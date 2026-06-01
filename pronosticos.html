@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pronósticos y Probabilidades | Mundial 2026™</title>
+  <meta name="description" content="Anexo personal de probabilidades para partidos del Mundial 2026. Modelo transparente, control de riesgo y simulador H2H sin garantía de resultados.">
+  <link rel="stylesheet" href="index.css">
+  <style>
+    /* Pronosticos Page Specific Styles */
+    .hero-pronosticos {
+      position: relative;
+      overflow: hidden;
+      padding: var(--space-2xl) var(--space-md);
+      text-align: center;
+      border-bottom: 1px solid var(--card-border);
+      background: radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.08) 0%, transparent 60%);
+    }
+
+    .hero-pronosticos h1 {
+      background: linear-gradient(135deg, #fbbf24 30%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-xs);
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: var(--space-md);
+      transition: color var(--transition-fast);
+    }
+
+    .back-link:hover {
+      color: var(--secondary);
+    }
+
+    .disclaimer-banner {
+      max-width: 900px;
+      margin: var(--space-lg) auto;
+      padding: var(--space-md) var(--space-lg);
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.25);
+      border-radius: var(--radius-lg);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .disclaimer-banner strong {
+      color: var(--danger);
+    }
+
+    .model-note {
+      max-width: 900px;
+      margin: 0 auto var(--space-xl);
+      padding: var(--space-md) var(--space-lg);
+      background: rgba(59, 130, 246, 0.08);
+      border: 1px solid rgba(59, 130, 246, 0.25);
+      border-radius: var(--radius-lg);
+      color: var(--text-secondary);
+      font-size: 0.85rem;
+      line-height: 1.7;
+    }
+
+    .model-note strong {
+      color: var(--info);
+    }
+
+    /* Page Sections */
+    .page-section {
+      max-width: 1200px;
+      margin: var(--space-xl) auto;
+      padding: 0 var(--space-md);
+    }
+
+    .section-heading {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.6rem;
+      color: var(--text-primary);
+      margin-bottom: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .section-heading .icon {
+      font-size: 1.4rem;
+    }
+
+    .section-heading::after {
+      content: '';
+      flex-grow: 1;
+      height: 2px;
+      background: linear-gradient(90deg, var(--card-border) 0%, transparent 100%);
+      margin-left: var(--space-md);
+    }
+
+    /* Value Cards Grid (Safe Picks) */
+    .value-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: var(--space-lg);
+    }
+
+    .value-card {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      transition: all var(--transition-normal);
+    }
+
+    .value-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--card-hover-border);
+      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+    }
+
+    .value-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-sm);
+      font-size: 0.8rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-xl);
+      font-weight: 800;
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-safe {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      color: var(--primary);
+    }
+
+    .badge-medium {
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      color: var(--secondary);
+    }
+
+    .badge-danger {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: var(--danger);
+    }
+
+    .prob-bar-container {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-tertiary);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: var(--space-sm) 0;
+    }
+
+    .prob-fill {
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.6s ease;
+    }
+
+    .suggested-bet-box {
+      background: rgba(251, 191, 36, 0.06);
+      border: 1px solid rgba(251, 191, 36, 0.15);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm) var(--space-md);
+      margin-top: var(--space-sm);
+    }
+
+    /* H2H Simulator Panel */
+    .simulator-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .sim-teams-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-xl);
+      margin-bottom: var(--space-xl);
+      flex-wrap: wrap;
+    }
+
+    .sim-team-selector {
+      text-align: center;
+    }
+
+    .sim-team-selector label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      margin-bottom: var(--space-xs);
+      letter-spacing: 0.05em;
+    }
+
+    .sim-team-selector select {
+      background: var(--bg-primary);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 0.6rem var(--space-lg) 0.6rem var(--space-md);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      min-width: 200px;
+    }
+
+    .sim-team-selector select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .sim-vs-badge {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      padding: 0.5rem 1rem;
+      border: 2px dashed var(--card-border);
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .sim-results-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+
+    .sim-probs-visual {
+      background: rgba(8, 12, 20, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+    }
+
+    .sim-probs-visual h4 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: var(--space-md);
+      font-size: 1rem;
+    }
+
+    .prob-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .prob-label {
+      width: 100px;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .prob-bar-lg {
+      flex-grow: 1;
+      height: 22px;
+      background: var(--bg-tertiary);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .prob-bar-lg .fill {
+      height: 100%;
+      border-radius: var(--radius-md);
+      transition: width 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: var(--space-sm);
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #000;
+    }
+
+    .prob-bar-lg .fill.green { background: linear-gradient(90deg, #059669, #34d399); }
+    .prob-bar-lg .fill.gray { background: linear-gradient(90deg, #374151, #6b7280); }
+    .prob-bar-lg .fill.blue { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+
+    .sim-advice-panel {
+      background: rgba(8, 12, 20, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .sim-advice-panel h4 {
+      font-family: var(--font-display);
+      font-weight: 800;
+      color: var(--text-primary);
+      font-size: 1rem;
+    }
+
+    .advice-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .advice-item .advice-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .advice-item .advice-value {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+
+    .advice-item .advice-value.gold { color: var(--secondary); }
+    .advice-item .advice-value.green { color: var(--primary); }
+
+    /* Betting Calculator */
+    .calc-panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .calc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--space-lg);
+      margin-bottom: var(--space-xl);
+    }
+
+    .calc-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .calc-input-group label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      letter-spacing: 0.04em;
+    }
+
+    .calc-input-group input,
+    .calc-input-group select {
+      background: var(--bg-primary);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: 0.7rem var(--space-md);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .calc-input-group input:focus,
+    .calc-input-group select:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+
+    .calc-results {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+      text-align: center;
+    }
+
+    .calc-result-card {
+      background: rgba(8, 12, 20, 0.6);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+    }
+
+    .calc-result-card .calc-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .calc-result-card .calc-value {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: var(--primary);
+      margin-top: 4px;
+    }
+
+    .calc-result-card .calc-value.gold { color: var(--secondary); }
+
+    /* All Matches Table */
+    .full-table-wrapper {
+      overflow-x: auto;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--card-border);
+    }
+
+    .full-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+      min-width: 900px;
+    }
+
+    .full-table thead th {
+      padding: 0.8rem var(--space-md);
+      text-align: left;
+      font-weight: 800;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 2px solid var(--card-border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .full-table tbody tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      transition: background-color var(--transition-fast);
+    }
+
+    .full-table tbody tr:hover {
+      background: rgba(16, 185, 129, 0.04);
+    }
+
+    .full-table td {
+      padding: 0.7rem var(--space-md);
+      vertical-align: middle;
+    }
+
+    .full-table .match-teams-cell {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .risk-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .risk-dot.low { background: var(--primary); }
+    .risk-dot.medium { background: var(--secondary); }
+    .risk-dot.high { background: var(--danger); }
+
+    .autofill-section {
+      text-align: center;
+      margin: var(--space-xl) 0;
+    }
+
+    .autofill-btn {
+      background: linear-gradient(135deg, var(--primary), #059669);
+      color: #000;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 0.85rem 2rem;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all var(--transition-normal);
+      box-shadow: var(--shadow-primary);
+    }
+
+    .autofill-btn:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .sim-results-grid {
+        grid-template-columns: 1fr;
+      }
+      .calc-results {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Header -->
+  <header class="hero-pronosticos">
+    <a href="index.html" class="back-link">
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+      Volver al Fixture Principal
+    </a>
+    <div class="brand">
+      <span class="brand-badge" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">Pronósticos & Estadísticas</span>
+      <h1>Probabilidades y <span>Riesgo</span></h1>
+      <p class="subtitle">Anexo personal para evaluar escenarios probables, comparar cuotas y decidir con más calma. No garantiza resultados ni reemplaza datos oficiales actualizados.</p>
+    </div>
+  </header>
+
+  <!-- Disclaimer Banner -->
+  <div class="disclaimer-banner">
+    <strong>AVISO IMPORTANTE:</strong> Esta herramienta es para <strong>uso personal informativo y de entretenimiento</strong>. 
+    Las probabilidades son estimaciones de un modelo simple y <strong>no garantizan resultados</strong>. 
+    Apuesta solo lo que puedas permitirte perder. El juego responsable es fundamental. Si sientes que el juego se convierte en un problema, busca ayuda profesional.
+  </div>
+
+  <div class="model-note" id="model-note">
+    <strong>Fuente del modelo:</strong> ratings internos auditables guardados en <code>pronosticos.js</code>. Antes de usar dinero real, actualiza esos ratings con una fuente verificable y contrasta cada probabilidad con cuotas reales; si la cuota no paga más que el riesgo asumido, no hay valor esperado.
+  </div>
+
+  <!-- Section 1: Safe Picks / Value Bets -->
+  <section class="page-section">
+    <h2 class="section-heading"><span class="icon">🔒</span> Escenarios de Mayor Probabilidad (Fase de Grupos)</h2>
+    <div id="safe-picks-container" class="value-grid">
+      <!-- Generated by pronosticos.js -->
+    </div>
+  </section>
+
+  <!-- Section 2: H2H Simulator -->
+  <section class="page-section">
+    <h2 class="section-heading"><span class="icon">⚔️</span> Simulador Cara a Cara (H2H)</h2>
+    <div class="simulator-panel">
+
+      <!-- Team Selectors -->
+      <div class="sim-teams-row">
+        <div class="sim-team-selector">
+          <label for="sim-team1">Equipo Local</label>
+          <select id="sim-team1"></select>
+        </div>
+        <div class="sim-vs-badge">VS</div>
+        <div class="sim-team-selector">
+          <label for="sim-team2">Equipo Visitante</label>
+          <select id="sim-team2"></select>
+        </div>
+      </div>
+
+      <!-- Results Dashboard -->
+      <div class="sim-results-grid">
+
+        <!-- Probability Bars -->
+        <div class="sim-probs-visual">
+          <h4>📊 Probabilidades Calculadas</h4>
+          <div class="prob-row">
+            <span class="prob-label">Equipo 1</span>
+            <div class="prob-bar-lg">
+              <div id="bar-t1" class="fill green" style="width: 50%;"><span id="sim-prob-t1">50%</span></div>
+            </div>
+          </div>
+          <div class="prob-row">
+            <span class="prob-label">Empate</span>
+            <div class="prob-bar-lg">
+              <div id="bar-draw" class="fill gray" style="width: 20%;"><span id="sim-prob-draw">20%</span></div>
+            </div>
+          </div>
+          <div class="prob-row">
+            <span class="prob-label">Equipo 2</span>
+            <div class="prob-bar-lg">
+              <div id="bar-t2" class="fill blue" style="width: 30%;"><span id="sim-prob-t2">30%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Advice Panel -->
+        <div class="sim-advice-panel">
+          <h4>Lectura del Modelo</h4>
+          <div class="advice-item">
+            <span class="advice-label">Nivel de Riesgo</span>
+            <span id="sim-risk-badge" class="badge badge-safe">Bajo Riesgo</span>
+          </div>
+          <div class="advice-item">
+            <span class="advice-label">Mercado a Evaluar</span>
+            <span id="sim-suggested" class="advice-value gold">-</span>
+          </div>
+          <div class="advice-item">
+            <span class="advice-label">Resultado Estimado</span>
+            <span id="sim-score" class="advice-value green">0 - 0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 3: Betting Calculator -->
+  <section class="page-section">
+    <h2 class="section-heading"><span class="icon">🧮</span> Calculadora de Apuestas (Soles Peruanos)</h2>
+    <div class="calc-panel">
+      <div class="calc-grid">
+        <div class="calc-input-group">
+          <label for="bet-amount">Monto a Apostar (S/)</label>
+          <input type="number" id="bet-amount" placeholder="Ej. 50" value="50" min="1">
+        </div>
+        <div class="calc-input-group">
+          <label for="bet-odds">Cuota Decimal (Odds)</label>
+          <input type="number" id="bet-odds" placeholder="Ej. 1.45" value="1.45" min="1" step="0.01">
+        </div>
+        <div class="calc-input-group">
+          <label for="bet-risk">Nivel de Riesgo</label>
+          <select id="bet-risk">
+            <option value="low">Bajo Riesgo (Favorito claro)</option>
+            <option value="medium" selected>Riesgo Medio (Partido parejo)</option>
+            <option value="high">Alto Riesgo (Underdog / Sorpresa)</option>
+          </select>
+        </div>
+      </div>
+      <div class="calc-results">
+        <div class="calc-result-card">
+          <div class="calc-label">Retorno Bruto</div>
+          <div id="calc-gross" class="calc-value">S/ 72.50</div>
+        </div>
+        <div class="calc-result-card">
+          <div class="calc-label">Ganancia Neta</div>
+          <div id="calc-net" class="calc-value gold">S/ 22.50</div>
+        </div>
+        <div class="calc-result-card">
+          <div class="calc-label">Fracción de Bankroll Recomendada</div>
+          <div id="calc-recommendation" class="calc-value" style="font-size: 1rem; color: var(--info);">3/10 (Confianza Moderada)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 4: Full Match Probabilities Table -->
+  <section class="page-section">
+    <h2 class="section-heading"><span class="icon">📋</span> Tabla Completa de Probabilidades (72 Partidos de Grupo)</h2>
+    <div class="full-table-wrapper" id="full-table-wrapper">
+      <!-- Generated by JS below -->
+    </div>
+  </section>
+
+  <!-- Autofill Feature -->
+  <section class="page-section autofill-section">
+    <p style="color: var(--text-secondary); margin-bottom: var(--space-md); max-width: 600px; margin-left: auto; margin-right: auto;">
+      ¿Quieres autocompletar la Fase de Grupos del fixture principal con los resultados estimados por el modelo?
+      Esto llena marcadores de simulación, no predicciones garantizadas.
+    </p>
+    <button id="autofill-btn" class="autofill-btn">Autocompletar Fixture con Estimaciones</button>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>ANEXO DE PRONÓSTICOS Y CONTROL DE RIESGO | COPA MUNDIAL FIFA 2026™</p>
+    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+      Los pronósticos se basan en modelos matemáticos Elo/FIFA y no constituyen asesoría financiera.
+      Juega responsablemente.
+    </p>
+    <p style="margin-top: 1rem;"><a href="index.html">← Volver al Fixture Interactivo</a></p>
+  </footer>
+
+  <script src="pronosticos.js"></script>
+</body>
+</html>

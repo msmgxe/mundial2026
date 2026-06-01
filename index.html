@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fixture Interactivo Copa Mundial FIFA 2026™ | Antigravity Engine</title>
+  <meta name="description" content="Simula y predice el fixture completo de los 104 partidos del Mundial 2026 de forma lúdica y profesional. Tablas de posiciones, bracket de avance y sedes en hora de Lima, Perú.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+  <!-- Premium Header & Banner -->
+  <header>
+    <div class="brand">
+      <span class="brand-badge">Canadá • México • Estados Unidos</span>
+      <h1>Fixture Interactivo <span>Mundial 2026</span></h1>
+      <p class="subtitle">Sigue y predice el fixture completo de los 104 partidos del torneo más grande de la historia en hora de Lima, Perú (PET).</p>
+    </div>
+
+    <!-- Countdown Timer -->
+    <div style="margin-top: 1rem;">
+      <div style="max-width: 400px; margin: 0 auto; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 0.5rem var(--space-md); text-align: center;">
+        <p id="countdown-title" style="margin-bottom: 0.15rem; font-size: 0.65rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.05em;">CUENTA REGRESIVA PARA LA INAUGURACIÓN</p>
+        <div id="countdown-timer" style="display: flex; justify-content: center; gap: var(--space-md); font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; color: var(--text-primary); line-height: 1.1;">
+          <div><span id="cd-days">00</span><p style="font-size: 0.55rem; color: var(--text-secondary); text-transform: uppercase;">Días</p></div>
+          <div><span id="cd-hours">00</span><p style="font-size: 0.55rem; color: var(--text-secondary); text-transform: uppercase;">Hrs</p></div>
+          <div><span id="cd-minutes">00</span><p style="font-size: 0.55rem; color: var(--text-secondary); text-transform: uppercase;">Min</p></div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Gamified Stepper - Tournament Progress -->
+  <section class="progress-stepper">
+    <div class="stepper-container">
+      <div class="step-node active" id="step-grupos">
+        <div class="step-circle">G</div>
+        <div class="step-label">Grupos</div>
+        <div class="step-percentage">0%</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-node" id="step-16avos">
+        <div class="step-circle">32</div>
+        <div class="step-label">16avos</div>
+        <div class="step-percentage">0%</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-node" id="step-octavos">
+        <div class="step-circle">16</div>
+        <div class="step-label">Octavos</div>
+        <div class="step-percentage">0%</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-node" id="step-cuartos">
+        <div class="step-circle">8</div>
+        <div class="step-label">Cuartos</div>
+        <div class="step-percentage">0%</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-node" id="step-semifinal">
+        <div class="step-circle">4</div>
+        <div class="step-label">Semifinal</div>
+        <div class="step-percentage">0%</div>
+      </div>
+      <div class="step-divider"></div>
+      <div class="step-node" id="step-final">
+        <div class="step-circle">🏆</div>
+        <div class="step-label">Final</div>
+        <div class="step-percentage">0%</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fan Zone / Favorite Team Card -->
+  <section class="fan-zone">
+    <div class="fan-zone-card">
+      <div class="fan-zone-title">
+        <span style="font-size: 1.25rem;">⭐</span>
+        <span>Zona del Fanático:</span>
+        <select id="fan-zone-select" class="fan-zone-select">
+          <option value="Todos">Selecciona tu Selección</option>
+        </select>
+      </div>
+      <div id="fan-zone-stats" class="fan-zone-stats">
+        <span>Selecciona tu país favorito para ver estadísticas especiales de avance!</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Summary Statistics Bar -->
+  <section class="summary-bar">
+    <div class="summary-card">
+      <h3 id="stat-matches">104</h3>
+      <p>Partidos Totales</p>
+    </div>
+    <div class="summary-card">
+      <h3>48</h3>
+      <p>Selecciones</p>
+    </div>
+    <div class="summary-card">
+      <h3>16</h3>
+      <p>Ciudades Sedes</p>
+    </div>
+    <div class="summary-card">
+      <h3>12</h3>
+      <p>Grupos Iniciales</p>
+    </div>
+  </section>
+
+  <section class="insights-link-section">
+    <a href="pronosticos.html" class="insights-link">
+      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"></path>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 15 4-4 3 3 5-7"></path>
+      </svg>
+      <span>Ver anexo de probabilidades y control de riesgo</span>
+    </a>
+  </section>
+
+  <!-- Control Panel (Search, Filters, Tabs) -->
+  <section class="controls-container">
+    <div class="filters-wrapper">
+      
+      <!-- Search Bar -->
+      <div class="search-bar">
+        <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        <input type="text" id="search-input" class="search-input" placeholder="Buscar por selección, sede, grupo o fase (ej. 'Argentina', 'SoFi Stadium')...">
+      </div>
+
+      <!-- Filters Row -->
+      <div class="filter-row">
+        <!-- Group Filter -->
+        <div class="form-group" id="group-filter-container">
+          <label for="filter-group">Filtrar por Grupo</label>
+          <select id="filter-group" class="custom-select">
+            <option value="Todos">Todos los Grupos</option>
+            <option value="Grupo A">Grupo A</option>
+            <option value="Grupo B">Grupo B</option>
+            <option value="Grupo C">Grupo C</option>
+            <option value="Grupo D">Grupo D</option>
+            <option value="Grupo E">Grupo E</option>
+            <option value="Grupo F">Grupo F</option>
+            <option value="Grupo G">Grupo G</option>
+            <option value="Grupo H">Grupo H</option>
+            <option value="Grupo I">Grupo I</option>
+            <option value="Grupo J">Grupo J</option>
+            <option value="Grupo K">Grupo K</option>
+            <option value="Grupo L">Grupo L</option>
+          </select>
+        </div>
+
+        <!-- Sede Filter -->
+        <div class="form-group">
+          <label for="filter-sede">Filtrar por Sede</label>
+          <select id="filter-sede" class="custom-select">
+            <option value="Todos">Todas las Sedes</option>
+          </select>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="form-group" style="justify-content: flex-end;">
+          <button id="reset-predictions-btn" class="tab-btn" style="border-color: rgba(239, 68, 68, 0.4); color: var(--danger); width: 100%; display: flex; justify-content: center; height: 42px;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="color: var(--danger);">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+            </svg>
+            Borrar Simulación
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs for Views -->
+      <div class="view-tabs">
+        <button class="tab-btn active" data-tab="fase-grupos">
+          ⚽ Grupos (Matches + Standings)
+        </button>
+        <button class="tab-btn" data-tab="tablas-grupos">
+          📊 Tablas (Pantalla Completa)
+        </button>
+        <button class="tab-btn" data-tab="eliminatorias">
+          🏆 Eliminatorias (Lista)
+        </button>
+        <button class="tab-btn" data-tab="llave-bracket">
+          🌳 Bracket Gráfico (Árbol)
+        </button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Matches Section -->
+  <main class="matches-section">
+    <div class="section-header">
+      <h2 class="section-title">Consola de Simulación</h2>
+      <span id="results-count" class="results-count">104 partidos</span>
+    </div>
+
+    <!-- Dynamic Container for Matches Grid, Tables, or Bracket -->
+    <div id="matches-container" class="matches-grid">
+      <!-- Generated dynamically from JS -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>COPA MUNDIAL DE LA FIFA 2026™ | FIXTURE INTERACTIVO COMPLETO</p>
+    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
+      Los horarios indicados corresponden a la Zona Horaria de Lima, Perú (PET / UTC-5). 
+      Desarrollado con fines demostrativos y de entretenimiento.
+    </p>
+    <p style="margin-top: 1rem;">Diseñado con ❤️ por <a href="https://github.com/google-deepmind" target="_blank" rel="noopener">Antigravity AI</a></p>
+  </footer>
+
+  <!-- JS Engine -->
+  <script src="index.js"></script>
+</body>
+</html>
