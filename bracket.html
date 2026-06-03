@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bracket Probabilístico · Copa Mundial FIFA 2026™</title>
+  <meta name="description" content="Simulación probabilística del bracket del Mundial 2026 — proyección de quién avanza en cada fase según el modelo estadístico.">
+  <link rel="stylesheet" href="index.css">
+  <style>
+    /* ---- PAGE HEADER ---- */
+    .bk-header {
+      position: relative;
+      overflow: hidden;
+      padding: var(--space-xl) var(--space-md) var(--space-lg);
+      text-align: center;
+      border-bottom: 1px solid var(--card-border);
+      background: radial-gradient(circle at 50% 0%, rgba(251,191,36,0.07) 0%, transparent 60%);
+    }
+    .bk-header::before {
+      content: '';
+      position: absolute; top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; height: 220px;
+      background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .bk-nav {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-md);
+      position: relative;
+      z-index: 1;
+      flex-wrap: wrap;
+    }
+    .bk-nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 700;
+      padding: 0.35rem 0.85rem;
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: var(--radius-sm);
+      transition: var(--transition-fast);
+    }
+    .bk-nav a:hover { background: var(--primary-glow); }
+    .bk-title {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: clamp(1.5rem, 5vw, 2.4rem);
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #fbbf24 30%, #ffffff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      position: relative;
+      z-index: 1;
+      margin-bottom: 0.4rem;
+    }
+    .bk-subtitle {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      position: relative;
+      z-index: 1;
+    }
+    .bk-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #000;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.8rem;
+      border-radius: var(--radius-xl);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: var(--space-sm);
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ---- LOADING ---- */
+    .bk-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-sm);
+      padding: var(--space-2xl) var(--space-md);
+      color: var(--text-secondary);
+    }
+    .bk-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--card-border);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: bk-spin 0.9s linear infinite;
+    }
+    @keyframes bk-spin { to { transform: rotate(360deg); } }
+    .bk-loading-label { font-size: 0.9rem; font-weight: 600; }
+    .bk-loading-sub { font-size: 0.75rem; color: var(--text-muted); }
+
+    /* ---- SECTION WRAP ---- */
+    .bk-section {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: var(--space-xl) var(--space-md);
+    }
+    .bk-section-title {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+    .bk-section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--card-border);
+    }
+
+    /* ---- TOP FAVORITES ---- */
+    .bk-favs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: var(--space-sm);
+    }
+    .bk-fav {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md) var(--space-sm);
+      text-align: center;
+      position: relative;
+      transition: var(--transition-normal);
+      backdrop-filter: blur(10px);
+      cursor: default;
+    }
+    .bk-fav:hover {
+      border-color: rgba(16,185,129,0.5);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-primary);
+    }
+    .bk-fav.is-top {
+      border-color: var(--secondary);
+      background: linear-gradient(135deg, rgba(251,191,36,0.08) 0%, var(--card-bg) 100%);
+      box-shadow: var(--shadow-gold);
+    }
+    .bk-fav-rank {
+      position: absolute;
+      top: 7px; left: 9px;
+      font-size: 0.6rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      font-family: var(--font-display);
+    }
+    .bk-fav-flag { font-size: 1.9rem; margin-bottom: 0.3rem; display: block; line-height: 1; }
+    .bk-fav-name {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.45rem;
+      line-height: 1.2;
+    }
+    .bk-fav-pct {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 900;
+      display: block;
+    }
+    .bk-fav-pct.gold-pct { color: var(--secondary); }
+    .bk-fav-pct.green-pct { color: var(--primary); }
+    .bk-fav-pct.muted-pct { color: var(--text-secondary); }
+    .bk-fav-label {
+      font-size: 0.58rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 1px;
+      display: block;
+    }
+    .bk-fav-bar {
+      margin-top: var(--space-xs);
+      height: 3px;
+      background: rgba(255,255,255,0.05);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bk-fav-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    /* ---- FUNNEL / BRACKET COLUMNS ---- */
+    .bk-funnel-wrap {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--card-border);
+      border-bottom: 1px solid var(--card-border);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+    }
+    .bk-funnel {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      padding: var(--space-lg) var(--space-md);
+      min-width: max-content;
+    }
+
+    /* ---- ROUND COLUMN ---- */
+    .bk-col {
+      width: 170px;
+      flex-shrink: 0;
+      padding: 0 10px;
+      border-right: 1px solid var(--card-border);
+    }
+    .bk-col:last-child { border-right: none; }
+    .bk-col-head {
+      text-align: center;
+      margin-bottom: var(--space-md);
+      padding-bottom: var(--space-sm);
+      border-bottom: 2px solid var(--primary);
+      position: sticky;
+      top: 0;
+    }
+    .bk-col.is-champ .bk-col-head { border-color: var(--secondary); }
+    .bk-col-round {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .bk-col.is-champ .bk-col-round { color: var(--secondary); }
+    .bk-col-count {
+      font-size: 0.58rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ---- TEAM CHIP ---- */
+    .bk-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(15,22,42,0.6);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 4px 7px;
+      margin-bottom: 4px;
+      transition: var(--transition-fast);
+      position: relative;
+    }
+    .bk-chip:hover { border-color: rgba(16,185,129,0.45); }
+    .bk-chip-flag { font-size: 0.85rem; flex-shrink: 0; line-height: 1; }
+    .bk-chip-name {
+      flex: 1;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 0.68rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .bk-chip-pct {
+      font-size: 0.6rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-family: var(--font-display);
+      flex-shrink: 0;
+    }
+    .bk-chip-pct.p-high   { background: rgba(16,185,129,0.18); color: #34d399; }
+    .bk-chip-pct.p-mid    { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+    .bk-chip-pct.p-low    { background: rgba(100,116,139,0.12); color: #64748b; }
+    .bk-chip-pct.p-ghost  { background: rgba(100,116,139,0.07); color: #475569; }
+
+    /* ---- CHAMPION CARD ---- */
+    .bk-champ-card {
+      background: linear-gradient(135deg, rgba(251,191,36,0.14), rgba(16,185,129,0.06));
+      border: 2px solid var(--secondary);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      text-align: center;
+      box-shadow: 0 0 30px rgba(251,191,36,0.2);
+      margin-bottom: var(--space-sm);
+    }
+    .bk-champ-trophy { font-size: 2.2rem; display: block; margin-bottom: 4px; line-height: 1; }
+    .bk-champ-flag   { font-size: 1.6rem; display: block; margin-bottom: 3px; line-height: 1; }
+    .bk-champ-name {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 900;
+      color: var(--secondary);
+      line-height: 1.2;
+    }
+    .bk-champ-pct {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 900;
+      color: var(--secondary);
+      display: block;
+      margin-top: 3px;
+    }
+    .bk-champ-sub {
+      font-size: 0.58rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 3px;
+    }
+
+    /* ---- DISCLAIMER ---- */
+    .bk-disclaimer {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: var(--space-lg) var(--space-md);
+      text-align: center;
+    }
+    .bk-disclaimer-box {
+      background: rgba(239,68,68,0.04);
+      border: 1px solid rgba(239,68,68,0.18);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      line-height: 1.75;
+    }
+
+    /* ---- SEPARATOR ---- */
+    .bk-sep {
+      border: none;
+      border-top: 1px solid var(--card-border);
+      margin: 0;
+    }
+
+    /* ---- LEGEND ---- */
+    .bk-legend {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      padding: var(--space-md);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+    .bk-legend-item { display: flex; align-items: center; gap: 5px; }
+    .bk-legend-dot {
+      width: 10px; height: 10px;
+      border-radius: 2px;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 640px) {
+      .bk-favs-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+      .bk-fav-flag { font-size: 1.4rem; }
+      .bk-fav-pct { font-size: 1.2rem; }
+      .bk-col { width: 145px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="bk-header">
+    <div class="bk-nav">
+      <a href="/">← Fixture</a>
+      <a href="/pronosticos">📊 Probabilidades</a>
+    </div>
+    <span class="bk-badge">Simulación Monte Carlo · 2,000 torneos</span>
+    <h1 class="bk-title">Bracket Probabilístico</h1>
+    <p class="bk-subtitle">Proyección de quién avanza en cada fase · Modelo interno v0.2 · No usar como base de apuestas</p>
+  </header>
+
+  <!-- Loading state -->
+  <div id="bk-loading" class="bk-loading">
+    <div class="bk-spinner"></div>
+    <span class="bk-loading-label">Simulando 2,000 torneos…</span>
+    <span class="bk-loading-sub">Calculando probabilidades por fase para las 48 selecciones</span>
+  </div>
+
+  <!-- Main content (hidden until simulation finishes) -->
+  <div id="bk-content" style="display:none;">
+
+    <!-- Top 12 Candidatos -->
+    <div class="bk-section">
+      <div class="bk-section-title">Candidatos al título · prob. de ser campeón</div>
+      <div class="bk-favs-grid" id="bk-favs"></div>
+    </div>
+
+    <hr class="bk-sep">
+
+    <!-- Legend -->
+    <div class="bk-legend">
+      <span style="font-weight:700; color:var(--text-secondary);">Probabilidad de avanzar en esa fase:</span>
+      <span class="bk-legend-item"><span class="bk-legend-dot" style="background:rgba(16,185,129,0.4);"></span>&ge;60% Alta</span>
+      <span class="bk-legend-item"><span class="bk-legend-dot" style="background:rgba(251,191,36,0.4);"></span>30–59% Media</span>
+      <span class="bk-legend-item"><span class="bk-legend-dot" style="background:rgba(100,116,139,0.25);"></span>10–29% Baja</span>
+      <span class="bk-legend-item"><span class="bk-legend-dot" style="background:rgba(100,116,139,0.1);"></span>&lt;10% Marginal</span>
+    </div>
+
+    <!-- Funnel bracket -->
+    <div class="bk-funnel-wrap">
+      <div class="bk-funnel" id="bk-funnel"></div>
+    </div>
+
+    <!-- Disclaimer -->
+    <div class="bk-disclaimer">
+      <div class="bk-disclaimer-box" id="bk-disc"></div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>COPA MUNDIAL DE LA FIFA 2026™ | BRACKET PROBABILÍSTICO</p>
+    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">
+      Proyecciones para análisis y entretenimiento. No garantizan resultados reales.
+    </p>
+    <p style="margin-top:1rem;">Diseñado con ❤️ por <a href="https://github.com/google-deepmind" target="_blank" rel="noopener">Antigravity AI</a></p>
+  </footer>
+
+  <!-- Load ratings + probability engine from shared module -->
+  <script src="pronosticos.js"></script>
+
+  <script>
+  // ================================================================
+  // BRACKET SIMULATION ENGINE
+  // ================================================================
+
+  const FLAGS = {
+    "Argentina":"🇦🇷","Francia":"🇫🇷","España":"🇪🇸","Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    "Brasil":"🇧🇷","Países Bajos":"🇳🇱","Portugal":"🇵🇹","Bélgica":"🇧🇪",
+    "Colombia":"🇨🇴","Uruguay":"🇺🇾","Alemania":"🇩🇪","Marruecos":"🇲🇦",
+    "Estados Unidos":"🇺🇸","Suiza":"🇨🇭","Japón":"🇯🇵","Croacia":"🇭🇷",
+    "Senegal":"🇸🇳","Corea del Sur":"🇰🇷","Ecuador":"🇪🇨","Suecia":"🇸🇪",
+    "Noruega":"🇳🇴","Austria":"🇦🇹","Turquía":"🇹🇷","Australia":"🇦🇺",
+    "República Checa":"🇨🇿","Egipto":"🇪🇬","Costa de Marfil":"🇨🇮",
+    "Paraguay":"🇵🇾","Argelia":"🇩🇿","Arabia Saudita":"🇸🇦",
+    "Ghana":"🇬🇭","Bosnia y Herzegovina":"🇧🇦","Túnez":"🇹🇳",
+    "Panamá":"🇵🇦","Catar":"🇶🇦","Sudáfrica":"🇿🇦","Irak":"🇮🇶",
+    "Uzbekistán":"🇺🇿","RD Congo":"🇨🇩","Jordania":"🇯🇴",
+    "Nueva Zelanda":"🇳🇿","Haití":"🇭🇹","Curazao":"🇨🇼",
+    "México":"🇲🇽","Canadá":"🇨🇦","Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Irán":"🇮🇷","Cabo Verde":"🇨🇻"
+  };
+
+  const GROUPS = {
+    A: ["México","Sudáfrica","Corea del Sur","República Checa"],
+    B: ["Canadá","Bosnia y Herzegovina","Catar","Suiza"],
+    C: ["Haití","Escocia","Brasil","Marruecos"],
+    D: ["Estados Unidos","Paraguay","Australia","Turquía"],
+    E: ["Costa de Marfil","Ecuador","Alemania","Curazao"],
+    F: ["Países Bajos","Japón","Suecia","Túnez"],
+    G: ["Irán","Nueva Zelanda","Bélgica","Egipto"],
+    H: ["Arabia Saudita","Uruguay","España","Cabo Verde"],
+    I: ["Francia","Senegal","Irak","Noruega"],
+    J: ["Argentina","Argelia","Austria","Jordania"],
+    K: ["Portugal","RD Congo","Uzbekistán","Colombia"],
+    L: ["Inglaterra","Croacia","Ghana","Panamá"]
+  };
+
+  const ALL_TEAMS = Object.values(GROUPS).flat();
+
+  // ---- Simulate a single match ----
+  function simMatch(t1, t2, knockout) {
+    const p = calculateMatchProbabilities(t1, t2);
+    const r = Math.random() * 100;
+    if (knockout) {
+      const denom = p.p1 + p.p2 || 1;
+      const pWin1 = p.p1 + p.pDraw * (p.p1 / denom);
+      return r < pWin1 ? t1 : t2;
+    }
+    // Group stage (allows draws)
+    if (r < p.p1)              return { win: t1, gW: 2, gL: 0 };
+    if (r < p.p1 + p.pDraw)   return { draw: true };
+    return                            { win: t2, gW: 2, gL: 0 };
+  }
+
+  // ---- Simulate a full group (round-robin), return teams ranked 1st-4th ----
+  function simGroup(teams) {
+    const s = {};
+    teams.forEach(t => { s[t] = { pts: 0, gd: 0, gf: 0 }; });
+
+    for (let i = 0; i < teams.length; i++) {
+      for (let j = i + 1; j < teams.length; j++) {
+        const r = simMatch(teams[i], teams[j], false);
+        if (r.draw) {
+          s[teams[i]].pts++; s[teams[j]].pts++;
+          s[teams[i]].gf++; s[teams[j]].gf++;
+        } else {
+          s[r.win].pts += 3;
+          s[r.win].gd += 2; s[r.win].gf += 2;
+          const loser = r.win === teams[i] ? teams[j] : teams[i];
+          s[loser].gd -= 2;
+        }
+      }
+    }
+
+    return teams.slice().sort((a, b) =>
+      s[b].pts - s[a].pts ||
+      s[b].gd  - s[a].gd  ||
+      s[b].gf  - s[a].gf  ||
+      (TEAM_RATINGS[b] || 70) - (TEAM_RATINGS[a] || 70)
+    );
+  }
+
+  // ---- Fisher-Yates shuffle ----
+  function shuffle(arr) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  // ---- Pair consecutive teams ----
+  function pair(arr) {
+    const out = [];
+    for (let i = 0; i < arr.length; i += 2) out.push([arr[i], arr[i + 1]]);
+    return out;
+  }
+
+  // ---- Main Monte Carlo simulation ----
+  function runSimulations(N) {
+    const cnt = {};
+    ALL_TEAMS.forEach(t => { cnt[t] = { r32:0, r16:0, qf:0, sf:0, fin:0, champ:0 }; });
+
+    for (let i = 0; i < N; i++) {
+      const thirds = [];
+      const r32 = [];
+
+      // Group stage
+      for (const teams of Object.values(GROUPS)) {
+        const ranked = simGroup(teams);
+        r32.push(ranked[0], ranked[1]);
+        thirds.push({ team: ranked[2], rating: TEAM_RATINGS[ranked[2]] || 70 });
+      }
+
+      // Best 8 third-place teams (by rating as proxy for group performance)
+      thirds.sort((a, b) => b.rating - a.rating);
+      thirds.slice(0, 8).forEach(({ team }) => r32.push(team));
+
+      // Track R32 qualifiers
+      r32.forEach(t => cnt[t] && cnt[t].r32++);
+
+      // Knockout rounds (random bracket draw each simulation)
+      let cur = shuffle(r32);
+
+      const r16 = pair(cur).map(([a, b]) => simMatch(a, b, true));
+      r16.forEach(t => cnt[t] && cnt[t].r16++);
+
+      const qf = pair(shuffle(r16)).map(([a, b]) => simMatch(a, b, true));
+      qf.forEach(t => cnt[t] && cnt[t].qf++);
+
+      const sf = pair(shuffle(qf)).map(([a, b]) => simMatch(a, b, true));
+      sf.forEach(t => cnt[t] && cnt[t].sf++);
+
+      // Finalists
+      const [f1, f2] = sf.length >= 2 ? sf : [sf[0], sf[0]];
+      const f1w = simMatch(f1, f2, true);
+      const finalists = pair(sf);
+      finalists.forEach(([a, b]) => {
+        cnt[a] && cnt[a].fin++;
+        cnt[b] && cnt[b].fin++;
+      });
+
+      // Champion
+      const champ = sf.length >= 2 ? simMatch(sf[0], sf[1], true) : sf[0];
+      if (cnt[champ]) cnt[champ].champ++;
+    }
+
+    // Convert to percentages
+    const out = {};
+    for (const [t, c] of Object.entries(cnt)) {
+      out[t] = {
+        r32:   Math.round(c.r32   / N * 100),
+        r16:   Math.round(c.r16   / N * 100),
+        qf:    Math.round(c.qf    / N * 100),
+        sf:    Math.round(c.sf    / N * 100),
+        fin:   Math.round(c.fin   / N * 100),
+        champ: Math.round(c.champ / N * 100)
+      };
+    }
+    return out;
+  }
+
+  // ================================================================
+  // RENDER FUNCTIONS
+  // ================================================================
+
+  function pctClass(pct) {
+    if (pct >= 60) return 'p-high';
+    if (pct >= 30) return 'p-mid';
+    if (pct >= 10) return 'p-low';
+    return 'p-ghost';
+  }
+
+  function chipHtml(team, pct) {
+    return `
+      <div class="bk-chip">
+        <span class="bk-chip-flag">${FLAGS[team] || '🏳'}</span>
+        <span class="bk-chip-name">${team}</span>
+        <span class="bk-chip-pct ${pctClass(pct)}">${pct}%</span>
+      </div>`;
+  }
+
+  function renderFavorites(probs) {
+    const sorted = ALL_TEAMS
+      .map(t => ({ team: t, pct: probs[t]?.champ || 0 }))
+      .filter(x => x.pct > 0)
+      .sort((a, b) => b.pct - a.pct)
+      .slice(0, 12);
+
+    const maxPct = sorted[0]?.pct || 1;
+
+    document.getElementById('bk-favs').innerHTML = sorted.map(({ team, pct }, i) => {
+      const pctCls = i === 0 ? 'gold-pct' : pct >= 10 ? 'green-pct' : 'muted-pct';
+      const fillW = Math.round(pct / maxPct * 100);
+      return `
+        <div class="bk-fav${i === 0 ? ' is-top' : ''}">
+          <span class="bk-fav-rank">#${i + 1}</span>
+          <span class="bk-fav-flag">${FLAGS[team] || '🏳'}</span>
+          <div class="bk-fav-name">${team}</div>
+          <span class="bk-fav-pct ${pctCls}">${pct}%</span>
+          <span class="bk-fav-label">prob. campeón</span>
+          <div class="bk-fav-bar"><div class="bk-fav-bar-fill" style="width:${fillW}%"></div></div>
+        </div>`;
+    }).join('');
+  }
+
+  function renderFunnel(probs) {
+    const rounds = [
+      { key: 'r32', label: '32avos de Final',   n: 32 },
+      { key: 'r16', label: '16avos de Final',   n: 16 },
+      { key: 'qf',  label: 'Cuartos de Final',  n: 8  },
+      { key: 'sf',  label: 'Semifinal',          n: 4  },
+      { key: 'fin', label: 'Final',              n: 2  },
+      { key: 'champ', label: 'Campeón',          n: 1  },
+    ];
+
+    const container = document.getElementById('bk-funnel');
+    container.innerHTML = '';
+
+    for (const round of rounds) {
+      const sorted = ALL_TEAMS
+        .map(t => ({ team: t, pct: probs[t]?.[round.key] || 0 }))
+        .filter(x => x.pct > 0)
+        .sort((a, b) => b.pct - a.pct);
+
+      const col = document.createElement('div');
+      col.className = `bk-col${round.key === 'champ' ? ' is-champ' : ''}`;
+
+      let inner = `
+        <div class="bk-col-head">
+          <div class="bk-col-round">${round.key === 'champ' ? '🏆 ' : ''}${round.label}</div>
+          <div class="bk-col-count">${sorted.length} selecciones</div>
+        </div>`;
+
+      if (round.key === 'champ') {
+        const top = sorted[0];
+        inner += `
+          <div class="bk-champ-card">
+            <span class="bk-champ-trophy">🏆</span>
+            <span class="bk-champ-flag">${FLAGS[top.team] || '🏳'}</span>
+            <div class="bk-champ-name">${top.team}</div>
+            <span class="bk-champ-pct">${top.pct}%</span>
+            <span class="bk-champ-sub">Más probable</span>
+          </div>`;
+        // Show runners-up as chips
+        sorted.slice(1).forEach(({ team, pct }) => {
+          inner += chipHtml(team, pct);
+        });
+      } else {
+        sorted.forEach(({ team, pct }) => {
+          inner += chipHtml(team, pct);
+        });
+      }
+
+      col.innerHTML = inner;
+      container.appendChild(col);
+    }
+  }
+
+  function renderDisclaimer(probs) {
+    const top = ALL_TEAMS
+      .map(t => ({ team: t, pct: probs[t]?.champ || 0 }))
+      .sort((a, b) => b.pct - a.pct)[0];
+
+    document.getElementById('bk-disc').innerHTML = `
+      <strong>⚠️ Nota metodológica:</strong> Resultados de 2,000 simulaciones Monte Carlo
+      basadas en ratings internos del modelo (no son datos oficiales FIFA ni Elo certificado).
+      En cada simulación, el bracket de eliminatorias se sorteó aleatoriamente para reflejar
+      la incertidumbre real del torneo. El campeonato <strong>no está determinado</strong>
+      — esta es la proyección más probable según el modelo actual.
+      El favorito estadístico es <strong>${top?.team}</strong> con ${top?.pct}% de probabilidad de título.
+      Fuente: ${MODEL_METADATA.name}, actualizado el ${MODEL_METADATA.updatedAt}.
+      ${MODEL_METADATA.warning}
+    `;
+  }
+
+  // ================================================================
+  // INIT
+  // ================================================================
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Defer simulation so loading indicator renders first
+    setTimeout(() => {
+      const probs = runSimulations(2000);
+      renderFavorites(probs);
+      renderFunnel(probs);
+      renderDisclaimer(probs);
+      document.getElementById('bk-loading').style.display = 'none';
+      document.getElementById('bk-content').style.display = 'block';
+    }, 60);
+  });
+  </script>
+
+</body>
+</html>

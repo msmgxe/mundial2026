@@ -11,6 +11,10 @@
     {
       "source": "/pronosticos",
       "destination": "/pronosticos.html"
+    },
+    {
+      "source": "/bracket",
+      "destination": "/bracket.html"
     }
   ]
 }
