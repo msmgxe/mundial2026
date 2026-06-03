@@ -176,6 +176,16 @@
           </select>
         </div>
 
+        <!-- Live Sync Button -->
+        <div class="form-group" style="justify-content: flex-end;">
+          <button id="live-sync-btn" onclick="syncLiveResults()" class="tab-btn"
+            style="border-color:rgba(16,185,129,0.4);color:var(--primary);width:100%;display:flex;justify-content:center;align-items:center;gap:6px;height:42px;font-weight:700">
+            <span id="live-sync-icon" style="font-size:0.85rem">⚡</span>
+            <span id="live-sync-label">Resultados en vivo</span>
+          </button>
+          <div id="live-sync-status" style="font-size:0.6rem;color:var(--text-muted);text-align:center;margin-top:2px;display:none"></div>
+        </div>
+
         <!-- Reset Button -->
         <div class="form-group" style="justify-content: flex-end;">
           <button id="reset-predictions-btn" class="tab-btn" style="border-color: rgba(239, 68, 68, 0.4); color: var(--danger); width: 100%; display: flex; justify-content: center; height: 42px;">
@@ -732,6 +742,164 @@
     document.getElementById('wc-modal-overlay').style.display = 'none';
   }
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWCModal(); });
+  </script>
+
+  <!-- ══ LIVE RESULTS SYNC ══════════════════════════════════════ -->
+  <script>
+  // Map football-data.org English names → our Spanish names
+  const _FD_MAP = {
+    "Mexico":"México","South Africa":"Sudáfrica","Korea Republic":"Corea del Sur",
+    "Czech Republic":"República Checa","Czechia":"República Checa",
+    "Canada":"Canadá","Bosnia and Herzegovina":"Bosnia y Herzegovina",
+    "Qatar":"Catar","Switzerland":"Suiza","Brazil":"Brasil","Morocco":"Marruecos",
+    "Haiti":"Haití","Scotland":"Escocia","United States":"Estados Unidos",
+    "USA":"Estados Unidos","Paraguay":"Paraguay","Australia":"Australia",
+    "Turkey":"Turquía","Türkiye":"Turquía","Germany":"Alemania",
+    "Curaçao":"Curazao","Curacao":"Curazao","Ivory Coast":"Costa de Marfil",
+    "Côte d'Ivoire":"Costa de Marfil","Ecuador":"Ecuador",
+    "Netherlands":"Países Bajos","Japan":"Japón","Sweden":"Suecia",
+    "Tunisia":"Túnez","Belgium":"Bélgica","Egypt":"Egipto","Iran":"Irán",
+    "IR Iran":"Irán","New Zealand":"Nueva Zelanda","Spain":"España",
+    "Cape Verde":"Cabo Verde","Saudi Arabia":"Arabia Saudita","Uruguay":"Uruguay",
+    "France":"Francia","Senegal":"Senegal","Iraq":"Irak","Norway":"Noruega",
+    "Argentina":"Argentina","Algeria":"Argelia","Austria":"Austria",
+    "Jordan":"Jordania","Portugal":"Portugal","DR Congo":"RD Congo",
+    "Congo DR":"RD Congo","Republic of Congo":"RD Congo","Uzbekistan":"Uzbekistán",
+    "Colombia":"Colombia","England":"Inglaterra","Croatia":"Croacia",
+    "Ghana":"Ghana","Panama":"Panamá","Panamá":"Panamá"
+  };
+
+  function _toEs(name) { return _FD_MAP[name] || name; }
+
+  // Build lookup: "team1||team2" → match id (using matchesData from index.js)
+  function _buildMatchLookup() {
+    const map = {};
+    if (typeof matchesData === 'undefined') return map;
+    matchesData.forEach(m => {
+      map[`${m.team1}||${m.team2}`] = m.id;
+      map[`${m.team2}||${m.team1}`] = m.id; // also reverse (in case API flips)
+    });
+    return map;
+  }
+
+  // Key for storing which scores are official (not user-entered)
+  const _LIVE_KEY = 'wc_2026_live_ids';
+
+  async function syncLiveResults(silent) {
+    const btn    = document.getElementById('live-sync-btn');
+    const icon   = document.getElementById('live-sync-icon');
+    const label  = document.getElementById('live-sync-label');
+    const status = document.getElementById('live-sync-status');
+
+    if (!silent) {
+      if (btn) btn.disabled = true;
+      if (icon) icon.textContent = '🔄';
+      if (label) label.textContent = 'Sincronizando…';
+    }
+
+    try {
+      const r = await fetch('/api/live-results');
+      const data = await r.json();
+      const matches = data.matches || [];
+
+      const lookup  = _buildMatchLookup();
+      const saved   = JSON.parse(localStorage.getItem('wc_2026_predictions') || '{}');
+      const liveIds = JSON.parse(localStorage.getItem(_LIVE_KEY) || '[]');
+      const liveSet = new Set(liveIds);
+
+      let synced = 0, live = 0;
+
+      matches.forEach(m => {
+        if (m.score1 === null && m.score2 === null) return;
+
+        const homeEs = _toEs(m.home);
+        const awayEs = _toEs(m.away);
+        const key1   = `${homeEs}||${awayEs}`;
+        const key2   = `${awayEs}||${homeEs}`;
+        const id     = lookup[key1] || lookup[key2];
+        if (!id) return;
+
+        // Determine scores (handle reversed team order)
+        let s1 = m.score1, s2 = m.score2;
+        if (lookup[key2] === id && !lookup[key1]) {
+          // API has teams reversed vs our order
+          s1 = m.score2; s2 = m.score1;
+        }
+
+        if (m.status === 'FINISHED') {
+          saved[id] = { score1: s1, score2: s2 };
+          liveSet.add(id);
+          synced++;
+        } else if (m.status === 'IN_PLAY' || m.status === 'PAUSED') {
+          saved[id] = { score1: s1, score2: s2 };
+          liveSet.add(id);
+          live++;
+        }
+
+        // Also update matchesData directly if available
+        if (typeof matchesData !== 'undefined') {
+          const match = matchesData.find(x => x.id === id);
+          if (match) { match.score1 = s1; match.score2 = s2; }
+        }
+      });
+
+      localStorage.setItem('wc_2026_predictions', JSON.stringify(saved));
+      localStorage.setItem(_LIVE_KEY, JSON.stringify([...liveSet]));
+
+      // Re-render
+      if (typeof renderApp === 'function') renderApp();
+
+      // Highlight official results
+      _markOfficialScores([...liveSet]);
+
+      // Update button state
+      const now = new Date().toLocaleTimeString('es-PE', { hour:'2-digit', minute:'2-digit' });
+      if (!silent) {
+        if (icon)   icon.textContent   = synced > 0 || live > 0 ? '🟢' : '✅';
+        if (label)  label.textContent  = synced > 0 || live > 0 ? `${synced} resultados · ${live} en vivo` : 'Al día';
+        if (status) { status.textContent = `Última sync: ${now}`; status.style.display = 'block'; }
+      } else if (synced > 0 || live > 0) {
+        // Silent but there's data — update icon to show it's live
+        if (icon)  icon.textContent  = live > 0 ? '🔴' : '🟢';
+        if (label) label.textContent = live > 0 ? `${live} partidos en vivo` : `${synced} resultados oficiales`;
+        if (status) { status.textContent = `Sync: ${now}`; status.style.display = 'block'; }
+      }
+
+    } catch(e) {
+      if (!silent) {
+        if (icon)  icon.textContent  = '⚠️';
+        if (label) label.textContent = 'Error al sincronizar';
+      }
+    } finally {
+      if (!silent && btn) btn.disabled = false;
+    }
+  }
+
+  // Add a small "OFICIAL" badge to match cards with real results
+  function _markOfficialScores(liveIds) {
+    const liveSet = new Set(liveIds.map(Number));
+    liveSet.forEach(id => {
+      // Match cards have data-match-id attribute
+      const card = document.querySelector(`[data-match-id="${id}"]`);
+      if (!card) return;
+      const container = card.closest('.match-card') || card.parentElement;
+      if (!container) return;
+      if (container.querySelector('.live-badge')) return; // already has badge
+      const badge = document.createElement('span');
+      badge.className = 'live-badge';
+      badge.innerHTML = '📡 OFICIAL';
+      badge.style.cssText = 'position:absolute;top:4px;right:4px;background:rgba(16,185,129,0.15);color:#34d399;border:1px solid rgba(16,185,129,0.3);border-radius:4px;font-size:0.55rem;font-weight:800;padding:1px 5px;letter-spacing:0.05em;font-family:Outfit,sans-serif;z-index:2';
+      container.style.position = 'relative';
+      container.appendChild(badge);
+    });
+  }
+
+  // Auto-sync on page load (silent)
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => syncLiveResults(true), 1500); // after index.js finishes
+    // Refresh every 3 minutes if page stays open
+    setInterval(() => syncLiveResults(true), 3 * 60 * 1000);
+  });
   </script>
 </body>
 </html>
