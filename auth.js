@@ -3,8 +3,8 @@
    Requires @supabase/supabase-js CDN loaded before this file.
    ============================================================ */
 
-const _SB_URL  = 'https://aafzhkilvxvejfuklcel.supabase.co';
-const _SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhZnpoa2lsdnh2ZWpmdWtsY2VsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA0OTY4MDYsImV4cCI6MjA5NjA3MjgwNn0.I92ijdssY3b2sPrKpaqeinjVWK9Ltvu7yWnEElXROXs';
+const _SB_URL  = 'https://piqtpwzoewufjwlluniq.supabase.co';
+const _SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpcXRwd3pvZXd1Zmp3bGx1bmlxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA1MDQ5ODgsImV4cCI6MjA5NjA4MDk4OH0.nrsfGr8Oil-EDEHog_HucHx0pQCyvxp0RWlW99yFQI4';
 const _ADMIN   = 'msmgxe@gmail.com';
 
 const _sb = window.supabase.createClient(_SB_URL, _SB_ANON);
