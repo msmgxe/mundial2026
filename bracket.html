@@ -401,6 +401,61 @@
   <!-- Main content (hidden until simulation finishes) -->
   <div id="bk-content" style="display:none;">
 
+    <!-- ══════════ VISUAL BRACKET TREE ══════════ -->
+    <div style="background:radial-gradient(ellipse at 50% 0%,rgba(16,185,129,0.07) 0%,transparent 65%),var(--bg-secondary);border-bottom:1px solid var(--card-border);padding:1.5rem 0.5rem 1rem;">
+      <div style="text-align:center;margin-bottom:1rem;">
+        <span style="font-family:var(--font-display);font-size:0.68rem;font-weight:800;color:var(--secondary);text-transform:uppercase;letter-spacing:0.1em;">Cuadro de eliminación directa · Octavos en adelante</span>
+        <div style="font-family:var(--font-display);font-size:1rem;font-weight:900;color:var(--text-primary);margin-top:2px;">Bracket más probable · simulación determinista</div>
+      </div>
+
+      <!-- Bracket tree (scrollable) -->
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+        <div id="bracket-tree" style="display:flex;align-items:center;justify-content:center;gap:0;min-width:max-content;padding:0.5rem 1rem 1rem;position:relative;">
+
+          <!-- LEFT HALF: R16 → QF → SF (flows left→right toward center) -->
+          <div id="b-left-r16"  class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:480px;"></div>
+          <div id="b-left-c1"   class="btree-conn" style="width:18px;height:480px;position:relative;flex-shrink:0;"></div>
+          <div id="b-left-qf"   class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:480px;"></div>
+          <div id="b-left-c2"   class="btree-conn" style="width:18px;height:480px;position:relative;flex-shrink:0;"></div>
+          <div id="b-left-sf"   class="btree-col" style="display:flex;flex-direction:column;justify-content:center;height:480px;"></div>
+          <div id="b-left-c3"   style="width:24px;height:480px;position:relative;flex-shrink:0;"></div>
+
+          <!-- CENTER: Final + Champion -->
+          <div id="b-center" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:480px;gap:0.75rem;flex-shrink:0;width:160px;"></div>
+
+          <!-- RIGHT HALF: SF → QF → R16 (mirrored) -->
+          <div id="b-right-c3"  style="width:24px;height:480px;position:relative;flex-shrink:0;"></div>
+          <div id="b-right-sf"  class="btree-col" style="display:flex;flex-direction:column;justify-content:center;height:480px;"></div>
+          <div id="b-right-c2"  class="btree-conn" style="width:18px;height:480px;position:relative;flex-shrink:0;"></div>
+          <div id="b-right-qf"  class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:480px;"></div>
+          <div id="b-right-c1"  class="btree-conn" style="width:18px;height:480px;position:relative;flex-shrink:0;"></div>
+          <div id="b-right-r16" class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:480px;"></div>
+        </div>
+      </div>
+
+      <!-- Round labels below bracket -->
+      <div style="display:flex;justify-content:center;gap:0;margin-top:0.5rem;overflow-x:auto;">
+        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;padding:0 18px;">Octavos</div>
+        <div style="width:18px"></div>
+        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;padding:0 18px;">Cuartos</div>
+        <div style="width:18px"></div>
+        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;">Semifinal</div>
+        <div style="width:24px"></div>
+        <div style="width:160px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:0.07em;">Final · Campeón</div>
+        <div style="width:24px"></div>
+        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;">Semifinal</div>
+        <div style="width:18px"></div>
+        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;">Cuartos</div>
+        <div style="width:18px"></div>
+        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;">Octavos</div>
+      </div>
+
+      <div style="text-align:center;margin-top:0.75rem;font-size:0.62rem;color:var(--text-muted);">
+        ⚠ Pronóstico determinista basado en ratings · No garantiza resultados reales
+      </div>
+    </div>
+    <!-- ══════════ END BRACKET TREE ══════════ -->
+
     <!-- Top 12 Candidatos -->
     <div class="bk-section">
       <div class="bk-section-title">Candidatos al título · prob. de ser campeón</div>
@@ -722,10 +777,201 @@
   // INIT
   // ================================================================
 
+  // ================================================================
+  // DETERMINISTIC BRACKET TREE
+  // ================================================================
+
+  const BFLAGS = {"Argentina":"🇦🇷","Francia":"🇫🇷","España":"🇪🇸","Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Brasil":"🇧🇷","Países Bajos":"🇳🇱","Portugal":"🇵🇹","Bélgica":"🇧🇪","Colombia":"🇨🇴","Uruguay":"🇺🇾","Alemania":"🇩🇪","Marruecos":"🇲🇦","Estados Unidos":"🇺🇸","Suiza":"🇨🇭","Japón":"🇯🇵","Croacia":"🇭🇷","Senegal":"🇸🇳","Corea del Sur":"🇰🇷","Ecuador":"🇪🇨","Suecia":"🇸🇪","Noruega":"🇳🇴","Austria":"🇦🇹","Turquía":"🇹🇷","Australia":"🇦🇺","República Checa":"🇨🇿","Egipto":"🇪🇬","Costa de Marfil":"🇨🇮","Paraguay":"🇵🇾","Argelia":"🇩🇿","Arabia Saudita":"🇸🇦","Ghana":"🇬🇭","Bosnia y Herzegovina":"🇧🇦","Túnez":"🇹🇳","Panamá":"🇵🇦","Catar":"🇶🇦","Sudáfrica":"🇿🇦","Irak":"🇮🇶","Uzbekistán":"🇺🇿","RD Congo":"🇨🇩","Jordania":"🇯🇴","Nueva Zelanda":"🇳🇿","Haití":"🇭🇹","Curazao":"🇨🇼","México":"🇲🇽","Canadá":"🇨🇦","Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Irán":"🇮🇷","Cabo Verde":"🇨🇻"};
+
+  function buildDeterministicBracket() {
+    // Step 1: deterministic group stage (sort by rating)
+    const qualified = [];
+    const thirds = [];
+    for (const teams of Object.values(GROUPS)) {
+      const s = [...teams].sort((a,b) => (TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
+      qualified.push(s[0], s[1]);
+      thirds.push(s[2]);
+    }
+    thirds.sort((a,b) => (TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
+    thirds.slice(0,8).forEach(t => qualified.push(t));
+
+    // Step 2: seed by rating
+    qualified.sort((a,b) => (TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
+    const S = qualified; // S[0]=seed1 ... S[31]=seed32
+
+    const w = (a,b) => (TEAM_RATINGS[a]||70) >= (TEAM_RATINGS[b]||70) ? a : b;
+    const winProb = (t1,t2) => {
+      const p = calculateMatchProbabilities(t1, t2);
+      const d = p.p1 + p.p2 || 1;
+      const pw1 = Math.round(p.p1 + p.pDraw * p.p1/d);
+      return { t1, t2, winner: w(t1,t2), loser: w(t1,t2)===t1?t2:t1, pw1, pw2: 100-pw1 };
+    };
+
+    // Step 3: R32 → R16 (8 matches per side, seeding: 1v32,16v17,... )
+    // Left side seeds: 1,32 | 16,17 | 8,25 | 9,24 | 4,29 | 13,20 | 5,28 | 12,21
+    const lr32 = [
+      winProb(S[0],S[31]), winProb(S[15],S[16]),
+      winProb(S[7],S[24]), winProb(S[8],S[23]),
+      winProb(S[3],S[28]), winProb(S[12],S[19]),
+      winProb(S[4],S[27]), winProb(S[11],S[20])
+    ];
+    // Right side seeds: 2,31 | 15,18 | 7,26 | 10,23 | 3,30 | 14,19 | 6,27 | 11,22
+    const rr32 = [
+      winProb(S[1],S[30]), winProb(S[14],S[17]),
+      winProb(S[6],S[25]), winProb(S[9],S[22]),
+      winProb(S[2],S[29]), winProb(S[13],S[18]),
+      winProb(S[5],S[26]), winProb(S[10],S[21])
+    ];
+
+    // Step 4: R16 (4 matches per side; each from 2 R32 winners)
+    const lr16 = [
+      winProb(lr32[0].winner, lr32[1].winner),
+      winProb(lr32[2].winner, lr32[3].winner),
+      winProb(lr32[4].winner, lr32[5].winner),
+      winProb(lr32[6].winner, lr32[7].winner)
+    ];
+    const rr16 = [
+      winProb(rr32[0].winner, rr32[1].winner),
+      winProb(rr32[2].winner, rr32[3].winner),
+      winProb(rr32[4].winner, rr32[5].winner),
+      winProb(rr32[6].winner, rr32[7].winner)
+    ];
+
+    // Step 5: QF (2 per side)
+    const lqf = [
+      winProb(lr16[0].winner, lr16[1].winner),
+      winProb(lr16[2].winner, lr16[3].winner)
+    ];
+    const rqf = [
+      winProb(rr16[0].winner, rr16[1].winner),
+      winProb(rr16[2].winner, rr16[3].winner)
+    ];
+
+    // Step 6: SF (1 per side)
+    const lsf = winProb(lqf[0].winner, lqf[1].winner);
+    const rsf = winProb(rqf[0].winner, rqf[1].winner);
+
+    // Step 7: Final
+    const final = winProb(lsf.winner, rsf.winner);
+
+    return { lr16, rr16, lqf, rqf, lsf, rsf, final };
+  }
+
+  function matchCard(m, flipped) {
+    // flipped = true → loser on top (for right half, winner at bottom approaching center)
+    const slots = flipped
+      ? [{ team:m.loser, pct: m.winner===m.t1?m.pw2:m.pw1, win:false }, { team:m.winner, pct: m.winner===m.t1?m.pw1:m.pw2, win:true }]
+      : [{ team:m.winner, pct: m.winner===m.t1?m.pw1:m.pw2, win:true }, { team:m.loser, pct: m.winner===m.t1?m.pw2:m.pw1, win:false }];
+
+    return `<div style="display:flex;flex-direction:column;gap:2px;width:162px;">
+      ${slots.map(s => `
+        <div style="display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:6px;border:1px solid ${s.win?'rgba(16,185,129,0.4)':'rgba(255,255,255,0.06)'};background:${s.win?'rgba(16,185,129,0.1)':'rgba(15,22,42,0.8)'};opacity:${s.win?1:0.42};min-height:26px;">
+          <span style="font-size:0.82rem;flex-shrink:0">${BFLAGS[s.team]||'🏳'}</span>
+          <span style="flex:1;font-size:0.68rem;font-weight:${s.win?700:500};color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.team}</span>
+          <span style="font-size:0.58rem;font-weight:800;font-family:var(--font-display);color:${s.win?'var(--primary)':'var(--text-muted)'};flex-shrink:0">${s.pct}%</span>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  function connectorCSS(isLeft) {
+    // Draws bracket ┤ (left side) or ├ (right side) lines using CSS
+    // 4 R16 matches → 2 QF → 1 SF: pairs at slot heights 120px each (total 480px)
+    const side = isLeft ? 'right' : 'left';
+    const borderSide = isLeft ? 'border-right' : 'border-left';
+    const c = 'rgba(16,185,129,0.3)';
+    // r16→qf: 2 pairs (each pair spans 240px: slots at 0,120 → connect at midpoint 60-180)
+    return `
+      <div style="position:absolute;${side}:0;top:60px;height:120px;width:18px;border-top:1px solid ${c};${borderSide}:1px solid ${c};border-bottom:1px solid ${c};"></div>
+      <div style="position:absolute;${side}:0;top:300px;height:120px;width:18px;border-top:1px solid ${c};${borderSide}:1px solid ${c};border-bottom:1px solid ${c};"></div>`;
+  }
+
+  function connectorQFCSS(isLeft) {
+    // qf→sf: 1 pair spanning 480px (qf at 120 and 360, midpoint 240)
+    const side = isLeft ? 'right' : 'left';
+    const borderSide = isLeft ? 'border-right' : 'border-left';
+    const c = 'rgba(16,185,129,0.3)';
+    return `<div style="position:absolute;${side}:0;top:120px;height:240px;width:18px;border-top:1px solid ${c};${borderSide}:1px solid ${c};border-bottom:1px solid ${c};"></div>`;
+  }
+
+  function renderBracketTree() {
+    const b = buildDeterministicBracket();
+
+    // ── LEFT R16 (4 matches, 120px slots each = 480px total) ──
+    document.getElementById('b-left-r16').innerHTML =
+      [b.lr16[0], b.lr16[1], b.lr16[2], b.lr16[3]].map(m =>
+        `<div style="height:120px;display:flex;align-items:center;">${matchCard(m,false)}</div>`
+      ).join('');
+
+    // ── LEFT connector R16→QF ──
+    document.getElementById('b-left-c1').innerHTML = connectorCSS(true);
+
+    // ── LEFT QF (2 matches, 240px slots) ──
+    document.getElementById('b-left-qf').innerHTML =
+      [b.lqf[0], b.lqf[1]].map(m =>
+        `<div style="height:240px;display:flex;align-items:center;">${matchCard(m,false)}</div>`
+      ).join('');
+
+    // ── LEFT connector QF→SF ──
+    document.getElementById('b-left-c2').innerHTML = connectorQFCSS(true);
+
+    // ── LEFT SF (1 match centered) ──
+    document.getElementById('b-left-sf').innerHTML = matchCard(b.lsf, false);
+
+    // ── CENTER ──
+    const fin = b.final;
+    const champ = fin.winner;
+    document.getElementById('b-center').innerHTML = `
+      <div style="font-family:var(--font-display);font-size:0.58rem;font-weight:800;color:var(--secondary);text-transform:uppercase;letter-spacing:0.1em;text-align:center">🏆 Gran Final</div>
+      <div style="display:flex;flex-direction:column;gap:2px;width:150px;">
+        ${[{team:fin.t1, pct:fin.pw1, win:fin.winner===fin.t1},{team:fin.t2, pct:fin.pw2, win:fin.winner===fin.t2}].map(s=>`
+          <div style="display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:7px;border:1px solid ${s.win?'rgba(251,191,36,0.5)':'rgba(255,255,255,0.07)'};background:${s.win?'rgba(251,191,36,0.1)':'rgba(15,22,42,0.9)'};opacity:${s.win?1:0.45}">
+            <span style="font-size:0.85rem">${BFLAGS[s.team]||'🏳'}</span>
+            <span style="flex:1;font-size:0.7rem;font-weight:700;color:${s.win?'#fbbf24':'var(--text-secondary)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.team}</span>
+            <span style="font-size:0.6rem;font-weight:800;color:${s.win?'#fbbf24':'var(--text-muted)'}">${s.pct}%</span>
+          </div>`).join('')}
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(16,185,129,0.08));border:2px solid rgba(251,191,36,0.5);border-radius:12px;padding:0.75rem;text-align:center;width:150px;box-shadow:0 0 24px rgba(251,191,36,0.2)">
+        <div style="font-size:1.6rem">🏆</div>
+        <div style="font-size:1rem">${BFLAGS[champ]||'🏳'}</div>
+        <div style="font-family:var(--font-display);font-size:0.75rem;font-weight:900;color:var(--secondary);margin-top:2px">${champ}</div>
+        <div style="font-size:0.58rem;color:var(--text-muted);margin-top:2px">Campeón proyectado</div>
+      </div>`;
+
+    // ── RIGHT SF ──
+    document.getElementById('b-right-sf').innerHTML = matchCard(b.rsf, true);
+
+    // ── RIGHT connector SF→QF ──
+    document.getElementById('b-right-c2').innerHTML = connectorQFCSS(false);
+
+    // ── RIGHT QF ──
+    document.getElementById('b-right-qf').innerHTML =
+      [b.rqf[0], b.rqf[1]].map(m =>
+        `<div style="height:240px;display:flex;align-items:center;">${matchCard(m,true)}</div>`
+      ).join('');
+
+    // ── RIGHT connector QF→R16 ──
+    document.getElementById('b-right-c1').innerHTML = connectorCSS(false);
+
+    // ── RIGHT R16 ──
+    document.getElementById('b-right-r16').innerHTML =
+      [b.rr16[0], b.rr16[1], b.rr16[2], b.rr16[3]].map(m =>
+        `<div style="height:120px;display:flex;align-items:center;">${matchCard(m,true)}</div>`
+      ).join('');
+
+    // SF→Final horizontal connectors
+    const lc = 'rgba(251,191,36,0.35)';
+    document.getElementById('b-left-c3').innerHTML  = `<div style="position:absolute;right:0;top:50%;width:24px;height:1px;background:${lc}"></div>`;
+    document.getElementById('b-right-c3').innerHTML = `<div style="position:absolute;left:0;top:50%;width:24px;height:1px;background:${lc}"></div>`;
+  }
+
+  // ================================================================
+  // INIT
+  // ================================================================
+
   document.addEventListener('DOMContentLoaded', () => {
-    // Defer simulation so loading indicator renders first
     setTimeout(() => {
       const probs = runSimulations(2000);
+      renderBracketTree();
       renderFavorites(probs);
       renderFunnel(probs);
       renderDisclaimer(probs);
