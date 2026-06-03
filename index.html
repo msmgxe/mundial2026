@@ -8,8 +8,13 @@
   
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="index.css">
+  <!-- Auth guard -->
+  <style id="auth-hide">body{visibility:hidden}</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="/auth.js"></script>
 </head>
 <body>
+<script>(async()=>{const r=await requireAuth();if(r){document.getElementById('auth-hide').remove();injectUserBar(r.session);}})();</script>
 
   <!-- Premium Header & Banner -->
   <header>

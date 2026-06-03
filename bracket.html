@@ -6,6 +6,10 @@
   <title>Bracket Probabilístico · Copa Mundial FIFA 2026™</title>
   <meta name="description" content="Simulación probabilística del bracket del Mundial 2026 — proyección de quién avanza en cada fase según el modelo estadístico.">
   <link rel="stylesheet" href="index.css">
+  <!-- Auth guard -->
+  <style id="auth-hide">body{visibility:hidden}</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="/auth.js"></script>
   <style>
     /* ---- PAGE HEADER ---- */
     .bk-header {
@@ -374,6 +378,7 @@
   </style>
 </head>
 <body>
+<script>(async()=>{const r=await requireAuth();if(r){document.getElementById('auth-hide').remove();injectUserBar(r.session);}})();</script>
 
   <!-- Header -->
   <header class="bk-header">

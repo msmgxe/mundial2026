@@ -6,6 +6,10 @@
   <title>Pronósticos y Probabilidades | Mundial 2026™</title>
   <meta name="description" content="Anexo personal de probabilidades para partidos del Mundial 2026. Modelo transparente, control de riesgo y simulador H2H sin garantía de resultados.">
   <link rel="stylesheet" href="index.css">
+  <!-- Auth guard -->
+  <style id="auth-hide">body{visibility:hidden}</style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="/auth.js"></script>
   <style>
     /* Pronosticos Page Specific Styles */
     .hero-pronosticos {
@@ -534,6 +538,7 @@
   </style>
 </head>
 <body>
+<script>(async()=>{const r=await requireAuth();if(r){document.getElementById('auth-hide').remove();injectUserBar(r.session);}})();</script>
 
   <!-- Hero Header -->
   <header class="hero-pronosticos">

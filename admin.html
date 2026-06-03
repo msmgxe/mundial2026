@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin · Mundial 2026</title>
+  <link rel="stylesheet" href="index.css">
+  <style id="auth-hide">body{visibility:hidden}</style>
+  <style>
+    .adm-wrap { max-width: 1100px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .adm-header {
+      background: linear-gradient(135deg, rgba(251,191,36,0.08), rgba(16,185,129,0.04));
+      border: 1px solid rgba(251,191,36,0.2);
+      border-radius: var(--radius-lg);
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;
+    }
+    .adm-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 900; color: var(--secondary); }
+    .adm-subtitle { font-size: 0.78rem; color: var(--text-muted); }
+    .adm-back { color: var(--primary); text-decoration: none; font-size: 0.8rem; font-weight: 700; padding: 0.4rem 0.9rem; border: 1px solid rgba(16,185,129,0.3); border-radius: 6px; }
+
+    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+    .stat-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 1rem; text-align: center; }
+    .stat-num { font-family: var(--font-display); font-size: 1.8rem; font-weight: 900; color: var(--primary); }
+    .stat-num.gold { color: var(--secondary); }
+    .stat-num.red { color: var(--danger); }
+    .stat-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .adm-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 1.2rem; margin-bottom: 1.5rem; }
+    .adm-card-title { font-family: var(--font-display); font-weight: 800; font-size: 0.85rem; color: var(--text-primary); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+    .form-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end; }
+    .form-group { display: flex; flex-direction: column; gap: 0.3rem; flex: 1; min-width: 140px; }
+    .form-label { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; }
+    .form-input {
+      padding: 0.6rem 0.8rem; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      color: var(--text-primary); font-size: 0.85rem; outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus { border-color: var(--primary); }
+    .pw-field { position: relative; }
+    .pw-field .form-input { padding-right: 2.5rem; }
+    .pw-eye { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--text-muted); font-size: 0.8rem; }
+    .btn { padding: 0.6rem 1.2rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 700; font-size: 0.82rem; transition: opacity 0.2s, transform 0.15s; }
+    .btn:hover { opacity: 0.85; transform: translateY(-1px); }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #059669); color: #fff; }
+    .btn-danger { background: rgba(239,68,68,0.15); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+    .btn-warning { background: rgba(251,191,36,0.12); color: var(--secondary); border: 1px solid rgba(251,191,36,0.3); }
+    .btn-sm { padding: 0.3rem 0.65rem; font-size: 0.72rem; }
+
+    .notes-hint { font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+    th { text-align: left; padding: 0.5rem 0.75rem; color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.06em; border-bottom: 1px solid var(--card-border); }
+    td { padding: 0.6rem 0.75rem; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .badge-active   { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 0.65rem; font-weight: 700; background: rgba(16,185,129,0.15); color: var(--primary); border: 1px solid rgba(16,185,129,0.3); }
+    .badge-inactive { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 0.65rem; font-weight: 700; background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.3); }
+
+    .actions-cell { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+    .msg { padding: 0.5rem 0.8rem; border-radius: 6px; font-size: 0.78rem; margin-top: 0.75rem; display: none; }
+    .msg.show { display: block; }
+    .msg-ok  { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+    .msg-err { background: rgba(239,68,68,0.1);  border: 1px solid rgba(239,68,68,0.3);  color: #fca5a5; }
+
+    .pw-note { font-size: 0.7rem; color: var(--text-muted); max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+    .pw-note:hover { color: var(--primary); }
+    .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid var(--card-border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(4px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 1rem;
+    }
+    .modal { background: #0d1222; border: 1px solid var(--card-border); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 380px; }
+    .modal-title { font-family: var(--font-display); font-weight: 800; color: var(--text-primary); margin-bottom: 1rem; }
+    .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem; }
+  </style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="/auth.js"></script>
+<script>
+(async () => {
+  const r = await requireAuth();
+  if (!r) return;
+  if (!isAdmin(r.session)) { window.location.href = '/'; return; }
+  document.getElementById('auth-hide').remove();
+  injectUserBar(r.session);
+  window._session = r.session;
+  loadUsers();
+})();
+</script>
+
+<div class="adm-wrap">
+  <div class="adm-header">
+    <div>
+      <div class="adm-title">⚙️ Panel de Administración</div>
+      <div class="adm-subtitle">Mundial 2026 · Gestión de accesos y suscripciones</div>
+    </div>
+    <a class="adm-back" href="/">← Volver al Fixture</a>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num gold" id="s-total">—</div><div class="stat-label">Total usuarios</div></div>
+    <div class="stat-card"><div class="stat-num" id="s-active">—</div><div class="stat-label">Activos</div></div>
+    <div class="stat-card"><div class="stat-num red" id="s-suspended">—</div><div class="stat-label">Suspendidos</div></div>
+  </div>
+
+  <!-- Create user -->
+  <div class="adm-card">
+    <div class="adm-card-title">➕ Crear nuevo acceso</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Email del cliente</label>
+        <input class="form-input" id="new-email" type="email" placeholder="cliente@correo.com">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <div class="pw-field">
+          <input class="form-input" id="new-pw" type="password" placeholder="Mín. 6 caracteres">
+          <button class="pw-eye" onclick="togglePw('new-pw')">👁</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notas / referencia de clave</label>
+        <input class="form-input" id="new-notes" type="text" placeholder="Ej: clave=hola123 | plan=básico">
+        <div class="notes-hint">💡 Guarda aquí la clave asignada para poder consultarla</div>
+      </div>
+      <div class="form-group" style="flex:0">
+        <label class="form-label">&nbsp;</label>
+        <button class="btn btn-primary" onclick="createUser()">Crear acceso</button>
+      </div>
+    </div>
+    <div class="msg msg-ok" id="create-ok">✓ Usuario creado correctamente.</div>
+    <div class="msg msg-err" id="create-err"></div>
+  </div>
+
+  <!-- Users table -->
+  <div class="adm-card">
+    <div class="adm-card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>👥 Usuarios registrados</span>
+      <button class="btn btn-sm" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);border:1px solid var(--card-border);" onclick="loadUsers()">↻ Actualizar</button>
+    </div>
+    <div id="users-loading" style="text-align:center;padding:2rem;color:var(--text-muted)"><div class="spinner"></div></div>
+    <div id="users-table-wrap" style="display:none;overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Estado</th>
+            <th>Notas / clave guardada</th>
+            <th>Creado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="users-tbody"></tbody>
+      </table>
+    </div>
+    <div id="users-empty" style="display:none;text-align:center;padding:2rem;color:var(--text-muted)">Sin usuarios registrados aún.</div>
+  </div>
+</div>
+
+<!-- Reset password modal -->
+<div class="modal-overlay" id="pw-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-title">🔑 Cambiar contraseña</div>
+    <div class="form-group" style="margin-bottom:0.75rem">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="modal-email" type="text" readonly style="opacity:0.6">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nueva contraseña</label>
+      <div class="pw-field">
+        <input class="form-input" id="modal-pw" type="password" placeholder="Mín. 6 caracteres">
+        <button class="pw-eye" onclick="togglePw('modal-pw')">👁</button>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Guardar en notas (referencia)</label>
+      <input class="form-input" id="modal-notes" type="text" placeholder="Ej: nueva clave=abc123">
+    </div>
+    <div class="msg msg-err" id="modal-err"></div>
+    <div class="modal-actions">
+      <button class="btn" style="background:rgba(255,255,255,0.05);color:var(--text-secondary);" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="doResetPw()">Cambiar contraseña</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ADMIN_EMAIL = 'msmgxe@gmail.com';
+let _currentUserId = null;
+
+function togglePw(id) {
+  const el = document.getElementById(id);
+  el.type = el.type === 'password' ? 'text' : 'password';
+}
+
+async function apiCall(action, method, body, query) {
+  const qs = new URLSearchParams({ action, ...(query||{}) }).toString();
+  const opts = {
+    method: method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${window._session?.access_token}`
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(`/api/admin?${qs}`, opts);
+  return r.json();
+}
+
+async function loadUsers() {
+  document.getElementById('users-loading').style.display = 'block';
+  document.getElementById('users-table-wrap').style.display = 'none';
+  document.getElementById('users-empty').style.display = 'none';
+
+  const data = await apiCall('list', 'GET');
+  document.getElementById('users-loading').style.display = 'none';
+
+  const users = (data.users || []).filter(u => u.email !== ADMIN_EMAIL);
+
+  const active = users.filter(u => u.profile?.is_active !== false).length;
+  document.getElementById('s-total').textContent = users.length;
+  document.getElementById('s-active').textContent = active;
+  document.getElementById('s-suspended').textContent = users.length - active;
+
+  if (!users.length) {
+    document.getElementById('users-empty').style.display = 'block';
+    return;
+  }
+
+  const tbody = document.getElementById('users-tbody');
+  tbody.innerHTML = users.map(u => {
+    const isActive = u.profile?.is_active !== false;
+    const notes = u.profile?.access_notes || '—';
+    const created = new Date(u.created_at).toLocaleDateString('es-PE', { day:'2-digit', month:'short', year:'numeric' });
+    return `
+      <tr id="row-${u.id}">
+        <td><strong>${u.email}</strong></td>
+        <td><span class="${isActive ? 'badge-active' : 'badge-inactive'}">${isActive ? '● Activo' : '● Suspendido'}</span></td>
+        <td>
+          <span class="pw-note" title="${notes}" onclick="navigator.clipboard.writeText('${notes.replace(/'/g,"\\'")}').then(()=>alert('Copiado'))">${notes}</span>
+        </td>
+        <td style="color:var(--text-muted)">${created}</td>
+        <td>
+          <div class="actions-cell">
+            <button class="btn btn-sm ${isActive ? 'btn-warning' : 'btn-primary'}" onclick="toggleUser('${u.id}', ${!isActive})">
+              ${isActive ? 'Suspender' : 'Activar'}
+            </button>
+            <button class="btn btn-sm" style="background:rgba(59,130,246,0.12);color:#60a5fa;border:1px solid rgba(59,130,246,0.3)" onclick="openResetModal('${u.id}','${u.email}','${notes.replace(/'/g,"\\'")}')">
+              🔑 Clave
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}','${u.email}')">
+              🗑
+            </button>
+          </div>
+        </td>
+      </tr>`;
+  }).join('');
+
+  document.getElementById('users-table-wrap').style.display = 'block';
+}
+
+async function createUser() {
+  const email = document.getElementById('new-email').value.trim();
+  const pw    = document.getElementById('new-pw').value;
+  const notes = document.getElementById('new-notes').value.trim();
+  const okEl  = document.getElementById('create-ok');
+  const errEl = document.getElementById('create-err');
+  okEl.classList.remove('show'); errEl.classList.remove('show');
+
+  if (!email || !pw) { errEl.textContent = 'Email y contraseña requeridos.'; errEl.classList.add('show'); return; }
+
+  const data = await apiCall('create', 'POST', { email, password: pw, notes });
+  if (data.error) { errEl.textContent = data.error; errEl.classList.add('show'); return; }
+
+  okEl.classList.add('show');
+  document.getElementById('new-email').value = '';
+  document.getElementById('new-pw').value = '';
+  document.getElementById('new-notes').value = '';
+  loadUsers();
+}
+
+async function toggleUser(userId, setActive) {
+  const data = await apiCall('toggle', 'POST', { userId, isActive: setActive });
+  if (data.error) { alert(data.error); return; }
+  loadUsers();
+}
+
+function openResetModal(userId, email, currentNotes) {
+  _currentUserId = userId;
+  document.getElementById('modal-email').value = email;
+  document.getElementById('modal-pw').value = '';
+  document.getElementById('modal-notes').value = currentNotes !== '—' ? currentNotes : '';
+  document.getElementById('modal-err').classList.remove('show');
+  document.getElementById('pw-modal').style.display = 'flex';
+}
+
+function closeModal() {
+  document.getElementById('pw-modal').style.display = 'none';
+  _currentUserId = null;
+}
+
+async function doResetPw() {
+  const pw    = document.getElementById('modal-pw').value;
+  const notes = document.getElementById('modal-notes').value.trim();
+  const errEl = document.getElementById('modal-err');
+  errEl.classList.remove('show');
+
+  if (!pw) { errEl.textContent = 'Ingresa la nueva contraseña.'; errEl.classList.add('show'); return; }
+  const data = await apiCall('resetPassword', 'POST', { userId: _currentUserId, newPassword: pw, notes });
+  if (data.error) { errEl.textContent = data.error; errEl.classList.add('show'); return; }
+
+  closeModal();
+  loadUsers();
+}
+
+async function deleteUser(userId, email) {
+  if (!confirm(`¿Eliminar permanentemente a ${email}?\n\nEsta acción no se puede deshacer.`)) return;
+  const data = await apiCall('delete', 'DELETE', null, { userId });
+  if (data.error) { alert(data.error); return; }
+  loadUsers();
+}
+</script>
+</body>
+</html>

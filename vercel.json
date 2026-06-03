@@ -4,17 +4,10 @@
   "outputDirectory": ".",
   "trailingSlash": false,
   "rewrites": [
-    {
-      "source": "/",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/pronosticos",
-      "destination": "/pronosticos.html"
-    },
-    {
-      "source": "/bracket",
-      "destination": "/bracket.html"
-    }
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/pronosticos", "destination": "/pronosticos.html" },
+    { "source": "/bracket", "destination": "/bracket.html" },
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/admin", "destination": "/admin.html" }
   ]
 }
