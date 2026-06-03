@@ -88,7 +88,7 @@
           <option value="Todos">Selecciona tu Selección</option>
         </select>
         <button id="wc-history-btn" onclick="openWCModal()" title="Ver historia en los Mundiales"
-          style="display:none;align-items:center;gap:5px;padding:0.35rem 0.8rem;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;border:none;border-radius:6px;font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:0.04em;white-space:nowrap;box-shadow:0 0 14px rgba(251,191,36,0.35);transition:opacity 0.2s">
+          style="display:inline-flex;align-items:center;gap:5px;padding:0.35rem 0.8rem;background:linear-gradient(135deg,#fbbf24,#f59e0b);color:#000;border:none;border-radius:6px;font-weight:800;font-size:0.75rem;cursor:pointer;font-family:'Outfit',sans-serif;letter-spacing:0.04em;white-space:nowrap;box-shadow:0 0 14px rgba(251,191,36,0.35);transition:all 0.2s;opacity:0.45">
           🏆 Historia Mundial
         </button>
       </div>
@@ -233,9 +233,32 @@
   <script src="index.js"></script>
 
   <!-- ====== WORLD CUP HISTORY MODAL ====== -->
-  <div id="wc-modal-overlay" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.82);backdrop-filter:blur(6px);align-items:center;justify-content:center;padding:1rem;">
-    <div id="wc-modal" style="background:#0d1222;border:1px solid rgba(251,191,36,0.25);border-radius:18px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;box-shadow:0 30px 80px rgba(0,0,0,0.8),0 0 0 1px rgba(251,191,36,0.1);">
-      <div id="wc-modal-content"></div>
+  <style>
+    .wct-tabs { display:flex; gap:4px; padding:0 1.2rem; border-bottom:1px solid rgba(255,255,255,0.07); }
+    .wct-tab { padding:0.6rem 1rem; font-size:0.75rem; font-weight:700; color:#64748b; border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; transition:all 0.2s; font-family:'Outfit',sans-serif; text-transform:uppercase; letter-spacing:0.06em; }
+    .wct-tab.active { color:#fbbf24; border-bottom-color:#fbbf24; }
+    .wct-tab:hover { color:#94a3b8; }
+    .wct-panel { display:none; padding:1rem 1.2rem 1.2rem; }
+    .wct-panel.active { display:block; }
+    .wcy-row { display:grid; grid-template-columns:60px 1fr auto; gap:0.5rem; align-items:center; padding:0.55rem 0.7rem; border-radius:8px; border:1px solid transparent; margin-bottom:4px; transition:all 0.15s; cursor:default; }
+    .wcy-row:hover { background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.07); }
+    .wcy-year { font-family:'Outfit',sans-serif; font-weight:900; font-size:0.9rem; }
+    .wcy-host { font-size:0.65rem; color:#64748b; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .wcy-phase { font-size:0.72rem; font-weight:700; padding:2px 7px; border-radius:5px; text-align:center; white-space:nowrap; }
+    .wcy-record { font-size:0.65rem; color:#94a3b8; text-align:right; line-height:1.5; }
+    .wcy-note { grid-column:1/-1; font-size:0.65rem; color:#64748b; font-style:italic; padding-left:2px; }
+    .ph-champ { background:rgba(251,191,36,0.15); color:#fbbf24; border:1px solid rgba(251,191,36,0.3); }
+    .ph-sub   { background:rgba(148,163,184,0.12); color:#94a3b8; border:1px solid rgba(148,163,184,0.25); }
+    .ph-sf    { background:rgba(16,185,129,0.1);  color:#34d399; border:1px solid rgba(16,185,129,0.25); }
+    .ph-qf    { background:rgba(59,130,246,0.1);  color:#60a5fa; border:1px solid rgba(59,130,246,0.25); }
+    .ph-r16   { background:rgba(139,92,246,0.1);  color:#a78bfa; border:1px solid rgba(139,92,246,0.25); }
+    .ph-gr    { background:rgba(100,116,139,0.1); color:#94a3b8; border:1px solid rgba(100,116,139,0.2); }
+  </style>
+  <div id="wc-modal-overlay" style="display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1rem;">
+    <div id="wc-modal" style="background:#080f20;border:1px solid rgba(251,191,36,0.2);border-radius:18px;width:100%;max-width:560px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 80px rgba(0,0,0,0.9);">
+      <div id="wc-modal-header" style="padding:1.2rem 1.2rem 0;flex-shrink:0;"></div>
+      <div class="wct-tabs" id="wc-tabs"></div>
+      <div style="overflow-y:auto;flex:1;" id="wc-modal-body"></div>
     </div>
   </div>
 
@@ -307,142 +330,408 @@
     "Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Irán":"🇮🇷","Cabo Verde":"🇨🇻"
   };
 
-  let _wcCurrentTeam = null;
+  // ── Per-edition World Cup data (main teams) ───────────────────
+  // phase codes: C=Campeón S=Subcampeón SF=Semifinal QF=Cuartos R16=Octavos/2daFase GR=Grupos
+  const WC_BY_YEAR = {
+    "Argentina":[
+      {y:1930,h:"🇺🇾 Uruguay",   ph:"Subcampeón",  pc:"sub", w:4,d:0,l:1,gf:18,ga:9,  n:"Primera final mundialista"},
+      {y:1934,h:"🇮🇹 Italia",    ph:"1ra ronda",   pc:"gr",  w:0,d:0,l:1,gf:2, ga:3,  n:"Solo 1 partido"},
+      {y:1958,h:"🇸🇪 Suecia",    ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:5, ga:10, n:"6-1 ante Checoslovaquia"},
+      {y:1966,h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra", ph:"Cuartos",     pc:"qf",  w:2,d:0,l:1,gf:4, ga:3,  n:"Ratín expulsado vs Inglaterra"},
+      {y:1974,h:"🇩🇪 Alemania",  ph:"2da fase",    pc:"r16", w:2,d:2,l:1,gf:7, ga:6,  n:"No clasificó a la final"},
+      {y:1978,h:"🇦🇷 Argentina", ph:"Campeón 🏆",  pc:"ch",  w:5,d:1,l:1,gf:15,ga:4,  n:"Primer título, Kempes figura"},
+      {y:1982,h:"🇪🇸 España",    ph:"2da fase",    pc:"r16", w:2,d:0,l:2,gf:6, ga:5,  n:"Maradona expulsado vs Brasil"},
+      {y:1986,h:"🇲🇽 México",    ph:"Campeón 🏆",  pc:"ch",  w:6,d:0,l:1,gf:14,ga:5,  n:"La Mano de Dios · Gol del Siglo"},
+      {y:1990,h:"🇮🇹 Italia",    ph:"Subcampeón",  pc:"sub", w:3,d:3,l:2,gf:5, ga:4,  n:"Final 0-1 ante Alemania"},
+      {y:1994,h:"🇺🇸 EE.UU.",    ph:"Cuartos",     pc:"qf",  w:3,d:1,l:1,gf:11,ga:3,  n:"Maradona suspendido por doping"},
+      {y:1998,h:"🇫🇷 Francia",   ph:"Cuartos",     pc:"qf",  w:3,d:1,l:1,gf:11,ga:5,  n:"Batistuta brilló con 5 goles"},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Grupos",  pc:"gr",  w:1,d:1,l:1,gf:2, ga:2,  n:"Sorpresa: eliminada en grupos"},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"Cuartos",     pc:"qf",  w:4,d:0,l:1,gf:11,ga:2,  n:"Penales vs Alemania"},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"Cuartos",     pc:"qf",  w:4,d:0,l:1,gf:10,ga:6,  n:"Alemania aplastó 4-0"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Subcampeón",  pc:"sub", w:6,d:1,l:1,gf:8, ga:4,  n:"Final 0-1 (prórroga) vs Alemania"},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Octavos",     pc:"r16", w:1,d:1,l:2,gf:6, ga:5,  n:"Eliminada por Francia 3-4"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Campeón 🏆",  pc:"ch",  w:7,d:0,l:2,gf:15,ga:8,  n:"El mundial de Messi · 3er título"},
+    ],
+    "Brasil":[
+      {y:1930,h:"🇺🇾 Uruguay",   ph:"3er lugar",   pc:"sf",  w:2,d:1,l:2,gf:8, ga:5,  n:"Primer Mundial de la historia"},
+      {y:1934,h:"🇮🇹 Italia",    ph:"1ra ronda",   pc:"gr",  w:1,d:0,l:1,gf:4, ga:3,  n:""},
+      {y:1938,h:"🇫🇷 Francia",   ph:"3er lugar",   pc:"sf",  w:4,d:1,l:1,gf:14,ga:11, n:"Leônidas fue goleador del torneo"},
+      {y:1950,h:"🇧🇷 Brasil",    ph:"Subcampeón",  pc:"sub", w:4,d:1,l:1,gf:22,ga:6,  n:"Maracanazo: perdió 1-2 vs Uruguay"},
+      {y:1954,h:"🇨🇭 Suiza",     ph:"Cuartos",     pc:"qf",  w:2,d:1,l:1,gf:10,ga:5,  n:""},
+      {y:1958,h:"🇸🇪 Suecia",    ph:"Campeón 🏆",  pc:"ch",  w:5,d:0,l:1,gf:16,ga:4,  n:"Pelé debuta con 17 años"},
+      {y:1962,h:"🇨🇱 Chile",     ph:"Campeón 🏆",  pc:"ch",  w:5,d:0,l:1,gf:14,ga:5,  n:"Defensa del título sin Pelé"},
+      {y:1966,h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra", ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:4, ga:6,  n:"Pelé fue agredido y se retiró"},
+      {y:1970,h:"🇲🇽 México",    ph:"Campeón 🏆",  pc:"ch",  w:6,d:0,l:0,gf:19,ga:7,  n:"El mejor equipo de la historia"},
+      {y:1974,h:"🇩🇪 Alemania",  ph:"4to lugar",   pc:"sf",  w:3,d:4,l:0,gf:6, ga:4,  n:"Rival de Alemania, sin perder"},
+      {y:1978,h:"🇦🇷 Argentina", ph:"3er lugar",   pc:"sf",  w:4,d:3,l:0,gf:10,ga:3,  n:"Invicto pero sin título"},
+      {y:1982,h:"🇪🇸 España",    ph:"2da fase",    pc:"r16", w:4,d:0,l:1,gf:15,ga:6,  n:"El gran Brasil que no ganó"},
+      {y:1986,h:"🇲🇽 México",    ph:"Cuartos",     pc:"qf",  w:4,d:0,l:1,gf:10,ga:4,  n:"Penales vs Francia"},
+      {y:1990,h:"🇮🇹 Italia",    ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:4, ga:2,  n:"Eliminado por Argentina en el último minuto"},
+      {y:1994,h:"🇺🇸 EE.UU.",    ph:"Campeón 🏆",  pc:"ch",  w:5,d:1,l:1,gf:11,ga:3,  n:"Romario y Bebeto: dupla histórica"},
+      {y:1998,h:"🇫🇷 Francia",   ph:"Subcampeón",  pc:"sub", w:6,d:0,l:1,gf:14,ga:4,  n:"Final 0-3 vs Francia, misterio Ronaldo"},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Campeón 🏆",pc:"ch", w:7,d:0,l:0,gf:18,ga:4, n:"Ronaldo Fenómeno, top goleador"},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"Cuartos",     pc:"qf",  w:4,d:0,l:1,gf:10,ga:3,  n:"Eliminado por Francia"},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"Cuartos",     pc:"qf",  w:4,d:0,l:1,gf:9, ga:4,  n:"Perdió vs Países Bajos"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"4to lugar",   pc:"sf",  w:3,d:2,l:2,gf:11,ga:14, n:"Mineirazo: 1-7 vs Alemania"},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Cuartos",     pc:"qf",  w:3,d:1,l:1,gf:8, ga:2,  n:"Neymar, pero eliminado por Bélgica"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Cuartos",     pc:"qf",  w:3,d:1,l:1,gf:8, ga:3,  n:"Eliminado por Croacia en penales"},
+    ],
+    "Francia":[
+      {y:1930,h:"🇺🇾 Uruguay",   ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:4, ga:3, n:""},
+      {y:1934,h:"🇮🇹 Italia",    ph:"1ra ronda",   pc:"gr",  w:0,d:0,l:1,gf:2, ga:3, n:""},
+      {y:1938,h:"🇫🇷 Francia",   ph:"Cuartos",     pc:"qf",  w:2,d:0,l:1,gf:5, ga:3, n:"Anfitriona, eliminada por Italia"},
+      {y:1954,h:"🇨🇭 Suiza",     ph:"Cuartos",     pc:"qf",  w:2,d:0,l:1,gf:11,ga:7, n:"Kopa brilló"},
+      {y:1958,h:"🇸🇪 Suecia",    ph:"3er lugar",   pc:"sf",  w:4,d:0,l:2,gf:23,ga:9, n:"Just Fontaine: 13 goles (récord)"},
+      {y:1966,h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra", ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:2, ga:5, n:""},
+      {y:1978,h:"🇦🇷 Argentina", ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:5, ga:5, n:""},
+      {y:1982,h:"🇪🇸 España",    ph:"Semifinal",   pc:"sf",  w:3,d:1,l:2,gf:9, ga:7, n:"Schumacher-Battiston: escándalo"},
+      {y:1986,h:"🇲🇽 México",    ph:"3er lugar",   pc:"sf",  w:3,d:1,l:2,gf:8, ga:6, n:"Platini comandó el equipo"},
+      {y:1998,h:"🇫🇷 Francia",   ph:"Campeón 🏆",  pc:"ch",  w:6,d:1,l:0,gf:15,ga:2, n:"Zidane x2 en la final vs Brasil"},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Grupos",  pc:"gr",  w:0,d:1,l:2,gf:0, ga:3, n:"Campeona eliminada en grupos"},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"Subcampeón",  pc:"sub", w:5,d:1,l:1,gf:9, ga:3, n:"Zidane: golpe de cabeza en la final"},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:1, ga:4, n:"Motín del equipo, vergüenza nacional"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Cuartos",     pc:"qf",  w:3,d:1,l:1,gf:10,ga:6, n:"Eliminada por Alemania"},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Campeón 🏆",  pc:"ch",  w:6,d:1,l:0,gf:14,ga:6, n:"Mbappé irrumpe, Griezmann decide"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Subcampeón",  pc:"sub", w:5,d:1,l:2,gf:16,ga:8, n:"Final épica vs Argentina, perdida en penales"},
+    ],
+    "Alemania":[
+      {y:1934,h:"🇮🇹 Italia",    ph:"3er lugar",   pc:"sf",  w:3,d:0,l:2,gf:11,ga:8,  n:""},
+      {y:1938,h:"🇫🇷 Francia",   ph:"1ra ronda",   pc:"gr",  w:0,d:1,l:1,gf:2, ga:3,  n:""},
+      {y:1954,h:"🇨🇭 Suiza",     ph:"Campeón 🏆",  pc:"ch",  w:5,d:0,l:1,gf:25,ga:14, n:"'El milagro de Berna'"},
+      {y:1958,h:"🇸🇪 Suecia",    ph:"4to lugar",   pc:"sf",  w:3,d:1,l:2,gf:12,ga:14, n:""},
+      {y:1962,h:"🇨🇱 Chile",     ph:"Cuartos",     pc:"qf",  w:2,d:1,l:1,gf:4, ga:4,  n:""},
+      {y:1966,h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra", ph:"Subcampeón",  pc:"sub", w:4,d:1,l:1,gf:17,ga:11, n:"Final controvertida vs Inglaterra"},
+      {y:1970,h:"🇲🇽 México",    ph:"3er lugar",   pc:"sf",  w:4,d:0,l:2,gf:18,ga:11, n:"Semifinal del siglo vs Italia"},
+      {y:1974,h:"🇩🇪 Alemania",  ph:"Campeón 🏆",  pc:"ch",  w:6,d:0,l:1,gf:14,ga:4,  n:"Beckenbauer capitán campeón"},
+      {y:1978,h:"🇦🇷 Argentina", ph:"3er lugar",   pc:"sf",  w:4,d:1,l:2,gf:11,ga:9,  n:""},
+      {y:1982,h:"🇪🇸 España",    ph:"Subcampeón",  pc:"sub", w:4,d:2,l:2,gf:12,ga:10, n:"Escándalo Schumacher-Battiston"},
+      {y:1986,h:"🇲🇽 México",    ph:"Subcampeón",  pc:"sub", w:5,d:0,l:2,gf:11,ga:7,  n:"Final perdida vs Argentina"},
+      {y:1990,h:"🇮🇹 Italia",    ph:"Campeón 🏆",  pc:"ch",  w:6,d:1,l:0,gf:15,ga:5,  n:"Brehme gana la final vs Argentina"},
+      {y:1994,h:"🇺🇸 EE.UU.",    ph:"Cuartos",     pc:"qf",  w:2,d:2,l:1,gf:9, ga:7,  n:""},
+      {y:1998,h:"🇫🇷 Francia",   ph:"Cuartos",     pc:"qf",  w:3,d:1,l:1,gf:8, ga:5,  n:""},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Subcampeón",pc:"sub",w:6,d:1,l:1,gf:14,ga:7, n:"Final perdida 0-2 vs Brasil"},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"3er lugar",   pc:"sf",  w:5,d:0,l:2,gf:14,ga:7,  n:"Anfitriona, emotivo torneo"},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"3er lugar",   pc:"sf",  w:5,d:0,l:1,gf:16,ga:5,  n:"Müller debuta con 10 goles"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Campeón 🏆",  pc:"ch",  w:7,d:0,l:0,gf:18,ga:4,  n:"7-1 a Brasil en semifinal"},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:2, ga:4,  n:"Campeón eliminado en grupos"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Grupos",      pc:"gr",  w:1,d:1,l:1,gf:6, ga:5,  n:"De nuevo eliminada en grupos"},
+    ],
+    "España":[
+      {y:1934,h:"🇮🇹 Italia",    ph:"Cuartos",     pc:"qf",  w:1,d:1,l:1,gf:7, ga:5, n:""},
+      {y:1950,h:"🇧🇷 Brasil",    ph:"4to lugar",   pc:"sf",  w:3,d:0,l:1,gf:6, ga:4, n:""},
+      {y:1962,h:"🇨🇱 Chile",     ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:2, ga:6, n:""},
+      {y:1966,h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra", ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:4, ga:5, n:""},
+      {y:1978,h:"🇦🇷 Argentina", ph:"Grupos",      pc:"gr",  w:1,d:1,l:1,gf:4, ga:5, n:""},
+      {y:1982,h:"🇪🇸 España",    ph:"2da fase",    pc:"r16", w:2,d:2,l:1,gf:5, ga:4, n:"Anfitriona, frustración nacional"},
+      {y:1986,h:"🇲🇽 México",    ph:"Cuartos",     pc:"qf",  w:2,d:2,l:1,gf:6, ga:5, n:"Penales vs Bélgica"},
+      {y:1990,h:"🇮🇹 Italia",    ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:6, ga:4, n:""},
+      {y:1994,h:"🇺🇸 EE.UU.",    ph:"Cuartos",     pc:"qf",  w:3,d:0,l:1,gf:9, ga:4, n:""},
+      {y:1998,h:"🇫🇷 Francia",   ph:"Grupos",      pc:"gr",  w:1,d:1,l:1,gf:8, ga:4, n:""},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Cuartos", pc:"qf",  w:3,d:1,l:1,gf:9, ga:4, n:"Polémico arbitraje vs Corea"},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"Octavos",     pc:"r16", w:3,d:0,l:1,gf:6, ga:3, n:"Podía ganar, eliminada por Francia"},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"Campeón 🏆",  pc:"ch",  w:6,d:0,l:1,gf:8, ga:2, n:"Iniesta, gol en el 116'"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:4, ga:7, n:"Campeona eliminada en grupos, 1-5 vs Holanda"},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:7, ga:5, n:"Penales vs Rusia anfitriona"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Cuartos",     pc:"qf",  w:2,d:1,l:2,gf:9, ga:6, n:"Eliminada por Marruecos en penales"},
+    ],
+    "Inglaterra":[
+      {y:1950,h:"🇧🇷 Brasil",    ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:2, ga:2, n:"Histórica derrota vs EE.UU."},
+      {y:1954,h:"🇨🇭 Suiza",     ph:"Cuartos",     pc:"qf",  w:2,d:0,l:1,gf:8, ga:7, n:""},
+      {y:1958,h:"🇸🇪 Suecia",    ph:"Grupos",      pc:"gr",  w:1,d:3,l:0,gf:4, ga:4, n:""},
+      {y:1962,h:"🇨🇱 Chile",     ph:"Cuartos",     pc:"qf",  w:2,d:1,l:1,gf:5, ga:4, n:""},
+      {y:1966,h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra", ph:"Campeón 🏆",  pc:"ch",  w:5,d:1,l:0,gf:11,ga:3, n:"Único título, anfitriona"},
+      {y:1970,h:"🇲🇽 México",    ph:"Cuartos",     pc:"qf",  w:2,d:1,l:1,gf:4, ga:3, n:"Eliminada por Alemania Occ."},
+      {y:1982,h:"🇪🇸 España",    ph:"2da fase",    pc:"r16", w:3,d:2,l:0,gf:6, ga:1, n:"Invicta pero eliminada"},
+      {y:1986,h:"🇲🇽 México",    ph:"Cuartos",     pc:"qf",  w:2,d:1,l:1,gf:7, ga:5, n:"La Mano de Dios eliminó a Inglaterra"},
+      {y:1990,h:"🇮🇹 Italia",    ph:"Semifinal",   pc:"sf",  w:3,d:2,l:2,gf:8, ga:6, n:"Penales vs Alemania, semifinal"},
+      {y:1998,h:"🇫🇷 Francia",   ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:7, ga:4, n:"Beckham expulsado vs Argentina"},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Cuartos", pc:"qf",  w:2,d:2,l:1,gf:6, ga:4, n:""},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"Cuartos",     pc:"qf",  w:2,d:2,l:1,gf:6, ga:4, n:"Penales vs Portugal"},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"Octavos",     pc:"r16", w:1,d:2,l:1,gf:3, ga:4, n:"Gol fantasma no reconocido"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:2, ga:4, n:"Eliminada en grupos"},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Semifinal",   pc:"sf",  w:4,d:1,l:2,gf:12,ga:8, n:"Llegó a semis, 'It's coming home'"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Cuartos",     pc:"qf",  w:3,d:1,l:1,gf:13,ga:5, n:"Eliminada por Francia"},
+    ],
+    "México":[
+      {y:1930,h:"🇺🇾 Uruguay",   ph:"Grupos",      pc:"gr",  w:0,d:0,l:3,gf:4, ga:13,n:"Primer Mundial de México"},
+      {y:1950,h:"🇧🇷 Brasil",    ph:"Grupos",      pc:"gr",  w:0,d:0,l:3,gf:2, ga:10,n:""},
+      {y:1954,h:"🇨🇭 Suiza",     ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:2, ga:8, n:""},
+      {y:1958,h:"🇸🇪 Suecia",    ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:1, ga:8, n:""},
+      {y:1962,h:"🇨🇱 Chile",     ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:3, ga:9, n:""},
+      {y:1966,h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra", ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:1, ga:4, n:""},
+      {y:1970,h:"🇲🇽 México",    ph:"Cuartos",     pc:"qf",  w:2,d:1,l:1,gf:6, ga:4, n:"Anfitriona, llegó a cuartos"},
+      {y:1978,h:"🇦🇷 Argentina", ph:"Grupos",      pc:"gr",  w:1,d:1,l:1,gf:4, ga:6, n:""},
+      {y:1986,h:"🇲🇽 México",    ph:"Cuartos",     pc:"qf",  w:3,d:2,l:1,gf:8, ga:5, n:"Anfitriona nuevamente"},
+      {y:1994,h:"🇺🇸 EE.UU.",    ph:"Octavos",     pc:"r16", w:1,d:2,l:1,gf:4, ga:4, n:""},
+      {y:1998,h:"🇫🇷 Francia",   ph:"Octavos",     pc:"r16", w:1,d:2,l:1,gf:4, ga:5, n:""},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Octavos", pc:"r16", w:2,d:1,l:1,gf:8, ga:5, n:""},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:7, ga:5, n:""},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"Octavos",     pc:"r16", w:1,d:1,l:2,gf:5, ga:6, n:""},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:4, ga:3, n:""},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Octavos",     pc:"r16", w:2,d:0,l:2,gf:5, ga:6, n:"Histórico 0-3 vs Suecia"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Grupos",      pc:"gr",  w:2,d:0,l:1,gf:4, ga:3, n:"Eliminada en el último minuto"},
+    ],
+    "Uruguay":[
+      {y:1930,h:"🇺🇾 Uruguay",   ph:"Campeón 🏆",  pc:"ch",  w:4,d:0,l:0,gf:15,ga:3, n:"Primer campeón mundial de la historia"},
+      {y:1950,h:"🇧🇷 Brasil",    ph:"Campeón 🏆",  pc:"ch",  w:3,d:1,l:0,gf:15,ga:5, n:"El Maracanazo"},
+      {y:1954,h:"🇨🇭 Suiza",     ph:"Semifinal",   pc:"sf",  w:2,d:1,l:2,gf:15,ga:14,n:"Semifinal del siglo vs Hungría"},
+      {y:1962,h:"🇨🇱 Chile",     ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:2, ga:6, n:""},
+      {y:1966,h:"🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra", ph:"Cuartos",     pc:"qf",  w:1,d:2,l:1,gf:2, ga:3, n:""},
+      {y:1970,h:"🇲🇽 México",    ph:"4to lugar",   pc:"sf",  w:2,d:1,l:2,gf:4, ga:5, n:"3er lugar del torneo"},
+      {y:1974,h:"🇩🇪 Alemania",  ph:"Grupos",      pc:"gr",  w:1,d:1,l:1,gf:1, ga:2, n:""},
+      {y:1986,h:"🇲🇽 México",    ph:"Octavos",     pc:"r16", w:1,d:1,l:1,gf:3, ga:3, n:""},
+      {y:1990,h:"🇮🇹 Italia",    ph:"Octavos",     pc:"r16", w:2,d:0,l:1,gf:2, ga:2, n:""},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Grupos",  pc:"gr",  w:0,d:1,l:2,gf:4, ga:5, n:""},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"4to lugar",   pc:"sf",  w:4,d:0,l:2,gf:11,ga:8, n:"Suárez y el gol con la mano"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Octavos",     pc:"r16", w:2,d:0,l:2,gf:7, ga:7, n:"Suárez mordió a Chiellini"},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Cuartos",     pc:"qf",  w:3,d:0,l:1,gf:7, ga:5, n:"Eliminado por Francia"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Grupos",      pc:"gr",  w:0,d:2,l:1,gf:2, ga:3, n:"Eliminado en la última jornada"},
+    ],
+    "Colombia":[
+      {y:1962,h:"🇨🇱 Chile",     ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:5, ga:11,n:"Debut mundialista"},
+      {y:1990,h:"🇮🇹 Italia",    ph:"Octavos",     pc:"r16", w:1,d:2,l:1,gf:6, ga:5, n:"Valderrama & Higuita"},
+      {y:1994,h:"🇺🇸 EE.UU.",    ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:4, ga:5, n:"Andrés Escobar: autogol trágico"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Cuartos",     pc:"qf",  w:4,d:0,l:1,gf:12,ga:4, n:"James Rodríguez goleador con 6 goles"},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Octavos",     pc:"r16", w:2,d:0,l:2,gf:6, ga:5, n:"Penales vs Inglaterra"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"No clasificó",pc:"gr",  w:0,d:0,l:0,gf:0, ga:0, n:"Se quedó fuera de Qatar 2022"},
+    ],
+    "Croacia":[
+      {y:1998,h:"🇫🇷 Francia",   ph:"3er lugar",   pc:"sf",  w:5,d:0,l:2,gf:14,ga:5, n:"Debut histórico, Davor Šuker goleador"},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Grupos",  pc:"gr",  w:1,d:1,l:1,gf:2, ga:2, n:""},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"Grupos",      pc:"gr",  w:1,d:1,l:1,gf:2, ga:3, n:""},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:6, ga:6, n:""},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Subcampeón",  pc:"sub", w:5,d:2,l:1,gf:14,ga:9, n:"Final perdida vs Francia"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"3er lugar",   pc:"sf",  w:3,d:4,l:1,gf:9, ga:8, n:"Modric lidera a los 37 años"},
+    ],
+    "Marruecos":[
+      {y:1970,h:"🇲🇽 México",    ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:2, ga:6, n:"Debut mundialista"},
+      {y:1986,h:"🇲🇽 México",    ph:"Octavos",     pc:"r16", w:1,d:2,l:1,gf:3, ga:3, n:"Primer equipo africano en octavos"},
+      {y:1994,h:"🇺🇸 EE.UU.",    ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:2, ga:5, n:""},
+      {y:1998,h:"🇫🇷 Francia",   ph:"Grupos",      pc:"gr",  w:1,d:0,l:2,gf:4, ga:5, n:""},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:2, ga:4, n:""},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Semifinal",   pc:"sf",  w:4,d:2,l:1,gf:6, ga:5, n:"Primera selección africana en semifinal"},
+    ],
+    "Japón":[
+      {y:1998,h:"🇫🇷 Francia",   ph:"Grupos",      pc:"gr",  w:0,d:0,l:3,gf:1, ga:4, n:"Debut mundialista"},
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Octavos", pc:"r16", w:3,d:0,l:1,gf:7, ga:4, n:"Anfitriona, primer octavos de final"},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:2, ga:7, n:""},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:4, ga:2, n:"Penales vs Paraguay"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"Grupos",      pc:"gr",  w:0,d:1,l:2,gf:2, ga:6, n:""},
+      {y:2018,h:"🇷🇺 Rusia",     ph:"Octavos",     pc:"r16", w:2,d:0,l:2,gf:7, ga:7, n:"Remontó 0-2 vs Bélgica, perdió 3-2"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:4, ga:3, n:"Venció a Alemania y España"},
+    ],
+    "Corea del Sur":[
+      {y:2002,h:"🇯🇵🇰🇷 Corea/Japón",ph:"Semifinal",pc:"sf", w:3,d:2,l:2,gf:8, ga:6, n:"Primera selección asiática en semifinal"},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:6, ga:3, n:""},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Octavos",     pc:"r16", w:1,d:1,l:2,gf:6, ga:5, n:"Clasificó en el último minuto"},
+    ],
+    "Países Bajos":[
+      {y:1934,h:"🇮🇹 Italia",    ph:"1ra ronda",   pc:"gr",  w:0,d:0,l:1,gf:2, ga:3, n:""},
+      {y:1938,h:"🇫🇷 Francia",   ph:"1ra ronda",   pc:"gr",  w:0,d:0,l:1,gf:0, ga:3, n:""},
+      {y:1974,h:"🇩🇪 Alemania",  ph:"Subcampeón",  pc:"sub", w:5,d:1,l:1,gf:15,ga:4, n:"Cruyff y el fútbol total"},
+      {y:1978,h:"🇦🇷 Argentina", ph:"Subcampeón",  pc:"sub", w:5,d:2,l:1,gf:12,ga:6, n:"Tras la renuncia de Cruyff"},
+      {y:1990,h:"🇮🇹 Italia",    ph:"Octavos",     pc:"r16", w:1,d:2,l:1,gf:3, ga:3, n:""},
+      {y:1994,h:"🇺🇸 EE.UU.",    ph:"Cuartos",     pc:"qf",  w:2,d:2,l:1,gf:6, ga:5, n:""},
+      {y:1998,h:"🇫🇷 Francia",   ph:"4to lugar",   pc:"sf",  w:4,d:1,l:2,gf:13,ga:8, n:"Bergkamp: golazo ante Argentina"},
+      {y:2006,h:"🇩🇪 Alemania",  ph:"Octavos",     pc:"r16", w:2,d:1,l:1,gf:5, ga:3, n:""},
+      {y:2010,h:"🇿🇦 Sudáfrica", ph:"Subcampeón",  pc:"sub", w:6,d:1,l:1,gf:12,ga:6, n:"Final perdida vs España (Iniesta)"},
+      {y:2014,h:"🇧🇷 Brasil",    ph:"3er lugar",   pc:"sf",  w:5,d:1,l:1,gf:15,ga:7, n:"Van Persie: el gol del siglo vs España"},
+      {y:2022,h:"🇶🇦 Qatar",     ph:"Cuartos",     pc:"qf",  w:3,d:2,l:1,gf:9, ga:5, n:"Eliminada por Argentina en penales"},
+    ],
+  };
 
-  // Show/hide history button when fan zone selection changes
-  document.addEventListener('DOMContentLoaded', () => {
+  // ── Helper: phase CSS class ────────────────────────────────────
+  function phaseClass(pc) {
+    return {ch:'ph-champ',sub:'ph-sub',sf:'ph-sf',qf:'ph-qf',r16:'ph-r16',gr:'ph-gr'}[pc] || 'ph-gr';
+  }
+
+  // ── Button: activate when country selected ─────────────────────
+  (function() {
     const sel = document.getElementById('fan-zone-select');
     const btn = document.getElementById('wc-history-btn');
     if (!sel || !btn) return;
+    function syncBtn() {
+      const v = sel.value;
+      btn.style.opacity = (v && v !== 'Todos') ? '1' : '0.35';
+      btn.style.pointerEvents = (v && v !== 'Todos') ? 'auto' : 'none';
+    }
+    sel.addEventListener('change', syncBtn);
+    // Observe option additions (index.js populates the select dynamically)
+    new MutationObserver(syncBtn).observe(sel, {childList:true});
+    syncBtn();
+  })();
 
-    const obs = new MutationObserver(() => {});
-    sel.addEventListener('change', () => {
-      const val = sel.value;
-      const hasData = val !== 'Todos' && WC_HISTORY[val];
-      btn.style.display = hasData ? 'inline-flex' : 'none';
-      _wcCurrentTeam = hasData ? val : null;
-    });
-  });
-
+  // ── Open modal ─────────────────────────────────────────────────
+  let _wcTab = 'summary';
   function openWCModal() {
-    const team = _wcCurrentTeam;
-    if (!team || !WC_HISTORY[team]) return;
-    const d = WC_HISTORY[team];
+    const sel = document.getElementById('fan-zone-select');
+    const team = sel ? sel.value : null;
+    if (!team || team === 'Todos') return;
+
+    const d    = WC_HISTORY[team] || {ap:0,ti:0,best:'Debut en 2026',w:0,d:0,l:0,gf:0,ga:0};
     const flag = WC_FLAGS[team] || '🏳';
-    const total = d.w + d.d + d.l;
-    const pts = d.w * 3 + d.d;
-    const wPct = total ? Math.round(d.w / total * 100) : 0;
-    const gdSign = d.gf - d.ga >= 0 ? '+' : '';
     const debut = d.ap === 0;
 
-    document.getElementById('wc-modal-content').innerHTML = `
-      <div style="padding:1.5rem;">
-        <!-- Header -->
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
-          <div style="display:flex;align-items:center;gap:0.75rem;">
-            <span style="font-size:2.5rem;line-height:1">${flag}</span>
-            <div>
-              <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:900;color:#f8fafc">${team}</div>
-              <div style="font-size:0.72rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;">Historia en la Copa del Mundo · hasta 2022</div>
-            </div>
-          </div>
-          <button onclick="closeWCModal()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;border-radius:6px;padding:0.3rem 0.65rem;cursor:pointer;font-size:0.85rem;">✕</button>
-        </div>
-
-        ${debut ? `
-          <div style="text-align:center;padding:2rem;background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:12px;">
-            <div style="font-size:2.5rem;margin-bottom:0.5rem;">🌟</div>
-            <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:800;color:#10b981;">¡Primera participación!</div>
-            <div style="font-size:0.82rem;color:#64748b;margin-top:0.4rem">${team} debuta en la Copa del Mundo 2026</div>
-          </div>
-        ` : `
-
-        <!-- Trophy / Titles -->
-        ${d.ti > 0 ? `
-          <div style="background:linear-gradient(135deg,rgba(251,191,36,0.12),rgba(251,191,36,0.04));border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem;">
-            <span style="font-size:1.6rem">${'🏆'.repeat(d.ti)}</span>
-            <div>
-              <div style="font-family:'Outfit',sans-serif;font-weight:900;color:#fbbf24;font-size:1rem">${d.ti === 1 ? 'Campeón del Mundo' : `${d.ti}× Campeón del Mundo`}</div>
-              <div style="font-size:0.72rem;color:#92400e">${d.best}</div>
-            </div>
-          </div>
-        ` : `
-          <div style="background:rgba(15,22,42,0.7);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:0.7rem 1rem;margin-bottom:1rem;">
-            <div style="font-size:0.65rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px;">Mejor resultado</div>
-            <div style="font-weight:700;color:#f8fafc;font-size:0.88rem;">${d.best}</div>
-          </div>
-        `}
-
-        <!-- Main stats row -->
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1rem;">
-          ${[
-            { label:'Mundiales', val: d.ap, color:'#10b981' },
-            { label:'Títulos',   val: d.ti, color:'#fbbf24' },
-            { label:'Partidos',  val: total, color:'#3b82f6' },
-            { label:'Puntos',    val: pts,   color:'#8b5cf6' }
-          ].map(s => `
-            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:0.6rem;text-align:center;">
-              <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:900;color:${s.color}">${s.val}</div>
-              <div style="font-size:0.6rem;color:#64748b;text-transform:uppercase;letter-spacing:0.05em">${s.label}</div>
-            </div>`).join('')}
-        </div>
-
-        <!-- Win/Draw/Loss bar -->
-        <div style="margin-bottom:1rem;">
-          <div style="display:flex;justify-content:space-between;font-size:0.68rem;color:#64748b;margin-bottom:4px;">
-            <span>V ${d.w} · E ${d.d} · D ${d.l}</span>
-            <span>${wPct}% victorias</span>
-          </div>
-          <div style="height:8px;border-radius:99px;background:rgba(255,255,255,0.06);overflow:hidden;display:flex;">
-            <div style="background:#10b981;width:${total ? d.w/total*100 : 0}%;transition:width 0.6s"></div>
-            <div style="background:#fbbf24;width:${total ? d.d/total*100 : 0}%;transition:width 0.6s"></div>
-            <div style="background:#ef4444;width:${total ? d.l/total*100 : 0}%;transition:width 0.6s"></div>
-          </div>
-          <div style="display:flex;gap:0.75rem;margin-top:4px;font-size:0.62rem;">
-            <span style="color:#10b981">■ Victorias</span>
-            <span style="color:#fbbf24">■ Empates</span>
-            <span style="color:#ef4444">■ Derrotas</span>
+    // Header
+    document.getElementById('wc-modal-header').innerHTML = `
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem;">
+        <div style="display:flex;align-items:center;gap:0.75rem;">
+          <span style="font-size:2.2rem;line-height:1">${flag}</span>
+          <div>
+            <div style="font-family:'Outfit',sans-serif;font-size:1.15rem;font-weight:900;color:#f8fafc">${team}</div>
+            <div style="font-size:0.65rem;color:#64748b;text-transform:uppercase;letter-spacing:0.07em">Historia en la Copa del Mundo · hasta Qatar 2022</div>
           </div>
         </div>
-
-        <!-- Goals -->
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:1rem;">
-          <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:0.6rem;text-align:center;">
-            <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:900;color:#10b981">⚽ ${d.gf}</div>
-            <div style="font-size:0.6rem;color:#64748b;text-transform:uppercase">Goles a favor</div>
-          </div>
-          <div style="background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:0.6rem;text-align:center;">
-            <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:900;color:#ef4444">🥅 ${d.ga}</div>
-            <div style="font-size:0.6rem;color:#64748b;text-transform:uppercase">Goles en contra</div>
-          </div>
-          <div style="background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:0.6rem;text-align:center;">
-            <div style="font-family:'Outfit',sans-serif;font-size:1.2rem;font-weight:900;color:#60a5fa">${gdSign}${d.gf - d.ga}</div>
-            <div style="font-size:0.6rem;color:#64748b;text-transform:uppercase">Diferencia goles</div>
-          </div>
-        </div>
-
-        <!-- Goals per match -->
-        <div style="font-size:0.7rem;color:#64748b;text-align:center;border-top:1px solid rgba(255,255,255,0.06);padding-top:0.75rem;">
-          Promedio por partido: <strong style="color:#94a3b8">${total ? (d.gf/total).toFixed(2) : '—'} GF</strong> ·
-          <strong style="color:#94a3b8">${total ? (d.ga/total).toFixed(2) : '—'} GC</strong>
-          &nbsp;·&nbsp; Datos históricos hasta Qatar 2022 · Fuente: FIFA / Wikipedia
-        </div>
-        `}
+        <button onclick="closeWCModal()" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#94a3b8;border-radius:8px;padding:0.35rem 0.75rem;cursor:pointer;font-size:0.9rem;line-height:1">✕</button>
       </div>`;
 
+    // Tabs
+    const hasByYear = !!WC_BY_YEAR[team];
+    document.getElementById('wc-tabs').innerHTML = `
+      <button class="wct-tab ${_wcTab==='summary'?'active':''}" onclick="switchWCTab('summary')">📊 Resumen</button>
+      <button class="wct-tab ${_wcTab==='editions'?'active':''}" onclick="switchWCTab('editions')"
+        ${debut||!hasByYear?'style="opacity:0.45;pointer-events:none"':''}
+      >📅 Edición por edición</button>`;
+
+    _renderWCBody(team, d, flag, debut);
     const overlay = document.getElementById('wc-modal-overlay');
     overlay.style.display = 'flex';
-    overlay.addEventListener('click', e => { if (e.target === overlay) closeWCModal(); }, { once: true });
+    overlay.onclick = e => { if (e.target === overlay) closeWCModal(); };
+  }
+
+  function switchWCTab(tab) {
+    _wcTab = tab;
+    document.querySelectorAll('.wct-tab').forEach(t => t.classList.toggle('active', t.textContent.includes(tab==='summary'?'Resumen':'Edición')));
+    const sel = document.getElementById('fan-zone-select');
+    const team = sel ? sel.value : null;
+    if (!team) return;
+    const d    = WC_HISTORY[team] || {ap:0,ti:0,best:'Debut en 2026',w:0,d:0,l:0,gf:0,ga:0};
+    const flag = WC_FLAGS[team] || '🏳';
+    _renderWCBody(team, d, flag, d.ap === 0);
+  }
+
+  function _renderWCBody(team, d, flag, debut) {
+    const body = document.getElementById('wc-modal-body');
+    if (_wcTab === 'summary') {
+      body.innerHTML = _summaryPanel(d, debut, team);
+    } else {
+      body.innerHTML = _editionsPanel(team);
+    }
+  }
+
+  function _summaryPanel(d, debut, team) {
+    if (debut) return `<div class="wct-panel active" style="text-align:center;padding:2.5rem 1.5rem">
+      <div style="font-size:3rem;margin-bottom:0.5rem">🌟</div>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#10b981">¡Primera participación!</div>
+      <div style="font-size:0.82rem;color:#64748b;margin-top:0.5rem">${team} debuta en la Copa del Mundo 2026</div>
+    </div>`;
+
+    const total = d.w + d.d + d.l;
+    const pts   = d.w * 3 + d.d;
+    const wPct  = total ? Math.round(d.w / total * 100) : 0;
+    const gd    = d.gf - d.ga;
+    const gdStr = (gd >= 0 ? '+' : '') + gd;
+
+    return `<div class="wct-panel active">
+      ${d.ti > 0 ? `
+        <div style="background:linear-gradient(135deg,rgba(251,191,36,0.14),transparent);border:1px solid rgba(251,191,36,0.3);border-radius:10px;padding:0.8rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:0.75rem">
+          <span style="font-size:1.5rem">${'🏆'.repeat(Math.min(d.ti,5))}</span>
+          <div>
+            <div style="font-family:'Outfit',sans-serif;font-weight:900;color:#fbbf24;font-size:0.95rem">${d.ti}× Campeón del Mundo</div>
+            <div style="font-size:0.68rem;color:#a16207">${d.best}</div>
+          </div>
+        </div>` : `
+        <div style="background:rgba(15,22,42,0.7);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:0.65rem 1rem;margin-bottom:1rem">
+          <div style="font-size:0.6rem;color:#64748b;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:2px">Mejor resultado histórico</div>
+          <div style="font-weight:700;color:#f8fafc;font-size:0.85rem">${d.best}</div>
+        </div>`}
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem;margin-bottom:1rem">
+        ${[['Mundiales',d.ap,'#10b981'],['Títulos',d.ti,'#fbbf24'],['Partidos',total,'#3b82f6'],['Puntos (WC)',pts,'#8b5cf6']].map(([l,v,c])=>`
+          <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:0.6rem;text-align:center">
+            <div style="font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:900;color:${c}">${v}</div>
+            <div style="font-size:0.57rem;color:#64748b;text-transform:uppercase;letter-spacing:0.04em">${l}</div>
+          </div>`).join('')}
+      </div>
+
+      <div style="margin-bottom:1rem">
+        <div style="display:flex;justify-content:space-between;font-size:0.67rem;color:#64748b;margin-bottom:5px">
+          <span><span style="color:#10b981">V ${d.w}</span> · <span style="color:#fbbf24">E ${d.d}</span> · <span style="color:#ef4444">D ${d.l}</span></span>
+          <span>${wPct}% victorias</span>
+        </div>
+        <div style="height:10px;border-radius:99px;background:rgba(255,255,255,0.05);overflow:hidden;display:flex">
+          <div style="background:#10b981;width:${total?d.w/total*100:0}%;transition:width 0.7s ease"></div>
+          <div style="background:#fbbf24;width:${total?d.d/total*100:0}%;transition:width 0.7s ease"></div>
+          <div style="background:#ef4444;width:${total?d.l/total*100:0}%;transition:width 0.7s ease"></div>
+        </div>
+        <div style="display:flex;gap:1rem;margin-top:5px;font-size:0.6rem">
+          <span style="color:#10b981">■ Victorias</span><span style="color:#fbbf24">■ Empates</span><span style="color:#ef4444">■ Derrotas</span>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0.5rem;margin-bottom:0.75rem">
+        <div style="background:rgba(16,185,129,0.07);border:1px solid rgba(16,185,129,0.2);border-radius:8px;padding:0.6rem;text-align:center">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#10b981">⚽ ${d.gf}</div>
+          <div style="font-size:0.57rem;color:#64748b;text-transform:uppercase">A favor</div>
+        </div>
+        <div style="background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:0.6rem;text-align:center">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#ef4444">🥅 ${d.ga}</div>
+          <div style="font-size:0.57rem;color:#64748b;text-transform:uppercase">En contra</div>
+        </div>
+        <div style="background:rgba(59,130,246,0.07);border:1px solid rgba(59,130,246,0.2);border-radius:8px;padding:0.6rem;text-align:center">
+          <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:900;color:#60a5fa">${gdStr}</div>
+          <div style="font-size:0.57rem;color:#64748b;text-transform:uppercase">Diferencia</div>
+        </div>
+      </div>
+
+      <div style="font-size:0.65rem;color:#475569;text-align:center;border-top:1px solid rgba(255,255,255,0.05);padding-top:0.7rem">
+        Promedio: <strong style="color:#64748b">${total?(d.gf/total).toFixed(2):'-'} GF</strong> · <strong style="color:#64748b">${total?(d.ga/total).toFixed(2):'-'} GC</strong> por partido · Datos hasta Qatar 2022 · Fuente: FIFA/Wikipedia
+      </div>
+    </div>`;
+  }
+
+  function _editionsPanel(team) {
+    const rows = WC_BY_YEAR[team];
+    if (!rows) return `<div class="wct-panel active" style="text-align:center;padding:2rem;color:#64748b">Sin datos detallados por edición disponibles.</div>`;
+
+    const rowsHtml = rows.map(r => {
+      const cl = phaseClass(r.pc);
+      return `<div class="wcy-row">
+        <div>
+          <div class="wcy-year" style="color:${r.pc==='ch'?'#fbbf24':r.pc==='sub'?'#94a3b8':'#f8fafc'}">${r.y}</div>
+          <div class="wcy-host">${r.h}</div>
+        </div>
+        <div>
+          <span class="wcy-phase ${cl}">${r.ph}</span>
+          ${r.n ? `<div class="wcy-note" style="margin-top:4px">💬 ${r.n}</div>` : ''}
+        </div>
+        <div class="wcy-record">
+          <div>${r.w}V-${r.d}E-${r.l}D</div>
+          <div>⚽${r.gf} · 🥅${r.ga}</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    const champs = rows.filter(r=>r.pc==='ch').length;
+    const subs   = rows.filter(r=>r.pc==='sub').length;
+    const sfs    = rows.filter(r=>r.pc==='sf').length;
+
+    return `<div class="wct-panel active">
+      ${champs||subs||sfs ? `
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-bottom:1rem">
+          ${champs?`<span style="background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);border-radius:6px;padding:3px 10px;font-size:0.68rem;font-weight:700">🏆 ${champs}× Campeón</span>`:''}
+          ${subs?`<span style="background:rgba(148,163,184,0.12);color:#94a3b8;border:1px solid rgba(148,163,184,0.25);border-radius:6px;padding:3px 10px;font-size:0.68rem;font-weight:700">🥈 ${subs}× Subcampeón</span>`:''}
+          ${sfs?`<span style="background:rgba(16,185,129,0.1);color:#34d399;border:1px solid rgba(16,185,129,0.25);border-radius:6px;padding:3px 10px;font-size:0.68rem;font-weight:700">🥉 ${sfs}× Semifinal</span>`:''}
+        </div>` : ''}
+      ${rowsHtml}
+      <div style="text-align:center;font-size:0.6rem;color:#475569;margin-top:0.75rem;border-top:1px solid rgba(255,255,255,0.05);padding-top:0.6rem">Datos históricos hasta Qatar 2022 · Fuente: FIFA / Wikipedia</div>
+    </div>`;
   }
 
   function closeWCModal() {
     document.getElementById('wc-modal-overlay').style.display = 'none';
   }
-
-  // Keyboard close
-  document.addEventListener('keydown', e => {
-    if (e.key === 'Escape') closeWCModal();
-  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWCModal(); });
   </script>
 </body>
 </html>
