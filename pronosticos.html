@@ -709,5 +709,189 @@
   </footer>
 
   <script src="pronosticos.js"></script>
+
+  <!-- ══ CUOTAS EN VIVO ══ -->
+  <style>
+    .odds-section { max-width:1100px; margin:0 auto; padding:0 var(--space-md) var(--space-xl); }
+    .odds-section-title { font-family:var(--font-display); font-weight:800; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:var(--space-md); display:flex; align-items:center; gap:var(--space-sm); }
+    .odds-section-title::after { content:''; flex:1; height:1px; background:var(--card-border); }
+    .odds-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); margin-bottom:var(--space-sm); overflow:hidden; }
+    .odds-card-header { display:flex; align-items:center; justify-content:space-between; padding:0.65rem 1rem; border-bottom:1px solid var(--card-border); flex-wrap:wrap; gap:0.5rem; }
+    .odds-match-title { font-family:var(--font-display); font-weight:800; font-size:0.88rem; color:var(--text-primary); }
+    .odds-match-date { font-size:0.68rem; color:var(--text-muted); }
+    .odds-model-probs { display:flex; gap:0.5rem; font-size:0.7rem; }
+    .odds-table { width:100%; border-collapse:collapse; font-size:0.75rem; }
+    .odds-table th { padding:0.35rem 0.75rem; color:var(--text-muted); font-weight:700; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em; text-align:center; border-bottom:1px solid rgba(255,255,255,0.04); }
+    .odds-table th:first-child { text-align:left; }
+    .odds-table td { padding:0.4rem 0.75rem; text-align:center; border-bottom:1px solid rgba(255,255,255,0.03); color:var(--text-primary); font-weight:600; }
+    .odds-table td:first-child { text-align:left; font-weight:700; color:var(--primary); }
+    .odds-table tr:last-child td { border-bottom:none; }
+    .odds-table tr:hover td { background:rgba(255,255,255,0.02); }
+    .ev-positive { background:rgba(16,185,129,0.15); color:#34d399; border-radius:4px; padding:1px 6px; font-size:0.6rem; font-weight:800; }
+    .ev-negative { background:rgba(239,68,68,0.1); color:#f87171; border-radius:4px; padding:1px 6px; font-size:0.6rem; font-weight:800; }
+    .ev-neutral  { background:rgba(100,116,139,0.1); color:#94a3b8; border-radius:4px; padding:1px 6px; font-size:0.6rem; font-weight:800; }
+    .odds-label-best { display:inline-block; background:rgba(251,191,36,0.15); color:#fbbf24; border-radius:4px; padding:1px 5px; font-size:0.58rem; font-weight:800; margin-left:4px; }
+  </style>
+
+  <section class="odds-section">
+    <div class="odds-section-title">Cuotas en vivo · casas de apuesta</div>
+    <div id="odds-loading" style="text-align:center;padding:1.5rem;color:var(--text-muted);font-size:0.85rem">
+      <div style="display:inline-block;width:18px;height:18px;border:2px solid var(--card-border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle"></div>
+      Obteniendo cuotas actualizadas…
+    </div>
+    <div id="odds-container" style="display:none"></div>
+    <div id="odds-empty" style="display:none;text-align:center;padding:1.5rem;color:var(--text-muted);font-size:0.82rem">
+      Sin cuotas disponibles aún. Los partidos aparecen 24–48 h antes del inicio en TheOddsAPI.<br>
+      Las cuotas de <strong style="color:var(--text-secondary)">Apuesta Total</strong> e <strong style="color:var(--text-secondary)">Inkabet</strong> se ingresan manualmente desde el <a href="/admin" style="color:var(--primary)">Panel Admin</a>.
+    </div>
+    <div style="text-align:right;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem" id="odds-api-credit"></div>
+  </section>
+
+  <script>
+  // ── Fetch and display odds ──────────────────────────────────────
+  const BK_DISPLAY = {
+    betsson:'Betsson',betano:'Betano',bet365:'Bet365',pinnacle:'Pinnacle',
+    unibet:'Unibet',williamhill:'Wm.Hill',
+    apuestatotal:'Apuesta Total',inkabet:'Inkabet'
+  };
+
+  async function loadOddsSection() {
+    try {
+      // Fetch live odds (TheOddsAPI) + manual odds (Supabase) in parallel
+      const [liveRes, manualRes] = await Promise.all([
+        fetch('/api/live-odds').then(r=>r.json()).catch(()=>({games:[]})),
+        fetch('/api/odds').then(r=>r.json()).catch(()=>[])
+      ]);
+
+      const liveGames = liveRes.games || [];
+      const manualOdds = Array.isArray(manualRes) ? manualRes : [];
+
+      // Group manual odds by match_id
+      const manualByMatch = {};
+      manualOdds.forEach(o => {
+        if (!manualByMatch[o.match_id]) manualByMatch[o.match_id] = [];
+        manualByMatch[o.match_id].push(o);
+      });
+
+      document.getElementById('odds-loading').style.display = 'none';
+
+      // Build combined display: live games + matches that only have manual odds
+      const cards = [];
+
+      // Process live games from TheOddsAPI
+      liveGames.forEach(g => {
+        cards.push(buildOddsCard(null, g.home, g.away, g.commenceAt, g.odds, []));
+      });
+
+      // Process manual-only entries (match IDs not in live)
+      const liveMatchNames = new Set(liveGames.map(g => `${g.home}||${g.away}`));
+      const manualGrouped = {};
+      manualOdds.forEach(o => {
+        const key = `${o.team1||''}||${o.team2||''}||${o.match_id}`;
+        if (!manualGrouped[key]) manualGrouped[key] = { team1:o.team1, team2:o.team2, match_id:o.match_id, date:o.match_date, entries:[] };
+        manualGrouped[key].entries.push(o);
+      });
+      Object.values(manualGrouped).forEach(g => {
+        if (!liveMatchNames.has(`${g.team1}||${g.team2}`)) {
+          const manOdds = {};
+          g.entries.forEach(e => { manOdds[e.bookmaker] = { name: BK_DISPLAY[e.bookmaker]||e.bookmaker, home:e.odd1, draw:e.odd_x, away:e.odd2 }; });
+          cards.push(buildOddsCard(g.match_id, g.team1||'Equipo 1', g.team2||'Equipo 2', g.date, manOdds, []));
+        }
+      });
+
+      if (!cards.length) {
+        document.getElementById('odds-empty').style.display = 'block';
+      } else {
+        document.getElementById('odds-container').style.display = 'block';
+        document.getElementById('odds-container').innerHTML = cards.join('');
+      }
+
+      if (liveRes.remaining !== undefined) {
+        document.getElementById('odds-api-credit').textContent =
+          `TheOddsAPI: ${liveRes.remaining} solicitudes restantes · actualizado ${new Date(liveRes.updatedAt).toLocaleTimeString('es-PE')}`;
+      }
+    } catch(e) {
+      document.getElementById('odds-loading').innerHTML = `<span style="color:var(--danger)">Error al cargar cuotas: ${e.message}</span>`;
+    }
+  }
+
+  function buildOddsCard(matchId, home, away, dateStr, oddsObj, modelProbs) {
+    const bks = Object.entries(oddsObj || {}).filter(([,bk]) => bk.home || bk.draw || bk.away);
+    if (!bks.length) return '';
+
+    const date = dateStr ? new Date(dateStr).toLocaleDateString('es-PE', { weekday:'short', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
+
+    // Get model probabilities for home/draw/away
+    let p1 = null, pX = null, p2 = null;
+    if (typeof calculateMatchProbabilities === 'function') {
+      try {
+        const p = calculateMatchProbabilities(home, away);
+        p1 = (p.p1 + p.pDraw * p.p1 / (p.p1 + p.p2 || 1)) / 100;
+        pX = p.pDraw / 100;
+        p2 = (p.p2 + p.pDraw * p.p2 / (p.p1 + p.p2 || 1)) / 100;
+      } catch(_) {}
+    }
+
+    // Find best odds per market
+    const best1 = Math.max(...bks.map(([,b]) => b.home || 0));
+    const bestX = Math.max(...bks.map(([,b]) => b.draw || 0));
+    const best2 = Math.max(...bks.map(([,b]) => b.away || 0));
+
+    const evBadge = (prob, odd) => {
+      if (!prob || !odd) return '';
+      const ev = ((prob * odd) - 1) * 100;
+      if (ev > 3)  return `<span class="ev-positive">EV +${ev.toFixed(0)}%</span>`;
+      if (ev < -5) return `<span class="ev-negative">EV ${ev.toFixed(0)}%</span>`;
+      return `<span class="ev-neutral">EV ${ev.toFixed(0)}%</span>`;
+    };
+
+    const rows = bks.map(([key, bk]) => {
+      const isBest1 = bk.home && bk.home >= best1;
+      const isBestX = bk.draw && bk.draw >= bestX;
+      const isBest2 = bk.away && bk.away >= best2;
+      return `<tr>
+        <td>${BK_DISPLAY[key] || bk.name}</td>
+        <td>${bk.home ? `${bk.home}${isBest1?'<span class="odds-label-best">★</span>':''}` : '—'}</td>
+        <td>${bk.draw ? `${bk.draw}${isBestX?'<span class="odds-label-best">★</span>':''}` : '—'}</td>
+        <td>${bk.away ? `${bk.away}${isBest2?'<span class="odds-label-best">★</span>':''}` : '—'}</td>
+        <td style="text-align:left;padding-left:0.5rem">
+          ${evBadge(p1, bk.home)} ${evBadge(pX, bk.draw)} ${evBadge(p2, bk.away)}
+        </td>
+      </tr>`;
+    }).join('');
+
+    const modelRow = (p1 !== null) ? `
+      <div style="display:flex;gap:1rem;font-size:0.68rem;color:var(--text-muted);padding:0.4rem 0.75rem;background:rgba(16,185,129,0.03);border-top:1px solid rgba(255,255,255,0.04)">
+        <span>Modelo: <strong style="color:var(--primary)">${Math.round(p1*100)}% gana ${home.split(' ')[0]}</strong></span>
+        <span><strong style="color:var(--text-secondary)">${Math.round(pX*100)}% empate</strong></span>
+        <span><strong style="color:var(--info)">${Math.round(p2*100)}% gana ${away.split(' ')[0]}</strong></span>
+        <span style="margin-left:auto;font-size:0.6rem">★ = mejor cuota disponible · EV = valor esperado</span>
+      </div>` : '';
+
+    return `<div class="odds-card">
+      <div class="odds-card-header">
+        <div>
+          <div class="odds-match-title">${home} <span style="color:var(--text-muted);font-weight:400">vs</span> ${away}</div>
+          ${date ? `<div class="odds-match-date">⏰ ${date}</div>` : ''}
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="odds-table">
+          <thead><tr>
+            <th>Casa de apuesta</th>
+            <th>1 (${home.split(' ')[0]})</th>
+            <th>X (Empate)</th>
+            <th>2 (${away.split(' ')[0]})</th>
+            <th style="text-align:left;padding-left:0.5rem">Valor esperado</th>
+          </tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
+      ${modelRow}
+    </div>`;
+  }
+
+  document.addEventListener('DOMContentLoaded', loadOddsSection);
+  </script>
 </body>
 </html>

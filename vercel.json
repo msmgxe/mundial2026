@@ -9,5 +9,11 @@
     { "source": "/bracket", "destination": "/bracket.html" },
     { "source": "/login", "destination": "/login.html" },
     { "source": "/admin", "destination": "/admin.html" }
-  ]
+  ],
+  "functions": {
+    "api/admin.js":        { "maxDuration": 15 },
+    "api/odds.js":         { "maxDuration": 15 },
+    "api/live-odds.js":    { "maxDuration": 15 },
+    "api/live-results.js": { "maxDuration": 15 }
+  }
 }

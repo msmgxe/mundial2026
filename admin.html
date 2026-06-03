@@ -167,6 +167,61 @@
     </div>
     <div id="users-empty" style="display:none;text-align:center;padding:2rem;color:var(--text-muted)">Sin usuarios registrados aún.</div>
   </div>
+
+  <!-- ══ CUOTAS MANAGEMENT ══ -->
+  <div class="adm-card">
+    <div class="adm-card-title" style="display:flex;justify-content:space-between;align-items:center;">
+      <span>📊 Cuotas por Partido</span>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <span id="odds-api-info" style="font-size:0.68rem;color:var(--text-muted)"></span>
+        <button class="btn btn-sm" style="background:rgba(59,130,246,0.1);color:#60a5fa;border:1px solid rgba(59,130,246,0.3)" onclick="loadLiveOdds()">⚡ Ver cuotas en vivo</button>
+      </div>
+    </div>
+
+    <!-- Manual entry for Peruvian bookmakers -->
+    <div style="margin-bottom:1rem;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;">Ingresar cuotas manualmente (Apuesta Total, Inkabet)</div>
+      <div class="form-row" style="flex-wrap:wrap;">
+        <div class="form-group" style="min-width:120px;">
+          <label class="form-label">Partido (ID)</label>
+          <input class="form-input" id="odds-match-id" type="number" placeholder="Ej: 1">
+        </div>
+        <div class="form-group" style="min-width:130px;">
+          <label class="form-label">Casa de apuesta</label>
+          <select class="form-input" id="odds-bookmaker">
+            <option value="apuestatotal">Apuesta Total</option>
+            <option value="inkabet">Inkabet</option>
+            <option value="betsson">Betsson</option>
+            <option value="betano">Betano</option>
+          </select>
+        </div>
+        <div class="form-group" style="min-width:80px;">
+          <label class="form-label">Gana 1</label>
+          <input class="form-input" id="odds-o1" type="number" step="0.01" placeholder="1.75">
+        </div>
+        <div class="form-group" style="min-width:80px;">
+          <label class="form-label">Empate</label>
+          <input class="form-input" id="odds-ox" type="number" step="0.01" placeholder="3.50">
+        </div>
+        <div class="form-group" style="min-width:80px;">
+          <label class="form-label">Gana 2</label>
+          <input class="form-input" id="odds-o2" type="number" step="0.01" placeholder="4.20">
+        </div>
+        <div class="form-group" style="flex:0">
+          <label class="form-label">&nbsp;</label>
+          <button class="btn btn-primary" onclick="saveOdds()">Guardar</button>
+        </div>
+      </div>
+      <div class="msg msg-ok" id="odds-ok">✓ Cuotas guardadas correctamente.</div>
+      <div class="msg msg-err" id="odds-err"></div>
+    </div>
+
+    <!-- Live odds from TheOddsAPI -->
+    <div id="live-odds-wrap" style="display:none;">
+      <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:0.5rem;">Cuotas en vivo · TheOddsAPI (Betsson, Betano, Bet365…)</div>
+      <div id="live-odds-content"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Reset password modal -->
@@ -330,6 +385,85 @@ async function deleteUser(userId, email) {
   const data = await apiCall('delete', 'DELETE', null, { userId });
   if (data.error) { alert(data.error); return; }
   loadUsers();
+}
+
+// ── ODDS MANAGEMENT ──────────────────────────────────────────────
+async function oddsCall(action, method, body, query) {
+  const qs = new URLSearchParams({ action: action || '', ...(query||{}) }).toString();
+  const opts = { method, headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${window._session?.access_token}` } };
+  if (body) opts.body = JSON.stringify(body);
+  const r = await fetch(`/api/odds?${qs}`, opts);
+  return r.json();
+}
+
+async function saveOdds() {
+  const okEl  = document.getElementById('odds-ok');
+  const errEl = document.getElementById('odds-err');
+  okEl.classList.remove('show'); errEl.classList.remove('show');
+
+  const match_id   = document.getElementById('odds-match-id').value;
+  const bookmaker  = document.getElementById('odds-bookmaker').value;
+  const odd1       = document.getElementById('odds-o1').value;
+  const odd_x      = document.getElementById('odds-ox').value;
+  const odd2       = document.getElementById('odds-o2').value;
+
+  if (!match_id || !bookmaker) { errEl.textContent = 'Ingresa el ID del partido y la casa de apuesta.'; errEl.classList.add('show'); return; }
+
+  // Try to get team names from the match ID by checking pronosticos.js match list
+  const data = await oddsCall('upsert', 'POST', { match_id: +match_id, bookmaker, odd1: +odd1||null, odd_x: +odd_x||null, odd2: +odd2||null });
+  if (data.error) { errEl.textContent = data.error; errEl.classList.add('show'); return; }
+  okEl.classList.add('show');
+  setTimeout(() => okEl.classList.remove('show'), 3000);
+}
+
+async function loadLiveOdds() {
+  const wrap = document.getElementById('live-odds-wrap');
+  const content = document.getElementById('live-odds-content');
+  const info = document.getElementById('odds-api-info');
+  wrap.style.display = 'block';
+  content.innerHTML = '<div style="color:var(--text-muted);font-size:0.8rem">Cargando cuotas en vivo…</div>';
+
+  const r = await fetch('/api/live-odds');
+  const data = await r.json();
+
+  if (data.error && !data.games?.length) {
+    content.innerHTML = `<div style="color:var(--danger);font-size:0.8rem">Error: ${data.error}</div>`;
+    return;
+  }
+
+  info.textContent = `TheOddsAPI: ${data.remaining ?? '?'} solicitudes restantes`;
+
+  if (!data.games?.length) {
+    content.innerHTML = '<div style="color:var(--text-muted);font-size:0.8rem">Sin partidos disponibles en TheOddsAPI. Los partidos aparecen 24-48h antes del inicio.</div>';
+    return;
+  }
+
+  const BK_LABELS = { betsson:'Betsson', betano:'Betano', bet365:'Bet365', pinnacle:'Pinnacle', unibet:'Unibet', williamhill:'Wm.Hill' };
+
+  content.innerHTML = data.games.map(g => {
+    const bks = Object.entries(g.odds || {});
+    if (!bks.length) return '';
+    const date = new Date(g.commenceAt).toLocaleDateString('es-PE', { weekday:'short', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' });
+    return `<div style="border:1px solid var(--card-border);border-radius:8px;padding:0.75rem;margin-bottom:0.5rem;">
+      <div style="font-weight:700;font-size:0.82rem;color:var(--text-primary);margin-bottom:0.5rem">${g.home} vs ${g.away} <span style="color:var(--text-muted);font-size:0.7rem">· ${date}</span></div>
+      <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:0.72rem;">
+        <thead><tr style="color:var(--text-muted)">
+          <th style="text-align:left;padding:2px 6px">Casa</th>
+          <th style="text-align:center;padding:2px 6px">1 (${g.home.split(' ')[0]})</th>
+          <th style="text-align:center;padding:2px 6px">X</th>
+          <th style="text-align:center;padding:2px 6px">2 (${g.away.split(' ')[0]})</th>
+        </tr></thead>
+        <tbody>${bks.map(([key,bk])=>`
+          <tr style="border-top:1px solid rgba(255,255,255,0.04)">
+            <td style="padding:3px 6px;color:var(--primary);font-weight:700">${BK_LABELS[key]||bk.name}</td>
+            <td style="text-align:center;padding:3px 6px;color:var(--text-primary)">${bk.home??'—'}</td>
+            <td style="text-align:center;padding:3px 6px;color:var(--text-secondary)">${bk.draw??'—'}</td>
+            <td style="text-align:center;padding:3px 6px;color:var(--text-primary)">${bk.away??'—'}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>
+    </div>`;
+  }).filter(Boolean).join('') || '<div style="color:var(--text-muted);font-size:0.8rem">Sin cuotas disponibles aún.</div>';
 }
 </script>
 </body>
