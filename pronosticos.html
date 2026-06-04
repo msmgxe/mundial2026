@@ -22,9 +22,11 @@
     }
 
     .hero-pronosticos h1 {
-      background: linear-gradient(135deg, #fbbf24 30%, #ffffff 100%);
+      background: linear-gradient(135deg, var(--gold-dark, #C49B00) 0%, var(--red, #E64A26) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      font-family: var(--font-hero);
+      letter-spacing: 0.02em;
     }
 
     .back-link {
@@ -126,7 +128,7 @@
     .value-card:hover {
       transform: translateY(-4px);
       border-color: var(--card-hover-border);
-      box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
+      box-shadow: 0 8px 24px rgba(230, 51, 41, 0.12);
     }
 
     .value-card-header {
@@ -542,21 +544,19 @@
 
   <!-- Hero Header -->
   <header class="hero-pronosticos">
-    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;margin-bottom:var(--space-sm);">
+    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;margin-bottom:var(--sp-sm);">
       <a href="index.html" class="back-link" style="margin-bottom:0;">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
         Fixture Principal
       </a>
-      <a href="bracket.html" class="back-link" style="margin-bottom:0;color:var(--secondary);">
-        <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h4m10 0h4M7 12a5 5 0 0 1 10 0M7 12a5 5 0 0 0 10 0M12 7V3m0 18v-4"></path></svg>
+      <a href="bracket.html" class="back-link" style="margin-bottom:0;color:var(--gold-dark);">
+        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h4m10 0h4M7 12a5 5 0 0 1 10 0M7 12a5 5 0 0 0 10 0M12 7V3m0 18v-4"/></svg>
         Bracket Probabilístico
       </a>
     </div>
-    <div class="brand">
-      <span class="brand-badge" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">Pronósticos & Estadísticas</span>
-      <h1>Probabilidades y <span>Riesgo</span></h1>
-      <p class="subtitle">Anexo personal para evaluar escenarios probables, comparar cuotas y decidir con más calma. No garantiza resultados ni reemplaza datos oficiales actualizados.</p>
-    </div>
+    <span class="brand-badge">📊 Probabilidades &amp; Análisis</span>
+    <h1>Probabilidades y <span>Riesgo</span></h1>
+    <p class="subtitle">Evalúa escenarios probables, compara cuotas y decide con más calma. Modelo interno transparente — no garantiza resultados.</p>
   </header>
 
   <!-- Disclaimer Banner -->

@@ -16,26 +16,56 @@
 <body>
 <script>(async()=>{const r=await requireAuth();if(r){document.getElementById('auth-hide').remove();injectUserBar(r.session);}})();</script>
 
-  <!-- Premium Header & Banner -->
-  <header>
-    <div class="brand">
-      <span class="brand-badge">Canadá • México • Estados Unidos</span>
-      <h1>Fixture Interactivo <span>Mundial 2026</span></h1>
-      <p class="subtitle">Sigue y predice el fixture completo de los 104 partidos del torneo más grande de la historia en hora de Lima, Perú (PET).</p>
-    </div>
+  <!-- HERO HEADER -->
+  <header class="wc-hero">
+    <!-- Mascot tapestry background — semi-transparent wallpaper -->
+    <img class="hero-mascot-bg"
+      src="https://f.rpp-noticias.io/2025/09/25/012801_1795754.jpg?width=1020&quality=80"
+      alt="" aria-hidden="true" loading="eager">
 
-    <!-- Countdown Timer -->
-    <div style="margin-top: 1rem;">
-      <div style="max-width: 400px; margin: 0 auto; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 0.5rem var(--space-md); text-align: center;">
-        <p id="countdown-title" style="margin-bottom: 0.15rem; font-size: 0.65rem; font-weight: 800; color: var(--secondary); text-transform: uppercase; letter-spacing: 0.05em;">CUENTA REGRESIVA PARA LA INAUGURACIÓN</p>
-        <div id="countdown-timer" style="display: flex; justify-content: center; gap: var(--space-md); font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; color: var(--text-primary); line-height: 1.1;">
-          <div><span id="cd-days">00</span><p style="font-size: 0.55rem; color: var(--text-secondary); text-transform: uppercase;">Días</p></div>
-          <div><span id="cd-hours">00</span><p style="font-size: 0.55rem; color: var(--text-secondary); text-transform: uppercase;">Hrs</p></div>
-          <div><span id="cd-minutes">00</span><p style="font-size: 0.55rem; color: var(--text-secondary); text-transform: uppercase;">Min</p></div>
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="brand-badge">⚽ Canadá &middot; México &middot; Estados Unidos &middot; 2026</span>
+        <h1 class="hero-title">
+          Fixture Interactivo
+          <span class="accent">Mundial 2026</span>
+        </h1>
+        <p class="hero-subtitle">Sigue y predice los 104 partidos del torneo más grande de la historia. Tablas, bracket y resultados en vivo — en hora de Lima, Perú.</p>
+
+        <!-- Countdown -->
+        <div class="countdown-box">
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <span class="countdown-digit" id="cd-days">00</span>
+            <span class="countdown-label">Días</span>
+          </div>
+          <span class="countdown-sep">:</span>
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <span class="countdown-digit" id="cd-hours">00</span>
+            <span class="countdown-label">Hrs</span>
+          </div>
+          <span class="countdown-sep">:</span>
+          <div style="display:flex;flex-direction:column;align-items:center;">
+            <span class="countdown-digit" id="cd-minutes">00</span>
+            <span class="countdown-label">Min</span>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.15);align-self:stretch;"></div>
+          <div style="display:flex;flex-direction:column;justify-content:center;">
+            <span style="font-family:var(--font-display);font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;" id="countdown-title">Para la Inauguración</span>
+            <span style="font-size:0.72rem;color:rgba(255,255,255,0.7);">11 Jun 2026 &middot; Estadio Azteca</span>
+          </div>
         </div>
-      </div>
-    </div>
+
+      </div><!-- /hero-text -->
+    </div><!-- /hero-inner -->
   </header>
+
+  <!-- ── SCORES TICKER ────────────────────────────────── -->
+  <div class="scores-ticker" id="scores-ticker-bar">
+    <div class="scores-ticker-inner" id="scores-ticker-inner">
+      <div class="scores-ticker-label">EN VIVO</div>
+      <!-- Populated by JS -->
+    </div>
+  </div>
 
   <!-- Gamified Stepper - Tournament Progress -->
   <section class="progress-stepper">
@@ -100,38 +130,24 @@
 
   <!-- Summary Statistics Bar -->
   <section class="summary-bar">
-    <div class="summary-card">
-      <h3 id="stat-matches">104</h3>
-      <p>Partidos Totales</p>
-    </div>
-    <div class="summary-card">
-      <h3>48</h3>
-      <p>Selecciones</p>
-    </div>
-    <div class="summary-card">
-      <h3>16</h3>
-      <p>Ciudades Sedes</p>
-    </div>
-    <div class="summary-card">
-      <h3>12</h3>
-      <p>Grupos Iniciales</p>
+    <div class="summary-bar-inner">
+      <div class="summary-card"><h3 id="stat-matches">104</h3><p>Partidos Totales</p></div>
+      <div class="summary-card"><h3>48</h3><p>Selecciones</p></div>
+      <div class="summary-card"><h3>16</h3><p>Ciudades Sedes</p></div>
+      <div class="summary-card"><h3>12</h3><p>Grupos Iniciales</p></div>
     </div>
   </section>
 
-  <section class="insights-link-section" style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;">
-    <a href="pronosticos.html" class="insights-link">
-      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18"></path>
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 15 4-4 3 3 5-7"></path>
-      </svg>
-      <span>Probabilidades y control de riesgo</span>
-    </a>
-    <a href="bracket.html" class="insights-link" style="border-color:rgba(251,191,36,0.35);color:var(--secondary);">
-      <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h4m10 0h4M7 12a5 5 0 0 1 10 0M7 12a5 5 0 0 0 10 0M12 7V3m0 18v-4"></path>
-      </svg>
-      <span>Bracket Probabilístico · quién llega lejos</span>
-    </a>
+  <!-- ── PORTAL NAV PILLS ─────────────────────────────── -->
+  <section style="background:var(--surface-2);border-bottom:1px solid var(--border);padding:0 var(--sp-xl);">
+    <div style="max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;">
+      <a href="/" style="display:flex;align-items:center;gap:6px;padding:12px 18px;font-family:var(--font-display);font-size:0.78rem;font-weight:900;color:var(--red);border-bottom:3px solid var(--red);text-decoration:none;white-space:nowrap;letter-spacing:0.04em;">⚽ Fixture</a>
+      <a href="pronosticos.html" style="display:flex;align-items:center;gap:6px;padding:12px 18px;font-family:var(--font-display);font-size:0.78rem;font-weight:700;color:var(--txt-2);border-bottom:3px solid transparent;text-decoration:none;white-space:nowrap;letter-spacing:0.04em;transition:color 0.15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--txt-2)'">📊 Probabilidades</a>
+      <a href="bracket.html" style="display:flex;align-items:center;gap:6px;padding:12px 18px;font-family:var(--font-display);font-size:0.78rem;font-weight:700;color:var(--txt-2);border-bottom:3px solid transparent;text-decoration:none;white-space:nowrap;letter-spacing:0.04em;transition:color 0.15s;" onmouseover="this.style.color='var(--gold-dark)'" onmouseout="this.style.color='var(--txt-2)'">🌳 Bracket</a>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding:8px 0;flex-shrink:0;">
+        <span style="font-size:0.65rem;color:var(--txt-3);font-family:var(--font-body);">48 selecciones · 104 partidos · 16 sedes</span>
+      </div>
+    </div>
   </section>
 
   <!-- Control Panel (Search, Filters, Tabs) -->
@@ -231,12 +247,14 @@
 
   <!-- Footer -->
   <footer>
-    <p>COPA MUNDIAL DE LA FIFA 2026™ | FIXTURE INTERACTIVO COMPLETO</p>
-    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
-      Los horarios indicados corresponden a la Zona Horaria de Lima, Perú (PET / UTC-5). 
-      Desarrollado con fines demostrativos y de entretenimiento.
+    <p>COPA MUNDIAL DE LA FIFA 2026™ &middot; FIXTURE INTERACTIVO COMPLETO</p>
+    <p style="font-size:0.75rem;color:var(--txt-3);margin-top:6px;">
+      Horarios en hora de Lima, Perú (PET / UTC-5) &middot; Uso personal y de entretenimiento.
     </p>
-    <p style="margin-top: 1rem;">Diseñado con ❤️ por <a href="https://github.com/google-deepmind" target="_blank" rel="noopener">Antigravity AI</a></p>
+    <p style="margin-top:12px;font-size:0.82rem;">
+      Diseñado por <strong style="color:var(--red);">Marco Saldarriaga</strong> con
+      <a href="https://claude.ai" target="_blank" rel="noopener" style="color:var(--gold-dark);font-weight:700;">Vibe Coding</a>
+    </p>
   </footer>
 
   <!-- JS Engine -->
@@ -550,6 +568,437 @@
     ],
   };
 
+  // ── WC2026 Key Players (Wikipedia photo IDs for thumbnails) ───
+  const WC2026_PLAYERS = {
+    "Argentina": {
+      coach: {n:"Lionel Scaloni", wiki:"Lionel_Scaloni"},
+      players: [
+        {n:"Emiliano Martínez",  pos:"POR", club:"Aston Villa",       wiki:"Emiliano_Martínez",                       num:23},
+        {n:"Geronimo Rulli",     pos:"POR", club:"Ajax",                                                               num:12},
+        {n:"Agustín Marchesín", pos:"POR", club:"Celta Vigo",                                                         num:1},
+        {n:"Nahuel Molina",      pos:"DEF", club:"Atlético Madrid",                                                    num:26},
+        {n:"Cristian Romero",    pos:"DEF", club:"Tottenham",          wiki:"Cristian_Romero_(footballer,_born_1998)", num:6},
+        {n:"Lisandro Martínez", pos:"DEF", club:"Manchester United",  wiki:"Lisandro_Martínez",                       num:13},
+        {n:"Nicolás Otamendi",  pos:"DEF", club:"Benfica",                                                             num:19},
+        {n:"Marcos Acuña",      pos:"DEF", club:"Sevilla",                                                             num:8},
+        {n:"Nicolás Tagliafico",pos:"DEF", club:"Olympique Lyon",                                                      num:3},
+        {n:"Gonzalo Montiel",    pos:"DEF", club:"Nottingham Forest",                                                  num:4},
+        {n:"Lionel Messi",       pos:"MED", club:"Inter Miami",        wiki:"Lionel_Messi",                            num:10},
+        {n:"Rodrigo De Paul",    pos:"MED", club:"Atlético Madrid",    wiki:"Rodrigo_De_Paul",                         num:7},
+        {n:"Alexis Mac Allister",pos:"MED", club:"Liverpool",          wiki:"Alexis_Mac_Allister",                     num:20},
+        {n:"Enzo Fernández",     pos:"MED", club:"Chelsea",            wiki:"Enzo_Fernández_(footballer,_born_2001)",  num:5},
+        {n:"Leandro Paredes",    pos:"MED", club:"Roma",                                                               num:14},
+        {n:"Julián Álvarez",    pos:"DEL", club:"Atlético Madrid",    wiki:"Julián_Álvarez_(footballer,_born_2000)",  num:9},
+        {n:"Ángel Di María",    pos:"DEL", club:"Benfica",                                                             num:11},
+        {n:"Lautaro Martínez",  pos:"DEL", club:"Inter Milan",         wiki:"Lautaro_Martínez",                        num:22},
+        {n:"Paulo Dybala",       pos:"DEL", club:"Roma",                                                               num:21},
+        {n:"Nicolás González",  pos:"DEL", club:"Juventus",                                                            num:18},
+        {n:"Giovanni Simeone",   pos:"DEL", club:"Napoli",                                                             num:17},
+        {n:"Ángel Correa",      pos:"DEL", club:"Atlético Madrid",                                                     num:16},
+      ]
+    },
+    "Brasil": {
+      coach: {n:"Dorival Júnior", wiki:"Dorival_Júnior"},
+      players: [
+        {n:"Alisson",            pos:"POR", club:"Liverpool",          wiki:"Alisson_Becker",                          num:1},
+        {n:"Éderson",            pos:"POR", club:"Manchester City",                                                    num:25},
+        {n:"Bento",              pos:"POR", club:"Al-Qadsiah",                                                         num:23},
+        {n:"Danilo",             pos:"DEF", club:"Juventus",                                                           num:2},
+        {n:"Éder Militão",      pos:"DEF", club:"Real Madrid",         wiki:"Éder_Militão",                            num:3},
+        {n:"Marquinhos",         pos:"DEF", club:"PSG",                 wiki:"Marquinhos_(footballer,_born_1994)",      num:4},
+        {n:"Gabriel Magalhães", pos:"DEF", club:"Arsenal",                                                             num:5},
+        {n:"Guilherme Arana",    pos:"DEF", club:"Atlético Mineiro",                                                   num:6},
+        {n:"Casemiro",           pos:"MED", club:"Manchester United",   wiki:"Casemiro",                               num:18},
+        {n:"Lucas Paquetá",     pos:"MED", club:"West Ham",             wiki:"Lucas_Paquetá",                          num:10},
+        {n:"Bruno Guimarães",   pos:"MED", club:"Newcastle",                                                           num:11},
+        {n:"Vinicius Jr.",       pos:"DEL", club:"Real Madrid",         wiki:"Vinícius_Júnior",                        num:7},
+        {n:"Rodrygo",            pos:"DEL", club:"Real Madrid",         wiki:"Rodrygo",                                num:19},
+        {n:"Raphinha",           pos:"DEL", club:"FC Barcelona",        wiki:"Raphinha",                               num:26},
+        {n:"Endrick",            pos:"DEL", club:"Real Madrid",         wiki:"Endrick",                                num:9},
+        {n:"Gabriel Jesus",      pos:"DEL", club:"Arsenal",                                                            num:16},
+        {n:"Richarlison",        pos:"DEL", club:"Tottenham",                                                          num:14},
+        {n:"Neymar Jr.",         pos:"DEL", club:"Al-Hilal",            wiki:"Neymar",                                 num:10},
+      ]
+    },
+    "Francia": {
+      coach: {n:"Didier Deschamps", wiki:"Didier_Deschamps"},
+      players: [
+        {n:"Mike Maignan",       pos:"POR", club:"AC Milan",            wiki:"Mike_Maignan",                           num:1},
+        {n:"Alphonse Areola",    pos:"POR", club:"West Ham",                                                           num:23},
+        {n:"Brice Samba",        pos:"POR", club:"RC Lens",                                                            num:16},
+        {n:"Jules Koundé",      pos:"DEF", club:"FC Barcelona",         wiki:"Jules_Koundé",                           num:5},
+        {n:"Dayot Upamecano",    pos:"DEF", club:"Bayern München",                                                     num:4},
+        {n:"William Saliba",     pos:"DEF", club:"Arsenal",             wiki:"William_Saliba",                         num:17},
+        {n:"Théo Hernández",    pos:"DEF", club:"AC Milan",                                                            num:22},
+        {n:"Benjamin Pavard",    pos:"DEF", club:"Inter Milan",                                                        num:2},
+        {n:"N'Golo Kanté",      pos:"MED", club:"Al-Ittihad",                                                          num:13},
+        {n:"Aurélien Tchouaméni",pos:"MED",club:"Real Madrid",          wiki:"Aurélien_Tchouaméni",                    num:8},
+        {n:"Eduardo Camavinga",  pos:"MED", club:"Real Madrid",         wiki:"Eduardo_Camavinga",                      num:14},
+        {n:"Adrien Rabiot",      pos:"MED", club:"Marseille",                                                          num:6},
+        {n:"Kylian Mbappé",     pos:"DEL", club:"Real Madrid",          wiki:"Kylian_Mbappé",                          num:10},
+        {n:"Antoine Griezmann",  pos:"DEL", club:"Atlético Madrid",     wiki:"Antoine_Griezmann",                      num:7},
+        {n:"Ousmane Dembélé",   pos:"DEL", club:"PSG",                                                                 num:11},
+        {n:"Marcus Thuram",      pos:"DEL", club:"Inter Milan",                                                        num:9},
+        {n:"Randal Kolo Muani",  pos:"DEL", club:"Juventus",                                                           num:19},
+      ]
+    },
+    "España": {
+      coach: {n:"Luis de la Fuente", wiki:"Luis_de_la_Fuente_(footballer)"},
+      players: [
+        {n:"Unai Simón",        pos:"POR", club:"Athletic Club",        wiki:"Unai_Simón",                             num:1},
+        {n:"David Raya",         pos:"POR", club:"Arsenal",                                                            num:23},
+        {n:"Alejandro Remiro",   pos:"POR", club:"Real Sociedad",                                                      num:13},
+        {n:"César Azpilicueta", pos:"DEF", club:"Atlético Madrid",                                                     num:2},
+        {n:"Pau Cubarsí",       pos:"DEF", club:"FC Barcelona",                                                        num:4},
+        {n:"Aymeric Laporte",    pos:"DEF", club:"Al-Nassr",                                                           num:14},
+        {n:"Alejandro Grimaldo", pos:"DEF", club:"Bayer Leverkusen",                                                   num:3},
+        {n:"Dani Carvajal",      pos:"DEF", club:"Real Madrid",                                                        num:20},
+        {n:"Rodri",              pos:"MED", club:"Manchester City",      wiki:"Rodri_(footballer)",                    num:16},
+        {n:"Pedri",              pos:"MED", club:"FC Barcelona",         wiki:"Pedri",                                 num:8},
+        {n:"Gavi",               pos:"MED", club:"FC Barcelona",         wiki:"Gavi_(footballer,_born_2004)",          num:6},
+        {n:"Mikel Merino",       pos:"MED", club:"Arsenal",                                                            num:15},
+        {n:"Lamine Yamal",       pos:"DEL", club:"FC Barcelona",         wiki:"Lamine_Yamal",                          num:19},
+        {n:"Álvaro Morata",     pos:"DEL", club:"AC Milan",              wiki:"Álvaro_Morata",                         num:7},
+        {n:"Nico Williams",      pos:"DEL", club:"Athletic Club",        wiki:"Nico_Williams_(footballer)",            num:17},
+        {n:"Mikel Oyarzabal",    pos:"DEL", club:"Real Sociedad",                                                      num:10},
+        {n:"Joselu",             pos:"DEL", club:"Real Madrid",                                                        num:11},
+        {n:"Ferran Torres",      pos:"DEL", club:"FC Barcelona",                                                       num:12},
+      ]
+    },
+    "Inglaterra": {
+      coach: {n:"Thomas Tuchel", wiki:"Thomas_Tuchel"},
+      players: [
+        {n:"Jordan Pickford",    pos:"POR", club:"Everton",             wiki:"Jordan_Pickford",                        num:1},
+        {n:"Dean Henderson",     pos:"POR", club:"Crystal Palace",                                                     num:13},
+        {n:"James Trafford",     pos:"POR", club:"Burnley",                                                            num:23},
+        {n:"Kyle Walker",        pos:"DEF", club:"Manchester City",                                                    num:2},
+        {n:"John Stones",        pos:"DEF", club:"Manchester City",     wiki:"John_Stones",                            num:5},
+        {n:"Marc Guehi",         pos:"DEF", club:"Crystal Palace",                                                     num:6},
+        {n:"Luke Shaw",          pos:"DEF", club:"Manchester United",                                                  num:3},
+        {n:"Trent Alexander-Arnold",pos:"DEF",club:"Real Madrid",       wiki:"Trent_Alexander-Arnold",                num:12},
+        {n:"Ezri Konsa",         pos:"DEF", club:"Aston Villa",                                                        num:4},
+        {n:"Jude Bellingham",    pos:"MED", club:"Real Madrid",         wiki:"Jude_Bellingham",                        num:10},
+        {n:"Declan Rice",        pos:"MED", club:"Arsenal",             wiki:"Declan_Rice",                            num:4},
+        {n:"Phil Foden",         pos:"MED", club:"Manchester City",     wiki:"Phil_Foden",                             num:11},
+        {n:"Kobbie Mainoo",      pos:"MED", club:"Manchester United",                                                  num:26},
+        {n:"Harry Kane",         pos:"DEL", club:"Bayern München",      wiki:"Harry_Kane",                             num:9},
+        {n:"Bukayo Saka",        pos:"DEL", club:"Arsenal",             wiki:"Bukayo_Saka",                            num:7},
+        {n:"Cole Palmer",        pos:"DEL", club:"Chelsea",             wiki:"Cole_Palmer",                            num:20},
+        {n:"Marcus Rashford",    pos:"DEL", club:"Manchester United",                                                  num:11},
+        {n:"Jarrod Bowen",       pos:"DEL", club:"West Ham",                                                           num:17},
+      ]
+    },
+    "Alemania": {
+      coach: {n:"Julian Nagelsmann", wiki:"Julian_Nagelsmann"},
+      players: [
+        {n:"Manuel Neuer",       pos:"POR", club:"Bayern München",      wiki:"Manuel_Neuer",                           num:1},
+        {n:"Marc-André ter Stegen",pos:"POR",club:"FC Barcelona",                                                      num:22},
+        {n:"Oliver Baumann",     pos:"POR", club:"Hoffenheim",                                                         num:12},
+        {n:"Joshua Kimmich",     pos:"DEF", club:"Bayern München",      wiki:"Joshua_Kimmich",                         num:6},
+        {n:"Antonio Rüdiger",   pos:"DEF", club:"Real Madrid",          wiki:"Antonio_Rüdiger",                        num:2},
+        {n:"Jonathan Tah",       pos:"DEF", club:"Bayer Leverkusen",                                                   num:4},
+        {n:"David Raum",         pos:"DEF", club:"RB Leipzig",                                                         num:3},
+        {n:"Benjamin Henrichs",  pos:"DEF", club:"RB Leipzig",                                                         num:18},
+        {n:"Florian Wirtz",      pos:"MED", club:"Bayer Leverkusen",    wiki:"Florian_Wirtz",                          num:10},
+        {n:"Jamal Musiala",      pos:"MED", club:"Bayern München",      wiki:"Jamal_Musiala",                          num:14},
+        {n:"Toni Kroos",         pos:"MED", club:"Real Madrid",                                                        num:8},
+        {n:"İlkay Gündoğan",    pos:"MED", club:"FC Barcelona",                                                        num:21},
+        {n:"Kai Havertz",        pos:"DEL", club:"Arsenal",             wiki:"Kai_Havertz",                            num:7},
+        {n:"Leroy Sané",        pos:"DEL", club:"Bayern München",                                                      num:19},
+        {n:"Thomas Müller",     pos:"DEL", club:"Bayern München",                                                      num:25},
+        {n:"Niclas Füllkrug",   pos:"DEL", club:"West Ham",                                                            num:9},
+        {n:"Serge Gnabry",       pos:"DEL", club:"Bayern München",                                                     num:20},
+      ]
+    },
+    "Portugal": {
+      coach: {n:"Roberto Martínez", wiki:"Roberto_Martínez"},
+      players: [
+        {n:"Diogo Costa",        pos:"POR", club:"FC Porto",            wiki:"Diogo_Costa_(goalkeeper)",               num:1},
+        {n:"Rui Patrício",      pos:"POR", club:"Roma",                                                                num:22},
+        {n:"José Sá",           pos:"POR", club:"Wolverhampton",                                                       num:12},
+        {n:"João Cancelo",      pos:"DEF", club:"FC Barcelona",         wiki:"João_Cancelo",                           num:20},
+        {n:"Rúben Dias",        pos:"DEF", club:"Manchester City",      wiki:"Rúben_Dias",                             num:3},
+        {n:"António Silva",     pos:"DEF", club:"Benfica",                                                             num:24},
+        {n:"Nuno Mendes",        pos:"DEF", club:"PSG",                                                                num:19},
+        {n:"Raphaël Guerreiro", pos:"DEF", club:"Bayern München",                                                      num:5},
+        {n:"Bruno Fernandes",    pos:"MED", club:"Manchester United",   wiki:"Bruno_Fernandes_(footballer,_born_1994)",num:8},
+        {n:"Bernardo Silva",     pos:"MED", club:"Manchester City",     wiki:"Bernardo_Silva",                         num:10},
+        {n:"William Carvalho",   pos:"MED", club:"Real Betis",                                                         num:14},
+        {n:"Vitinha",            pos:"MED", club:"PSG",                                                                num:16},
+        {n:"Cristiano Ronaldo",  pos:"DEL", club:"Al-Nassr",            wiki:"Cristiano_Ronaldo",                      num:7},
+        {n:"Rafael Leão",       pos:"DEL", club:"AC Milan",             wiki:"Rafael_Leão",                            num:17},
+        {n:"Pedro Neto",         pos:"DEL", club:"Chelsea",                                                            num:26},
+        {n:"Gonçalo Ramos",     pos:"DEL", club:"PSG",                                                                 num:9},
+        {n:"Diogo Jota",         pos:"DEL", club:"Liverpool",           wiki:"Diogo_Jota",                             num:11},
+      ]
+    },
+    "México": {
+      coach: {n:"Javier Aguirre", wiki:"Javier_Aguirre"},
+      players: [
+        {n:"Guillermo Ochoa",    pos:"POR", club:"UNAM",                wiki:"Guillermo_Ochoa",                        num:13},
+        {n:"Rodolfo Cota",       pos:"POR", club:"Chivas",                                                             num:1},
+        {n:"Carlos Acevedo",     pos:"POR", club:"Santos Laguna",                                                      num:23},
+        {n:"Jorge Sánchez",     pos:"DEF", club:"Ajax",                                                                num:19},
+        {n:"César Montes",      pos:"DEF", club:"RCD Espanyol",                                                        num:3},
+        {n:"Johan Vásquez",     pos:"DEF", club:"Genoa",                                                               num:16},
+        {n:"Jesús Gallardo",    pos:"DEF", club:"Monterrey",                                                           num:22},
+        {n:"Gerardo Arteaga",    pos:"DEF", club:"Genk",                                                               num:21},
+        {n:"Edson Álvarez",     pos:"MED", club:"West Ham",             wiki:"Edson_Álvarez",                          num:6},
+        {n:"Andrés Guardado",   pos:"MED", club:"Real Betis",                                                          num:18},
+        {n:"Orbelín Pineda",    pos:"MED", club:"AEK Athens",                                                          num:10},
+        {n:"Roberto Alvarado",   pos:"MED", club:"Chivas",                                                             num:25},
+        {n:"Santiago Giménez",  pos:"DEL", club:"Feyenoord",            wiki:"Santiago_Giménez",                       num:9},
+        {n:"Hirving Lozano",     pos:"DEL", club:"PSV",                 wiki:"Hirving_Lozano",                         num:22},
+        {n:"Alexis Vega",        pos:"DEL", club:"Chivas",                                                             num:11},
+        {n:"Raúl Jiménez",      pos:"DEL", club:"Fulham",                                                              num:14},
+        {n:"Henry Martín",      pos:"DEL", club:"Club América",                                                        num:14},
+        {n:"Uriel Antuna",       pos:"DEL", club:"Cruz Azul",                                                          num:17},
+      ]
+    },
+    "Estados Unidos": {
+      coach: {n:"Mauricio Pochettino", wiki:"Mauricio_Pochettino"},
+      players: [
+        {n:"Matt Turner",        pos:"POR", club:"Crystal Palace",      wiki:"Matt_Turner_(soccer_player)",            num:1},
+        {n:"Zack Steffen",       pos:"POR", club:"Middlesbrough",                                                      num:12},
+        {n:"Sean Johnson",       pos:"POR", club:"Toronto FC",                                                         num:13},
+        {n:"Antonee Robinson",   pos:"DEF", club:"Fulham",              wiki:"Antonee_Robinson",                       num:5},
+        {n:"Tim Ream",           pos:"DEF", club:"Fulham",                                                             num:13},
+        {n:"Chris Richards",     pos:"DEF", club:"Crystal Palace",                                                     num:21},
+        {n:"Sergiño Dest",      pos:"DEF", club:"PSV",                                                                 num:2},
+        {n:"Joe Scally",         pos:"DEF", club:"Borussia M'gladbach",                                                num:15},
+        {n:"Tyler Adams",        pos:"MED", club:"Bournemouth",         wiki:"Tyler_Adams_(soccer)",                   num:4},
+        {n:"Weston McKennie",    pos:"MED", club:"Juventus",            wiki:"Weston_McKennie",                        num:8},
+        {n:"Yunus Musah",        pos:"MED", club:"AC Milan",                                                           num:6},
+        {n:"Luca de la Torre",   pos:"MED", club:"Celta Vigo",                                                         num:11},
+        {n:"Christian Pulisic",  pos:"DEL", club:"AC Milan",            wiki:"Christian_Pulisic",                      num:10},
+        {n:"Ricardo Pepi",       pos:"DEL", club:"PSV",                                                                num:9},
+        {n:"Folarin Balogun",    pos:"DEL", club:"Monaco",                                                             num:17},
+        {n:"Giovanni Reyna",     pos:"DEL", club:"Borussia Dortmund",                                                  num:7},
+        {n:"Brenden Aaronson",   pos:"DEL", club:"Leeds United",                                                       num:11},
+      ]
+    },
+    "Canadá": {
+      coach: {n:"Jesse Marsch", wiki:"Jesse_Marsch"},
+      players: [
+        {n:"Maxime Crépeau",    pos:"POR", club:"LA Galaxy",                                                           num:1},
+        {n:"Dayne St. Clair",    pos:"POR", club:"Minnesota United",                                                   num:12},
+        {n:"James Pantemis",     pos:"POR", club:"CF Montréal",                                                        num:23},
+        {n:"Alistair Johnston",  pos:"DEF", club:"Celtic",              wiki:"Alistair_Johnston",                      num:2},
+        {n:"Kamal Miller",       pos:"DEF", club:"Portland Timbers",                                                   num:5},
+        {n:"Steven Vitória",    pos:"DEF", club:"Moreirense",                                                          num:4},
+        {n:"Sam Adekugbe",       pos:"DEF", club:"Hatayspor",                                                          num:3},
+        {n:"Derek Cornelius",    pos:"DEF", club:"CF Montréal",                                                        num:16},
+        {n:"Jonathan Osorio",    pos:"MED", club:"Toronto FC",                                                         num:21},
+        {n:"Ismaël Koné",       pos:"MED", club:"Marseille",            wiki:"Ismaël_Koné",                            num:14},
+        {n:"Stephen Eustáquio", pos:"MED", club:"FC Porto",                                                            num:7},
+        {n:"Mark-Anthony Kaye",  pos:"MED", club:"Toronto FC",                                                         num:8},
+        {n:"Alphonso Davies",    pos:"DEL", club:"Bayern München",      wiki:"Alphonso_Davies",                        num:19},
+        {n:"Jonathan David",     pos:"DEL", club:"Lille",               wiki:"Jonathan_David_(soccer)",                num:9},
+        {n:"Tajon Buchanan",     pos:"DEL", club:"Inter Milan",         wiki:"Tajon_Buchanan",                         num:11},
+        {n:"Liam Millar",        pos:"DEL", club:"Stoke City",                                                         num:17},
+        {n:"Cyle Larin",         pos:"DEL", club:"Brøndby",                                                            num:13},
+      ]
+    },
+    "Uruguay": {
+      coach: {n:"Marcelo Bielsa", wiki:"Marcelo_Bielsa"},
+      players: [
+        {n:"Sergio Rochet",      pos:"POR", club:"Nacional",                                                           num:1},
+        {n:"Sebastián Sosa",    pos:"POR", club:"Independiente",                                                       num:12},
+        {n:"Fernando Muslera",   pos:"POR", club:"Galatasaray",                                                        num:25},
+        {n:"Ronald Araújo",     pos:"DEF", club:"FC Barcelona",         wiki:"Ronald_Araújo",                          num:2},
+        {n:"Mathías Olivera",   pos:"DEF", club:"Napoli",                                                              num:19},
+        {n:"Sebastián Cáceres", pos:"DEF", club:"Club América",                                                        num:3},
+        {n:"Nahitan Nández",    pos:"DEF", club:"Cagliari",                                                            num:15},
+        {n:"José María Giménez",pos:"DEF", club:"Atlético Madrid",                                                     num:16},
+        {n:"Federico Valverde",  pos:"MED", club:"Real Madrid",         wiki:"Federico_Valverde",                      num:8},
+        {n:"Rodrigo Bentancur",  pos:"MED", club:"Tottenham",           wiki:"Rodrigo_Bentancur",                      num:5},
+        {n:"Matías Vecino",     pos:"MED", club:"Lazio",                                                               num:11},
+        {n:"Nicolás de la Cruz",pos:"MED", club:"River Plate",                                                         num:6},
+        {n:"Darwin Núñez",      pos:"DEL", club:"Liverpool",            wiki:"Darwin_Núñez",                           num:11},
+        {n:"Facundo Torres",     pos:"DEL", club:"Orlando City",                                                       num:17},
+        {n:"Maxi Gómez",        pos:"DEL", club:"Spartak Moscú",                                                       num:18},
+        {n:"Agustín Canobbio",  pos:"DEL", club:"Athletico Paranaense",                                                num:7},
+        {n:"Luciano Rodríguez", pos:"DEL", club:"Liverpool FC",                                                        num:22},
+      ]
+    },
+    "Colombia": {
+      coach: {n:"Néstor Lorenzo", wiki:"Néstor_Lorenzo"},
+      players: [
+        {n:"David Ospina",       pos:"POR", club:"Al-Qadsiah",          wiki:"David_Ospina",                           num:1},
+        {n:"Camilo Vargas",      pos:"POR", club:"Deportivo Cali",                                                     num:12},
+        {n:"Álvaro Montero",    pos:"POR", club:"Millonarios",                                                         num:23},
+        {n:"Dávinson Sánchez",  pos:"DEF", club:"Galatasaray",          wiki:"Dávinson_Sánchez",                       num:2},
+        {n:"Jhon Lucumí",       pos:"DEF", club:"Bologna",                                                             num:3},
+        {n:"Daniel Muñoz",      pos:"DEF", club:"Crystal Palace",                                                      num:18},
+        {n:"Johan Mojica",       pos:"DEF", club:"Girona",                                                             num:16},
+        {n:"Carlos Cuesta",      pos:"DEF", club:"Genk",                                                               num:21},
+        {n:"James Rodríguez",   pos:"MED", club:"Rayo Vallecano",       wiki:"James_Rodríguez",                        num:10},
+        {n:"Richard Ríos",      pos:"MED", club:"Palmeiras",            wiki:"Richard_Ríos",                           num:8},
+        {n:"Wilmar Barrios",     pos:"MED", club:"Zenit",                                                              num:5},
+        {n:"Matheus Uribe",      pos:"MED", club:"FC Porto",                                                           num:15},
+        {n:"Luis Díaz",         pos:"DEL", club:"Liverpool",            wiki:"Luis_Díaz_(Colombian_footballer)",       num:7},
+        {n:"Jhon Córdoba",      pos:"DEL", club:"Krasnodar",            wiki:"Jhon_Córdoba",                           num:9},
+        {n:"Rafael Santos Borré",pos:"DEL",club:"Eintracht Frankfurt",                                                  num:19},
+        {n:"Roger Martínez",    pos:"DEL", club:"Club América",                                                        num:11},
+        {n:"Cucho Hernández",    pos:"DEL", club:"Columbus Crew",                                                      num:22},
+      ]
+    },
+    "Países Bajos": {
+      coach: {n:"Ronald Koeman", wiki:"Ronald_Koeman"},
+      players: [
+        {n:"Bart Verbruggen",    pos:"POR", club:"Brighton",                                                           num:1},
+        {n:"Mark Flekken",       pos:"POR", club:"Brentford",                                                          num:23},
+        {n:"Remko Pasveer",      pos:"POR", club:"Ajax",                                                               num:22},
+        {n:"Virgil van Dijk",    pos:"DEF", club:"Liverpool",           wiki:"Virgil_van_Dijk",                        num:4},
+        {n:"Matthijs de Ligt",   pos:"DEF", club:"Bayern München",                                                     num:3},
+        {n:"Nathan Aké",        pos:"DEF", club:"Manchester City",                                                     num:5},
+        {n:"Denzel Dumfries",    pos:"DEF", club:"Inter Milan",                                                        num:22},
+        {n:"Daley Blind",        pos:"DEF", club:"Girona",                                                             num:17},
+        {n:"Frenkie de Jong",    pos:"MED", club:"FC Barcelona",        wiki:"Frenkie_de_Jong",                        num:21},
+        {n:"Xavi Simons",        pos:"MED", club:"RB Leipzig",          wiki:"Xavi_Simons",                            num:7},
+        {n:"Teun Koopmeiners",   pos:"MED", club:"Juventus",                                                           num:8},
+        {n:"Joey Veerman",       pos:"MED", club:"PSV",                                                                num:6},
+        {n:"Cody Gakpo",         pos:"DEL", club:"Liverpool",           wiki:"Cody_Gakpo",                             num:11},
+        {n:"Memphis Depay",      pos:"DEL", club:"Corinthians",         wiki:"Memphis_Depay",                          num:10},
+        {n:"Donyell Malen",      pos:"DEL", club:"Borussia Dortmund",                                                  num:18},
+        {n:"Wout Weghorst",      pos:"DEL", club:"Burnley",                                                            num:9},
+        {n:"Brian Brobbey",      pos:"DEL", club:"Ajax",                                                               num:19},
+      ]
+    },
+    "Marruecos": {
+      coach: {n:"Walid Regragui", wiki:"Walid_Regragui"},
+      players: [
+        {n:"Yassine Bounou",     pos:"POR", club:"Al-Hilal",                                                           num:1},
+        {n:"Munir Mohamedi",     pos:"POR", club:"Nantes",                                                             num:16},
+        {n:"Anas Zniti",         pos:"POR", club:"FAR Rabat",                                                          num:23},
+        {n:"Achraf Hakimi",      pos:"DEF", club:"PSG",                  wiki:"Achraf_Hakimi",                         num:2},
+        {n:"Noussair Mazraoui",  pos:"DEF", club:"Manchester United",    wiki:"Noussair_Mazraoui",                     num:5},
+        {n:"Romain Saïss",      pos:"DEF", club:"Besiktas",                                                            num:13},
+        {n:"Nayef Aguerd",       pos:"DEF", club:"West Ham",                                                           num:6},
+        {n:"Yahya Attiyat Allah",pos:"DEF", club:"WAC",                                                                num:3},
+        {n:"Sofyan Amrabat",     pos:"MED", club:"Fiorentina",           wiki:"Sofyan_Amrabat",                        num:4},
+        {n:"Selim Amallah",      pos:"MED", club:"Standard Liège",                                                     num:8},
+        {n:"Azzedine Ounahi",    pos:"MED", club:"Marseille",                                                          num:17},
+        {n:"Hakim Ziyech",       pos:"MED", club:"Galatasaray",          wiki:"Hakim_Ziyech",                          num:7},
+        {n:"Youssef En-Nesyri",  pos:"DEL", club:"Fenerbahçe",           wiki:"Youssef_En-Nesyri",                     num:19},
+        {n:"Abderrazak Hamdallah",pos:"DEL",club:"Al-Ittihad",                                                         num:9},
+        {n:"Soufiane Rahimi",    pos:"DEL", club:"Al Ain",                                                             num:21},
+        {n:"Munir El Haddadi",   pos:"DEL", club:"Almería",                                                            num:11},
+        {n:"Ayoub El Kaabi",     pos:"DEL", club:"Olympiakos",                                                         num:14},
+      ]
+    },
+    "Japón": {
+      coach: {n:"Hajime Moriyasu", wiki:"Hajime_Moriyasu"},
+      players: [
+        {n:"Shuichi Gonda",      pos:"POR", club:"Shimizu S-Pulse",     wiki:"Shuichi_Gonda",                          num:1},
+        {n:"Zion Suzuki",        pos:"POR", club:"Sint-Truiden",                                                       num:23},
+        {n:"Kosei Tani",         pos:"POR", club:"Shonan Bellmare",                                                    num:12},
+        {n:"Takehiro Tomiyasu",  pos:"DEF", club:"Arsenal",             wiki:"Takehiro_Tomiyasu",                      num:5},
+        {n:"Ko Itakura",         pos:"DEF", club:"Borussia M'gladbach",                                                num:3},
+        {n:"Maya Yoshida",       pos:"DEF", club:"FC Barcelona",                                                       num:22},
+        {n:"Yuto Nagatomo",      pos:"DEF", club:"FC Tokyo",                                                           num:5},
+        {n:"Hiroki Ito",         pos:"DEF", club:"VfB Stuttgart",                                                      num:16},
+        {n:"Hidemasa Morita",    pos:"MED", club:"Sporting CP",         wiki:"Hidemasa_Morita",                        num:15},
+        {n:"Wataru Endo",        pos:"MED", club:"Liverpool",                                                          num:6},
+        {n:"Junya Ito",          pos:"MED", club:"Reims",                                                              num:14},
+        {n:"Ritsu Doan",         pos:"MED", club:"Freiburg",                                                           num:8},
+        {n:"Kaoru Mitoma",       pos:"DEL", club:"Brighton",            wiki:"Kaoru_Mitoma",                           num:10},
+        {n:"Takefusa Kubo",      pos:"DEL", club:"Real Sociedad",       wiki:"Takefusa_Kubo",                          num:7},
+        {n:"Ayase Ueda",         pos:"DEL", club:"Feyenoord",                                                          num:9},
+        {n:"Daichi Kamada",      pos:"DEL", club:"Crystal Palace",                                                     num:10},
+        {n:"Fuki Yamada",        pos:"DEL", club:"FC Tokyo",                                                           num:19},
+      ]
+    },
+    "Corea del Sur": {
+      coach: {n:"Hong Myung-bo", wiki:"Hong_Myung-bo"},
+      players: [
+        {n:"Jo Hyeon-woo",       pos:"POR", club:"Ulsan HD",                                                           num:1},
+        {n:"Song Bum-keun",      pos:"POR", club:"Jeonbuk Hyundai",                                                    num:21},
+        {n:"Kim Seung-gyu",      pos:"POR", club:"Vissel Kobe",                                                        num:31},
+        {n:"Kim Min-jae",        pos:"DEF", club:"Bayern München",      wiki:"Kim_Min-jae",                            num:3},
+        {n:"Kim Young-gwon",     pos:"DEF", club:"Ulsan HD",                                                           num:19},
+        {n:"Kim Jin-su",         pos:"DEF", club:"Jeonbuk Hyundai",                                                    num:3},
+        {n:"Lee Ki-je",          pos:"DEF", club:"Jeonbuk Hyundai",                                                    num:12},
+        {n:"Kim Tae-hwan",       pos:"DEF", club:"Ulsan HD",                                                           num:13},
+        {n:"Lee Kang-in",        pos:"MED", club:"PSG",                 wiki:"Lee_Kang-in",                            num:10},
+        {n:"Hwang In-beom",      pos:"MED", club:"Vancouver Whitecaps",                                                num:16},
+        {n:"Jung Woo-young",     pos:"MED", club:"Al-Qadsiah",                                                         num:6},
+        {n:"Paik Seung-ho",      pos:"MED", club:"Jeonbuk Hyundai",                                                    num:17},
+        {n:"Son Heung-min",      pos:"DEL", club:"Tottenham",           wiki:"Son_Heung-min",                          num:7},
+        {n:"Hwang Hee-chan",     pos:"DEL", club:"Wolverhampton",       wiki:"Hwang_Hee-chan",                         num:11},
+        {n:"Cho Gue-sung",       pos:"DEL", club:"Jeonbuk Hyundai",     wiki:"Cho_Gue-sung",                           num:9},
+        {n:"Hwang Ui-jo",        pos:"DEL", club:"Nottingham Forest",                                                  num:9},
+        {n:"Oh Hyeon-gyu",       pos:"DEL", club:"Celtic",                                                             num:22},
+      ]
+    },
+    "Croacia": {
+      coach: {n:"Zlatko Dalić", wiki:"Zlatko_Dalić"},
+      players: [
+        {n:"Dominik Livaković",  pos:"POR", club:"Fenerbahçe",          wiki:"Dominik_Livaković",                      num:1},
+        {n:"Ivica Ivušić",      pos:"POR", club:"Osijek",                                                              num:23},
+        {n:"Nediljko Labrović", pos:"POR", club:"Hajduk Split",                                                        num:12},
+        {n:"Joško Gvardiol",    pos:"DEF", club:"Manchester City",      wiki:"Joško_Gvardiol",                         num:6},
+        {n:"Josip Šutalo",      pos:"DEF", club:"Ajax",                                                                num:5},
+        {n:"Duje Ćaleta-Car",  pos:"DEF", club:"Southampton",                                                          num:3},
+        {n:"Borna Sosa",         pos:"DEF", club:"Ajax",                                                               num:4},
+        {n:"Josip Juranović",   pos:"DEF", club:"Celtic",                                                              num:22},
+        {n:"Luka Modrić",       pos:"MED", club:"Real Madrid",          wiki:"Luka_Modrić",                            num:10},
+        {n:"Mateo Kovačić",     pos:"MED", club:"Manchester City",      wiki:"Mateo_Kovačić",                          num:8},
+        {n:"Marcelo Brozović",  pos:"MED", club:"Al-Nassr",                                                            num:11},
+        {n:"Mario Pašalić",    pos:"MED", club:"Atalanta",                                                             num:14},
+        {n:"Ivan Perišić",     pos:"DEL", club:"Hajduk Split",          wiki:"Ivan_Perišić",                           num:4},
+        {n:"Ante Budimir",       pos:"DEL", club:"Osasuna",                                                            num:15},
+        {n:"Bruno Petković",    pos:"DEL", club:"Dinamo Zagreb",                                                       num:16},
+        {n:"Marko Livaja",       pos:"DEL", club:"Hajduk Split",                                                       num:17},
+        {n:"Dani Olmo",          pos:"DEL", club:"FC Barcelona",                                                       num:7},
+      ]
+    },
+    "Senegal": {
+      coach: {n:"Aliou Cissé", wiki:"Aliou_Cissé"},
+      players: [
+        {n:"Édouard Mendy",     pos:"POR", club:"Al-Ahli",              wiki:"Édouard_Mendy",                          num:1},
+        {n:"Alfred Gomis",       pos:"POR", club:"Rennes",                                                             num:16},
+        {n:"Seny Dieng",         pos:"POR", club:"FC Zürich",                                                          num:23},
+        {n:"Kalidou Koulibaly",  pos:"DEF", club:"Al-Hilal",            wiki:"Kalidou_Koulibaly",                      num:3},
+        {n:"Abdou Diallo",       pos:"DEF", club:"RB Leipzig",                                                         num:5},
+        {n:"Pape Abou Cissé",    pos:"DEF", club:"Olympiakos",                                                         num:13},
+        {n:"Youssouf Sabaly",    pos:"DEF", club:"Real Betis",                                                         num:2},
+        {n:"Fodé Ballo-Touré",  pos:"DEF", club:"Fulham",                                                              num:20},
+        {n:"Nampalys Mendy",     pos:"MED", club:"Leicester City",      wiki:"Nampalys_Mendy",                         num:7},
+        {n:"Cheikhou Kouyaté",  pos:"MED", club:"Nottingham Forest",                                                   num:14},
+        {n:"Pape Matar Sarr",    pos:"MED", club:"Tottenham",                                                          num:6},
+        {n:"Idrissa Gueye",      pos:"MED", club:"Everton",                                                            num:18},
+        {n:"Sadio Mané",        pos:"DEL", club:"Al-Nassr",             wiki:"Sadio_Mané",                             num:10},
+        {n:"Ismaïla Sarr",      pos:"DEL", club:"Crystal Palace",       wiki:"Ismaïla_Sarr",                           num:23},
+        {n:"Habib Diallo",       pos:"DEL", club:"Strasbourg",                                                         num:9},
+        {n:"Nicolas Jackson",    pos:"DEL", club:"Chelsea",                                                            num:11},
+        {n:"Boulaye Dia",        pos:"DEL", club:"Lazio",                                                              num:22},
+      ]
+    },
+    "Suiza": {
+      coach: {n:"Murat Yakin", wiki:"Murat_Yakin"},
+      players: [
+        {n:"Yann Sommer",        pos:"POR", club:"Inter Milan",         wiki:"Yann_Sommer",                            num:1},
+        {n:"Gregor Kobel",       pos:"POR", club:"Borussia Dortmund",                                                  num:12},
+        {n:"Philipp Köhn",      pos:"POR", club:"Monaco",                                                              num:21},
+        {n:"Manuel Akanji",      pos:"DEF", club:"Manchester City",     wiki:"Manuel_Akanji",                          num:5},
+        {n:"Fabian Schär",      pos:"DEF", club:"Newcastle",                                                           num:5},
+        {n:"Silvan Widmer",      pos:"DEF", club:"Mainz",                                                              num:19},
+        {n:"Ricardo Rodríguez", pos:"DEF", club:"Torino",                                                              num:13},
+        {n:"Edimilson Fernandes",pos:"DEF", club:"Mainz",                                                              num:20},
+        {n:"Granit Xhaka",       pos:"MED", club:"Bayer Leverkusen",    wiki:"Granit_Xhaka",                           num:10},
+        {n:"Remo Freuler",       pos:"MED", club:"Nottingham Forest",                                                  num:8},
+        {n:"Fabian Frei",        pos:"MED", club:"FC Basel",                                                           num:16},
+        {n:"Denis Zakaria",      pos:"MED", club:"Monaco",                                                             num:6},
+        {n:"Xherdan Shaqiri",    pos:"DEL", club:"Chicago Fire",        wiki:"Xherdan_Shaqiri",                        num:23},
+        {n:"Breel Embolo",       pos:"DEL", club:"Monaco",              wiki:"Breel_Embolo",                           num:10},
+        {n:"Haris Seferović",   pos:"DEL", club:"Galatasaray",                                                         num:9},
+        {n:"Noah Okafor",        pos:"DEL", club:"AC Milan",                                                           num:21},
+        {n:"Ruben Vargas",       pos:"DEL", club:"Augsburg",                                                           num:17},
+      ]
+    },
+  };
+
   // ── Helper: phase CSS class ────────────────────────────────────
   function phaseClass(pc) {
     return {ch:'ph-champ',sub:'ph-sub',sf:'ph-sf',qf:'ph-qf',r16:'ph-r16',gr:'ph-gr'}[pc] || 'ph-gr';
@@ -596,12 +1045,16 @@
       </div>`;
 
     // Tabs
-    const hasByYear = !!WC_BY_YEAR[team];
+    const hasByYear  = !!WC_BY_YEAR[team];
+    const hasPlayers = !!(WC2026_PLAYERS[team]?.players || Array.isArray(WC2026_PLAYERS[team]));
     document.getElementById('wc-tabs').innerHTML = `
       <button class="wct-tab ${_wcTab==='summary'?'active':''}" onclick="switchWCTab('summary')">📊 Resumen</button>
       <button class="wct-tab ${_wcTab==='editions'?'active':''}" onclick="switchWCTab('editions')"
         ${debut||!hasByYear?'style="opacity:0.45;pointer-events:none"':''}
-      >📅 Edición por edición</button>`;
+      >📅 Por edición</button>
+      <button class="wct-tab ${_wcTab==='players'?'active':''}" onclick="switchWCTab('players')"
+        ${!hasPlayers?'style="opacity:0.45;pointer-events:none"':''}
+      >⭐ Jugadores 2026</button>`;
 
     _renderWCBody(team, d, flag, debut);
     const overlay = document.getElementById('wc-modal-overlay');
@@ -611,7 +1064,13 @@
 
   function switchWCTab(tab) {
     _wcTab = tab;
-    document.querySelectorAll('.wct-tab').forEach(t => t.classList.toggle('active', t.textContent.includes(tab==='summary'?'Resumen':'Edición')));
+    document.querySelectorAll('.wct-tab').forEach(t => {
+      const label = t.textContent;
+      const isActive = (tab==='summary' && label.includes('Resumen'))
+        || (tab==='editions' && label.includes('edición'))
+        || (tab==='players' && label.includes('Jugadores'));
+      t.classList.toggle('active', isActive);
+    });
     const sel = document.getElementById('fan-zone-select');
     const team = sel ? sel.value : null;
     if (!team) return;
@@ -624,8 +1083,10 @@
     const body = document.getElementById('wc-modal-body');
     if (_wcTab === 'summary') {
       body.innerHTML = _summaryPanel(d, debut, team);
-    } else {
+    } else if (_wcTab === 'editions') {
       body.innerHTML = _editionsPanel(team);
+    } else {
+      body.innerHTML = _playersPanel(team, flag);
     }
   }
 
@@ -736,6 +1197,108 @@
       ${rowsHtml}
       <div style="text-align:center;font-size:0.6rem;color:#475569;margin-top:0.75rem;border-top:1px solid rgba(255,255,255,0.05);padding-top:0.6rem">Datos históricos hasta Qatar 2022 · Fuente: FIFA / Wikipedia</div>
     </div>`;
+  }
+
+  // ── Players Panel ─────────────────────────────────────────────
+  function _playersPanel(team, flag) {
+    const data = WC2026_PLAYERS[team];
+    if (!data || !data.players) {
+      // fallback for old format
+      return `<div class="wct-panel active" style="text-align:center;padding:2.5rem 1.5rem;color:var(--txt-3)">
+        <div style="font-size:2.5rem;margin-bottom:0.5rem">⭐</div>Sin datos de plantilla disponibles.</div>`;
+    }
+
+    const { coach, players } = data;
+    const posOrder  = ['POR','DEF','MED','DEL'];
+    const posLabel  = {POR:'🧤 Porteros',DEF:'🛡 Defensores',MED:'⚙️ Mediocampistas',DEL:'⚡ Delanteros'};
+    const posColor  = {POR:'#22c55e',DEF:'#3b82f6',MED:'#f59e0b',DEL:'#E64A26'};
+
+    // Coach card
+    const coachCard = coach ? `
+      <div style="background:linear-gradient(135deg,var(--surface-2),var(--surface));border:1px solid var(--border);border-left:4px solid var(--gold-dark);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--gold-light,rgba(245,196,0,0.15));border:2px solid var(--gold-dark);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;">👔</div>
+        <div>
+          <div style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold-dark);">Director Técnico</div>
+          <div style="font-family:var(--font-display);font-weight:900;font-size:1rem;color:var(--txt-1);">${coach.n}</div>
+        </div>
+        <div style="margin-left:auto;font-size:1.5rem;">${flag}</div>
+      </div>` : '';
+
+    // Build position groups
+    const groups = posOrder.map(pos => {
+      const group = players.filter(p => p.pos === pos);
+      if (!group.length) return '';
+      const cards = group.map(p => {
+        const col = posColor[p.pos];
+        const hasStar = !!p.wiki;
+        const safeId = (p.wiki||p.n).replace(/[^a-zA-Z0-9]/g,'_');
+        return `
+          <div id="pcard-${safeId}"
+            style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;align-items:center;transition:transform 0.15s,box-shadow 0.15s;cursor:default;"
+            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 16px rgba(0,0,0,0.1)'"
+            onmouseout="this.style.transform='';this.style.boxShadow=''">
+            <div style="width:100%;height:64px;background:linear-gradient(135deg,${col}18,${col}08);display:flex;align-items:center;justify-content:center;position:relative;">
+              ${hasStar ? `<img id="img-${safeId}"
+                src="" alt="${p.n}" style="height:58px;width:58px;object-fit:cover;object-position:top;border-radius:50%;border:2px solid ${col}44;background:var(--surface-2);"
+                onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+              <div id="av-${safeId}" style="display:none;height:58px;width:58px;border-radius:50%;border:2px solid ${col}44;align-items:center;justify-content:center;font-size:1.4rem;background:var(--surface-2);">
+                ${pos==='POR'?'🧤':pos==='DEF'?'🛡':pos==='MED'?'⚙️':'⚽'}
+              </div>` : `<div style="height:58px;width:58px;border-radius:50%;border:2px solid ${col}44;display:flex;align-items:center;justify-content:center;background:var(--surface-2);font-size:1.2rem;">
+                ${pos==='POR'?'🧤':pos==='DEF'?'🛡':pos==='MED'?'⚙️':'⚽'}
+              </div>`}
+              <div style="position:absolute;top:4px;right:4px;background:${col};color:#fff;font-family:var(--font-display);font-size:0.52rem;font-weight:900;padding:1px 5px;border-radius:4px;">#${p.num}</div>
+            </div>
+            <div style="padding:6px 4px 8px;text-align:center;width:100%;">
+              <div style="font-family:var(--font-display);font-size:0.68rem;font-weight:800;color:var(--txt-1);line-height:1.2;">${p.n.split(' ').slice(-1)[0]}</div>
+              <div style="font-size:0.56rem;color:var(--txt-3);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:0 2px;">${p.club}</div>
+            </div>
+          </div>`;
+      }).join('');
+
+      return `
+        <div style="margin-bottom:12px;">
+          <div style="font-family:var(--font-display);font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:${posColor[pos]};margin-bottom:6px;">${posLabel[pos]}</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:6px;">${cards}</div>
+        </div>`;
+    }).join('');
+
+    const html = `<div class="wct-panel active" style="padding:12px 14px 16px;">
+      ${coachCard}
+      ${groups}
+      <div style="text-align:center;font-size:0.58rem;color:var(--txt-3);margin-top:8px;border-top:1px solid var(--border);padding-top:6px;">
+        Plantilla estimada para WC2026 · Fotos via Wikipedia · Puede variar
+      </div>
+    </div>`;
+
+    setTimeout(() => _loadPlayerPhotos(players.filter(p=>p.wiki)), 80);
+    return html;
+  }
+
+  async function _loadPlayerPhotos(players) {
+    for (const p of players) {
+      if (!p.wiki) continue;
+      const safeId = (p.wiki||p.n).replace(/[^a-zA-Z0-9]/g,'_');
+      const imgEl  = document.getElementById(`img-${safeId}`);
+      if (!imgEl) continue;
+      try {
+        const res  = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(p.wiki)}`);
+        const data = await res.json();
+        if (data.thumbnail?.source) {
+          imgEl.src = data.thumbnail.source;
+          const avEl = document.getElementById(`av-${safeId}`);
+          if (avEl) avEl.style.display = 'none';
+          imgEl.style.display = 'block';
+        } else {
+          imgEl.style.display = 'none';
+          const avEl = document.getElementById(`av-${safeId}`);
+          if (avEl) avEl.style.display = 'flex';
+        }
+      } catch(_) {
+        imgEl.style.display = 'none';
+        const avEl = document.getElementById(`av-${safeId}`);
+        if (avEl) avEl.style.display = 'flex';
+      }
+    }
   }
 
   function closeWCModal() {
@@ -896,10 +1459,46 @@
 
   // Auto-sync on page load (silent)
   document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => syncLiveResults(true), 1500); // after index.js finishes
-    // Refresh every 3 minutes if page stays open
-    setInterval(() => syncLiveResults(true), 3 * 60 * 1000);
+    setTimeout(() => {
+      syncLiveResults(true);
+      buildScoresTicker();
+    }, 1600);
+    setInterval(() => { syncLiveResults(true); buildScoresTicker(); }, 3 * 60 * 1000);
   });
+
+  function buildScoresTicker() {
+    const inner = document.getElementById('scores-ticker-inner');
+    if (!inner || typeof matchesData === 'undefined') return;
+    const now = new Date();
+    // Show: live matches first, then today's, then next 6 upcoming
+    const scored = matchesData.filter(m => m.score1 !== null && m.score2 !== null);
+    const upcoming = matchesData.filter(m => m.score1 === null && m.score2 === null);
+    const featured = [...scored.slice(-4), ...upcoming.slice(0, 8)];
+    if (!featured.length) { document.getElementById('scores-ticker-bar').style.display = 'none'; return; }
+
+    const flags = typeof TEAM_FLAGS !== 'undefined' ? TEAM_FLAGS : {};
+    const flag = t => flags[t] || '🏳️';
+
+    const label = inner.querySelector('.scores-ticker-label');
+    inner.innerHTML = '';
+    if (label) inner.appendChild(label);
+
+    featured.forEach(m => {
+      const hasScore = m.score1 !== null && m.score2 !== null;
+      const item = document.createElement('div');
+      item.className = 'scores-ticker-item';
+      const dateStr = m.date ? new Date(m.date).toLocaleDateString('es-PE', {day:'2-digit',month:'short'}) : '';
+      item.innerHTML = `
+        <span class="scores-ticker-team">${flag(m.team1)} ${m.team1}</span>
+        ${hasScore
+          ? `<span class="scores-ticker-score">${m.score1} - ${m.score2}</span>`
+          : `<span class="scores-ticker-vs">vs</span>`}
+        <span class="scores-ticker-team">${m.team2} ${flag(m.team2)}</span>
+        <span class="scores-ticker-date">${dateStr}</span>
+      `;
+      inner.appendChild(item);
+    });
+  }
   </script>
 </body>
 </html>
