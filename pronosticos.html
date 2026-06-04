@@ -3,895 +3,825 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pronósticos y Probabilidades | Mundial 2026™</title>
-  <meta name="description" content="Anexo personal de probabilidades para partidos del Mundial 2026. Modelo transparente, control de riesgo y simulador H2H sin garantía de resultados.">
+  <title>Probabilidades & Modelos | Mundial 2026™</title>
+  <meta name="description" content="5 modelos de predicción para los partidos del Mundial 2026. Compara Manual, FIFA, Elo, Dixon-Coles y el Combinado.">
   <link rel="stylesheet" href="index.css">
-  <!-- Auth guard -->
   <style id="auth-hide">body{visibility:hidden}</style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="/auth.js"></script>
+
   <style>
-    /* Pronosticos Page Specific Styles */
-    .hero-pronosticos {
+    /* ══════════════════════════════════════════════
+       PRONOSTICOS v2 — Premium Sports Analytics UI
+       ══════════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    .pron-page { max-width: 1280px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* ── HERO ──────────────────────────────────────── */
+    .pron-hero {
+      padding: 48px 0 36px;
+      text-align: center;
       position: relative;
-      overflow: hidden;
-      padding: var(--space-2xl) var(--space-md);
-      text-align: center;
-      border-bottom: 1px solid var(--card-border);
-      background: radial-gradient(circle at 50% 0%, rgba(251, 191, 36, 0.08) 0%, transparent 60%);
+    }
+    .pron-hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: var(--font-display); font-size: 0.68rem; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.18em;
+      background: linear-gradient(135deg, var(--gold), var(--red));
+      color: #000; padding: 4px 16px; border-radius: 99px;
+      margin-bottom: 16px;
+    }
+    .pron-hero h1 {
+      font-family: var(--font-hero); font-size: clamp(2.2rem, 5vw, 3.6rem);
+      font-weight: 900; letter-spacing: 0.04em; line-height: 1;
+      background: linear-gradient(135deg, var(--gold-dark) 0%, var(--red) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      margin-bottom: 12px;
+    }
+    .pron-hero-sub {
+      color: var(--txt-3); font-size: 0.9rem; max-width: 560px;
+      margin: 0 auto 28px; line-height: 1.7;
+    }
+    .pron-disclaimer {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.22);
+      border-radius: 8px; padding: 8px 16px; font-size: 0.76rem;
+      color: var(--txt-3); line-height: 1.5; text-align: left; max-width: 640px;
+    }
+    .pron-disclaimer strong { color: #EF4444; }
+
+    /* ── MODEL SELECTOR ────────────────────────────── */
+    .model-selector-wrap {
+      margin: 32px 0 24px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: 8px;
+      display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none;
+    }
+    .model-selector-wrap::-webkit-scrollbar { display: none; }
+
+    .model-tab {
+      flex: 1; min-width: 130px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 12px 10px; border-radius: 14px; border: 1.5px solid transparent;
+      cursor: pointer; transition: all 0.2s; background: transparent;
+      font-family: var(--font-display); position: relative;
+    }
+    .model-tab:hover { background: var(--surface-2); }
+    .model-tab.active {
+      background: var(--surface-2);
+      border-color: var(--active-color, var(--gold));
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--active-color, var(--gold)) 15%, transparent);
+    }
+    .model-tab-name {
+      font-size: 0.78rem; font-weight: 800; color: var(--txt-1);
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .model-tab-desc {
+      font-size: 0.6rem; color: var(--txt-3); font-family: var(--font-body);
+      text-align: center; line-height: 1.4; font-weight: 400;
+      display: none;
+    }
+    .model-tab.active .model-tab-desc { display: block; }
+    .model-tab-stars {
+      font-size: 0.62rem; letter-spacing: -1px;
+    }
+    .model-tab-source {
+      font-size: 0.56rem; color: var(--txt-3); font-family: var(--font-body);
+    }
+    .model-tab-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--active-color, var(--gold));
+      margin-bottom: 2px;
     }
 
-    .hero-pronosticos h1 {
-      background: linear-gradient(135deg, var(--gold-dark, #C49B00) 0%, var(--red, #E64A26) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-family: var(--font-hero);
-      letter-spacing: 0.02em;
+    [data-theme="dark"] .model-selector-wrap { background: #111A2C; border-color: rgba(255,255,255,0.08); }
+    [data-theme="dark"] .model-tab:hover { background: #1a2840; }
+    [data-theme="dark"] .model-tab.active { background: #1a2840; }
+
+    /* ── SECTION HEADER ────────────────────────────── */
+    .sec-header {
+      display: flex; align-items: center; gap: 12px;
+      margin: 40px 0 20px; padding-bottom: 12px;
+      border-bottom: 2px solid var(--border);
+    }
+    .sec-header::before {
+      content: ''; width: 4px; height: 26px;
+      background: var(--red); border-radius: 2px; flex-shrink: 0;
+    }
+    .sec-title {
+      font-family: var(--font-display); font-size: 1.05rem;
+      font-weight: 900; color: var(--txt-1); text-transform: uppercase;
+      letter-spacing: 0.06em; flex: 1;
+    }
+    .sec-badge {
+      font-size: 0.65rem; font-weight: 700; font-family: var(--font-display);
+      padding: 3px 10px; border-radius: 99px; letter-spacing: 0.06em;
+    }
+    .sec-badge-gold {
+      background: rgba(245,196,0,0.15); color: var(--gold-dark);
+      border: 1px solid rgba(245,196,0,0.3);
     }
 
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-xs);
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 0.9rem;
-      margin-bottom: var(--space-md);
-      transition: color var(--transition-fast);
+    /* ── H2H SIMULATOR ──────────────────────────────── */
+    .sim-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); overflow: hidden;
+      box-shadow: var(--sh-lg);
     }
+    [data-theme="dark"] .sim-card { background: #0E1525; border-color: rgba(255,255,255,0.08); }
 
-    .back-link:hover {
-      color: var(--secondary);
+    .sim-card-header {
+      background: linear-gradient(135deg, #090D18 0%, #111A2C 100%);
+      padding: 20px 28px;
+      display: flex; align-items: center; gap: 16px;
+      border-bottom: 1px solid rgba(212,175,55,0.2);
     }
-
-    .disclaimer-banner {
-      max-width: 900px;
-      margin: var(--space-lg) auto;
-      padding: var(--space-md) var(--space-lg);
-      background: rgba(239, 68, 68, 0.08);
-      border: 1px solid rgba(239, 68, 68, 0.25);
-      border-radius: var(--radius-lg);
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      text-align: center;
-      line-height: 1.7;
+    .sim-card-header-title {
+      font-family: var(--font-display); font-weight: 900; font-size: 1rem;
+      color: #fff; flex: 1;
     }
-
-    .disclaimer-banner strong {
-      color: var(--danger);
-    }
-
-    .model-note {
-      max-width: 900px;
-      margin: 0 auto var(--space-xl);
-      padding: var(--space-md) var(--space-lg);
-      background: rgba(59, 130, 246, 0.08);
-      border: 1px solid rgba(59, 130, 246, 0.25);
-      border-radius: var(--radius-lg);
-      color: var(--text-secondary);
-      font-size: 0.85rem;
-      line-height: 1.7;
-    }
-
-    .model-note strong {
-      color: var(--info);
-    }
-
-    /* Page Sections */
-    .page-section {
-      max-width: 1200px;
-      margin: var(--space-xl) auto;
-      padding: 0 var(--space-md);
-    }
-
-    .section-heading {
-      font-family: var(--font-display);
-      font-weight: 900;
-      font-size: 1.6rem;
-      color: var(--text-primary);
-      margin-bottom: var(--space-lg);
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-    }
-
-    .section-heading .icon {
-      font-size: 1.4rem;
-    }
-
-    .section-heading::after {
-      content: '';
-      flex-grow: 1;
-      height: 2px;
-      background: linear-gradient(90deg, var(--card-border) 0%, transparent 100%);
-      margin-left: var(--space-md);
-    }
-
-    /* Value Cards Grid (Safe Picks) */
-    .value-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: var(--space-lg);
-    }
-
-    .value-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: var(--space-lg);
-      transition: all var(--transition-normal);
-    }
-
-    .value-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--card-hover-border);
-      box-shadow: 0 8px 24px rgba(230, 51, 41, 0.12);
-    }
-
-    .value-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--space-sm);
-      font-size: 0.8rem;
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.6rem;
-      border-radius: var(--radius-xl);
-      font-weight: 800;
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .badge-safe {
-      background: rgba(16, 185, 129, 0.15);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: var(--primary);
-    }
-
-    .badge-medium {
-      background: rgba(251, 191, 36, 0.12);
-      border: 1px solid rgba(251, 191, 36, 0.3);
-      color: var(--secondary);
-    }
-
-    .badge-danger {
-      background: rgba(239, 68, 68, 0.12);
-      border: 1px solid rgba(239, 68, 68, 0.3);
-      color: var(--danger);
-    }
-
-    .prob-bar-container {
-      width: 100%;
-      height: 8px;
-      background: var(--bg-tertiary);
-      border-radius: 999px;
-      overflow: hidden;
-      margin: var(--space-sm) 0;
-    }
-
-    .prob-fill {
-      height: 100%;
-      border-radius: 999px;
-      transition: width 0.6s ease;
-    }
-
-    .suggested-bet-box {
-      background: rgba(251, 191, 36, 0.06);
-      border: 1px solid rgba(251, 191, 36, 0.15);
-      border-radius: var(--radius-md);
-      padding: var(--space-sm) var(--space-md);
-      margin-top: var(--space-sm);
-    }
-
-    /* H2H Simulator Panel */
-    .simulator-panel {
-      background: var(--card-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: var(--space-xl);
-      box-shadow: var(--shadow-lg);
-    }
-
-    .sim-teams-row {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: var(--space-xl);
-      margin-bottom: var(--space-xl);
-      flex-wrap: wrap;
-    }
-
-    .sim-team-selector {
-      text-align: center;
-    }
-
-    .sim-team-selector label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--text-secondary);
-      margin-bottom: var(--space-xs);
-      letter-spacing: 0.05em;
-    }
-
-    .sim-team-selector select {
-      background: var(--bg-primary);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 0.6rem var(--space-lg) 0.6rem var(--space-md);
-      color: var(--text-primary);
+    .sim-card-header-sub {
+      font-size: 0.7rem; color: rgba(255,255,255,0.4);
       font-family: var(--font-body);
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      min-width: 200px;
     }
 
-    .sim-team-selector select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-glow);
+    .sim-body { padding: 28px; }
+
+    /* Team selectors */
+    .sim-selectors {
+      display: grid; grid-template-columns: 1fr auto 1fr;
+      gap: 16px; align-items: end; margin-bottom: 32px;
     }
+    .sim-sel-group label {
+      display: block; font-size: 0.68rem; font-weight: 800;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--txt-3); margin-bottom: 8px; font-family: var(--font-display);
+    }
+    .sim-sel-group select {
+      width: 100%; padding: 12px 16px;
+      background: var(--surface-2); border: 1.5px solid var(--border);
+      border-radius: var(--r-md); color: var(--txt-1);
+      font-family: var(--font-display); font-weight: 700; font-size: 0.95rem;
+      cursor: pointer; transition: border-color 0.15s; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236A6458' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center;
+    }
+    .sim-sel-group select:focus {
+      outline: none; border-color: var(--gold-dark);
+      box-shadow: 0 0 0 3px rgba(245,196,0,0.15);
+    }
+    [data-theme="dark"] .sim-sel-group select { background-color: #111A2C; border-color: rgba(255,255,255,0.12); color: #fff; }
 
     .sim-vs-badge {
+      font-family: 'Bebas Neue', var(--font-display);
+      font-size: 1.6rem; color: var(--txt-3);
+      text-align: center; padding: 12px 0; letter-spacing: 0.06em;
+    }
+
+    /* Probability bars */
+    .sim-bars-section { margin-bottom: 28px; }
+    .sim-bar-row {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 10px;
+    }
+    .sim-bar-label {
+      width: 110px; font-size: 0.82rem; font-weight: 700;
+      color: var(--txt-2); text-align: right; flex-shrink: 0;
+      font-family: var(--font-display); white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis;
+    }
+    .sim-bar-track {
+      flex: 1; height: 28px; background: var(--surface-2);
+      border-radius: 6px; overflow: hidden; position: relative;
+      border: 1px solid var(--border);
+    }
+    .sim-bar-fill {
+      height: 100%; border-radius: 6px;
+      transition: width 0.55s cubic-bezier(0.4,0,0.2,1);
+      display: flex; align-items: center; justify-content: flex-end;
+      padding-right: 10px; min-width: 32px;
+    }
+    .sim-bar-fill.fill-t1 { background: linear-gradient(90deg,#059669,#34d399); }
+    .sim-bar-fill.fill-draw { background: linear-gradient(90deg,#374151,#6b7280); }
+    .sim-bar-fill.fill-t2 { background: linear-gradient(90deg,#1d4ed8,#60a5fa); }
+    .sim-bar-pct {
+      font-family: 'Bebas Neue', var(--font-display); font-size: 1rem;
+      font-weight: 900; color: #fff; letter-spacing: 0.04em; flex-shrink: 0;
+      width: 46px; text-align: right;
+    }
+    [data-theme="dark"] .sim-bar-track { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+
+    /* xG display */
+    .sim-xg-row {
+      display: flex; gap: 12px; margin-bottom: 24px;
+    }
+    .sim-xg-card {
+      flex: 1; background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 12px 16px; text-align: center;
+    }
+    [data-theme="dark"] .sim-xg-card { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+    .sim-xg-label { font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--txt-3); margin-bottom: 4px; font-family: var(--font-display); }
+    .sim-xg-value { font-family: 'Bebas Neue', var(--font-display);
+      font-size: 1.6rem; font-weight: 900; color: var(--gold-dark); line-height: 1; }
+    .sim-xg-sub { font-size: 0.58rem; color: var(--txt-3); font-family: var(--font-body); margin-top: 2px; }
+
+    /* Advice row */
+    .sim-advice-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px; margin-bottom: 0;
+    }
+    .sim-advice-item {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 14px 16px;
+    }
+    [data-theme="dark"] .sim-advice-item { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+    .sim-advice-label {
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--txt-3); margin-bottom: 6px;
       font-family: var(--font-display);
-      font-weight: 900;
-      font-size: 1.5rem;
-      color: var(--text-muted);
-      padding: 0.5rem 1rem;
-      border: 2px dashed var(--card-border);
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    }
+    .sim-advice-value {
+      font-family: var(--font-display); font-weight: 700; font-size: 0.92rem;
+      color: var(--txt-1); line-height: 1.3;
+    }
+    .sim-advice-value.gold { color: var(--gold-dark); }
+
+    .risk-chip {
+      display: inline-block; padding: 3px 10px; border-radius: 99px;
+      font-family: var(--font-display); font-size: 0.72rem; font-weight: 900;
+      letter-spacing: 0.06em;
+    }
+    .risk-low  { background: rgba(16,185,129,0.15); color: #10B981; border: 1px solid rgba(16,185,129,0.3); }
+    .risk-mid  { background: rgba(245,196,0,0.12);  color: var(--gold-dark); border: 1px solid rgba(245,196,0,0.3); }
+    .risk-high { background: rgba(239,68,68,0.12);  color: #EF4444; border: 1px solid rgba(239,68,68,0.3); }
+
+    /* ── MODEL COMPARISON GRID ─────────────────────── */
+    .cmp-container {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); overflow: hidden; box-shadow: var(--sh-md);
+    }
+    [data-theme="dark"] .cmp-container { background: #0E1525; border-color: rgba(255,255,255,0.08); }
+
+    .cmp-header {
+      padding: 16px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--surface-2);
+    }
+    [data-theme="dark"] .cmp-header { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
+    .cmp-header-title {
+      font-family: var(--font-display); font-size: 0.78rem; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--txt-1);
+    }
+    .cmp-team-labels {
+      display: flex; gap: 24px; font-size: 0.7rem; font-weight: 700;
+      font-family: var(--font-display); color: var(--txt-3);
     }
 
-    .sim-results-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: var(--space-lg);
+    .cmp-row {
+      display: grid; grid-template-columns: 180px 1fr 100px;
+      align-items: center; gap: 16px;
+      padding: 12px 20px; border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .cmp-row:last-child { border-bottom: none; }
+    .cmp-row:hover { background: var(--surface-2); }
+    [data-theme="dark"] .cmp-row:hover { background: rgba(255,255,255,0.03); }
+    [data-theme="dark"] .cmp-row { border-bottom-color: rgba(255,255,255,0.06); }
+
+    .cmp-model { display: flex; align-items: center; gap: 10px; }
+    .cmp-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .cmp-name { font-family: var(--font-display); font-size: 0.78rem; font-weight: 800; color: var(--txt-1); }
+    .cmp-stars { font-size: 0.6rem; color: var(--gold-dark); letter-spacing: -1px; margin-top: 1px; }
+
+    .cmp-bar-group { display: flex; flex-direction: column; gap: 4px; }
+    .cmp-bar-wrap {
+      display: flex; align-items: center; gap: 8px; height: 18px;
+      background: var(--surface-2); border-radius: 4px; overflow: hidden;
+      position: relative; border: 1px solid var(--border);
+    }
+    [data-theme="dark"] .cmp-bar-wrap { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.06); }
+    .cmp-bar-fill { height: 100%; border-radius: 4px; transition: width 0.5s ease; min-width: 4px; }
+    .cmp-bar-label {
+      position: absolute; right: 6px; font-size: 0.62rem; font-weight: 800;
+      font-family: var(--font-display); color: var(--txt-1); z-index: 1;
+    }
+    .cmp-fav {
+      font-family: var(--font-display); font-size: 0.75rem; font-weight: 700;
+      color: var(--gold-dark); text-align: right; white-space: nowrap;
     }
 
-    .sim-probs-visual {
-      background: rgba(8, 12, 20, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: var(--space-lg);
+    /* ── SAFE PICKS GRID ────────────────────────────── */
+    .picks-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
     }
-
-    .sim-probs-visual h4 {
-      font-family: var(--font-display);
-      font-weight: 800;
-      color: var(--text-primary);
-      margin-bottom: var(--space-md);
-      font-size: 1rem;
+    .pick-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 18px; transition: all 0.2s;
+      animation: fadeUp 0.4s ease both;
     }
-
-    .prob-row {
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-      margin-bottom: var(--space-sm);
+    .pick-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--sh-lg);
+      border-color: var(--border-hover);
     }
+    [data-theme="dark"] .pick-card { background: #0E1525; border-color: rgba(255,255,255,0.08); }
+    [data-theme="dark"] .pick-card:hover { border-color: rgba(245,196,0,0.3); box-shadow: 0 8px 28px rgba(0,0,0,0.4); }
 
-    .prob-label {
-      width: 100px;
-      font-size: 0.85rem;
-      color: var(--text-secondary);
-      font-weight: 600;
-      text-align: right;
-      flex-shrink: 0;
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(16px); }
+      to   { opacity:1; transform:translateY(0); }
     }
+    @media (prefers-reduced-motion: reduce) { .pick-card { animation: none !important; } }
 
-    .prob-bar-lg {
-      flex-grow: 1;
-      height: 22px;
-      background: var(--bg-tertiary);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      position: relative;
+    .pick-card-top {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 10px;
     }
-
-    .prob-bar-lg .fill {
-      height: 100%;
-      border-radius: var(--radius-md);
+    .pick-group {
+      font-size: 0.62rem; font-weight: 800; font-family: var(--font-display);
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--txt-3);
+    }
+    .pick-risk {
+      font-size: 0.6rem; font-weight: 800; font-family: var(--font-display);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--rc); padding: 2px 8px;
+      background: color-mix(in srgb, var(--rc) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--rc) 30%, transparent);
+      border-radius: 99px;
+    }
+    .pick-teams {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 10px;
+    }
+    .pick-team {
+      font-family: var(--font-display); font-size: 0.9rem; font-weight: 800;
+      color: var(--txt-1); flex: 1; text-align: center;
+    }
+    .pick-vs { font-size: 0.7rem; color: var(--txt-3); flex-shrink: 0; }
+    .pick-probs-row {
+      display: flex; justify-content: space-between;
+      font-size: 0.7rem; font-weight: 700;
+      font-family: var(--font-display); margin-bottom: 6px;
+    }
+    .pick-pct { font-size: 0.78rem; font-weight: 900; }
+    .pick-bar {
+      height: 6px; background: var(--surface-2); border-radius: 99px;
+      overflow: hidden; margin-bottom: 10px; border: 1px solid var(--border);
+    }
+    .pick-bar-fill {
+      height: 100%; border-radius: 99px;
       transition: width 0.5s ease;
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      padding-right: var(--space-sm);
-      font-size: 0.75rem;
-      font-weight: 800;
-      color: #000;
+    }
+    .pick-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 8px;
+    }
+    .pick-fav { font-size: 0.75rem; color: var(--txt-2); font-family: var(--font-body); }
+    .pick-fav strong { color: var(--txt-1); }
+    .pick-score {
+      font-family: 'Bebas Neue', var(--font-display); font-size: 1.1rem;
+      font-weight: 900; color: var(--gold-dark); letter-spacing: 0.06em;
+    }
+    .pick-market {
+      font-size: 0.72rem; color: var(--gold-dark); font-weight: 700;
+      background: rgba(245,196,0,0.08); border: 1px solid rgba(245,196,0,0.2);
+      border-radius: var(--r-sm); padding: 6px 10px; font-family: var(--font-body);
     }
 
-    .prob-bar-lg .fill.green { background: linear-gradient(90deg, #059669, #34d399); }
-    .prob-bar-lg .fill.gray { background: linear-gradient(90deg, #374151, #6b7280); }
-    .prob-bar-lg .fill.blue { background: linear-gradient(90deg, #2563eb, #60a5fa); }
-
-    .sim-advice-panel {
-      background: rgba(8, 12, 20, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: var(--space-lg);
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-md);
+    /* ── FULL TABLE ──────────────────────────────────── */
+    .table-model-badge {
+      padding: 10px 20px; font-size: 0.72rem; color: var(--txt-3);
+      background: var(--surface-2); border-bottom: 1px solid var(--border);
+      font-family: var(--font-body);
+    }
+    [data-theme="dark"] .table-model-badge { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
+    .full-table-scroll { overflow-x: auto; }
+    .full-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; min-width: 800px; }
+    .full-table thead th {
+      padding: 10px 14px; text-align: left; font-weight: 800;
+      text-transform: uppercase; font-size: 0.62rem; letter-spacing: 0.07em;
+      color: var(--txt-3); background: var(--surface-2);
+      border-bottom: 2px solid var(--border); position: sticky; top: 0; z-index: 5;
+    }
+    [data-theme="dark"] .full-table thead th { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.1); }
+    .th-center { text-align: center !important; }
+    .full-table tbody tr {
+      border-bottom: 1px solid var(--border); transition: background 0.12s;
+    }
+    [data-theme="dark"] .full-table tbody tr { border-bottom-color: rgba(255,255,255,0.05); }
+    .full-table tbody tr:hover { background: var(--surface-2); }
+    [data-theme="dark"] .full-table tbody tr:hover { background: rgba(255,255,255,0.03); }
+    .full-table td { padding: 9px 14px; vertical-align: middle; }
+    .td-muted { color: var(--txt-3); font-size: 0.75rem; }
+    .td-teams { font-weight: 600; color: var(--txt-1); }
+    .td-vs { color: var(--txt-3); font-weight: 400; font-size: 0.8rem; }
+    .td-center { text-align: center; font-weight: 800; font-family: var(--font-display); font-size: 0.88rem; }
+    .td-green { color: #10B981; }
+    .td-gray  { color: var(--txt-3); }
+    .td-blue  { color: #60a5fa; }
+    .group-pill {
+      background: rgba(230,74,38,0.1); color: var(--red);
+      border: 1px solid rgba(230,74,38,0.25); border-radius: 4px;
+      padding: 1px 7px; font-size: 0.65rem; font-weight: 800;
+      font-family: var(--font-display); letter-spacing: 0.04em;
     }
 
-    .sim-advice-panel h4 {
-      font-family: var(--font-display);
-      font-weight: 800;
-      color: var(--text-primary);
-      font-size: 1rem;
+    /* ── CALCULATOR ──────────────────────────────────── */
+    .calc-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-xl); padding: 28px; box-shadow: var(--sh-md);
     }
-
-    .advice-item {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
+    [data-theme="dark"] .calc-card { background: #0E1525; border-color: rgba(255,255,255,0.08); }
+    .calc-inputs {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 24px;
     }
-
-    .advice-item .advice-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      font-weight: 700;
+    .calc-field { display: flex; flex-direction: column; gap: 6px; }
+    .calc-field label {
+      font-size: 0.68rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--txt-3); font-family: var(--font-display);
     }
-
-    .advice-item .advice-value {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: var(--text-primary);
+    .calc-field input, .calc-field select {
+      padding: 11px 14px; background: var(--surface-2);
+      border: 1.5px solid var(--border); border-radius: var(--r-md);
+      color: var(--txt-1); font-family: var(--font-display); font-size: 0.95rem;
+      font-weight: 700; transition: border-color 0.15s;
     }
-
-    .advice-item .advice-value.gold { color: var(--secondary); }
-    .advice-item .advice-value.green { color: var(--primary); }
-
-    /* Betting Calculator */
-    .calc-panel {
-      background: var(--card-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: var(--space-xl);
-      box-shadow: var(--shadow-lg);
+    .calc-field input:focus, .calc-field select:focus {
+      outline: none; border-color: var(--gold-dark);
     }
-
-    .calc-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: var(--space-lg);
-      margin-bottom: var(--space-xl);
+    [data-theme="dark"] .calc-field input,
+    [data-theme="dark"] .calc-field select { background: #111A2C; border-color: rgba(255,255,255,0.12); color: #fff; }
+    .calc-results {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 12px;
     }
-
-    .calc-input-group {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-xs);
+    .calc-result-item {
+      background: var(--surface-2); border: 1px solid var(--border);
+      border-radius: var(--r-md); padding: 14px; text-align: center;
     }
+    [data-theme="dark"] .calc-result-item { background: rgba(255,255,255,0.04); border-color: rgba(255,255,255,0.08); }
+    .calc-result-label {
+      font-size: 0.6rem; font-weight: 800; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--txt-3); font-family: var(--font-display); margin-bottom: 6px;
+    }
+    .calc-result-value {
+      font-family: 'Bebas Neue', var(--font-display); font-size: 1.5rem;
+      font-weight: 900; color: var(--red);
+    }
+    .calc-result-value.gold { color: var(--gold-dark); }
+    .calc-result-value.small { font-size: 0.85rem; font-family: var(--font-body); font-weight: 700; color: var(--txt-2); }
 
-    .calc-input-group label {
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--text-secondary);
+    /* ── ACTION BAR ──────────────────────────────────── */
+    .action-bar {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+      margin-top: 32px; padding: 20px 24px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+    }
+    [data-theme="dark"] .action-bar { background: #0E1525; border-color: rgba(255,255,255,0.08); }
+    .action-bar p { flex: 1; font-size: 0.8rem; color: var(--txt-3); line-height: 1.5; min-width: 200px; }
+    .btn-autofill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 22px; border-radius: var(--r-md);
+      background: linear-gradient(135deg, var(--gold), #e6b800);
+      color: #000; font-family: var(--font-display); font-size: 0.82rem;
+      font-weight: 900; border: none; cursor: pointer; transition: all 0.2s;
+      letter-spacing: 0.06em; white-space: nowrap;
+    }
+    .btn-autofill:hover { transform: translateY(-2px); box-shadow: var(--sh-gold); }
+    .btn-back {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; border-radius: var(--r-md);
+      border: 1.5px solid var(--border); background: none;
+      color: var(--txt-2); font-family: var(--font-display); font-size: 0.78rem;
+      font-weight: 700; cursor: pointer; text-decoration: none; transition: all 0.15s;
       letter-spacing: 0.04em;
     }
+    .btn-back:hover { border-color: var(--red); color: var(--red); }
 
-    .calc-input-group input,
-    .calc-input-group select {
-      background: var(--bg-primary);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 0.7rem var(--space-md);
-      color: var(--text-primary);
-      font-family: var(--font-body);
-      font-size: 1rem;
-      font-weight: 700;
-    }
-
-    .calc-input-group input:focus,
-    .calc-input-group select:focus {
-      outline: none;
-      border-color: var(--primary);
-    }
-
-    .calc-results {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--space-md);
-      text-align: center;
-    }
-
-    .calc-result-card {
-      background: rgba(8, 12, 20, 0.6);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: var(--space-md);
-    }
-
-    .calc-result-card .calc-label {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      font-weight: 700;
-      letter-spacing: 0.05em;
-    }
-
-    .calc-result-card .calc-value {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: var(--primary);
-      margin-top: 4px;
-    }
-
-    .calc-result-card .calc-value.gold { color: var(--secondary); }
-
-    /* All Matches Table */
-    .full-table-wrapper {
-      overflow-x: auto;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--card-border);
-    }
-
-    .full-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.85rem;
-      min-width: 900px;
-    }
-
-    .full-table thead th {
-      padding: 0.8rem var(--space-md);
-      text-align: left;
-      font-weight: 800;
-      text-transform: uppercase;
-      font-size: 0.7rem;
-      letter-spacing: 0.05em;
-      color: var(--text-secondary);
-      background: rgba(255, 255, 255, 0.02);
-      border-bottom: 2px solid var(--card-border);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    .full-table tbody tr {
-      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-      transition: background-color var(--transition-fast);
-    }
-
-    .full-table tbody tr:hover {
-      background: rgba(16, 185, 129, 0.04);
-    }
-
-    .full-table td {
-      padding: 0.7rem var(--space-md);
-      vertical-align: middle;
-    }
-
-    .full-table .match-teams-cell {
-      font-family: var(--font-display);
-      font-weight: 700;
-      font-size: 0.9rem;
-    }
-
-    .risk-dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin-right: 6px;
-    }
-
-    .risk-dot.low { background: var(--primary); }
-    .risk-dot.medium { background: var(--secondary); }
-    .risk-dot.high { background: var(--danger); }
-
-    .autofill-section {
-      text-align: center;
-      margin: var(--space-xl) 0;
-    }
-
-    .autofill-btn {
-      background: linear-gradient(135deg, var(--primary), #059669);
-      color: #000;
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 0.85rem 2rem;
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all var(--transition-normal);
-      box-shadow: var(--shadow-primary);
-    }
-
-    .autofill-btn:hover {
-      transform: translateY(-2px) scale(1.02);
-      box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
-    }
-
+    /* ── RESPONSIVE ──────────────────────────────────── */
     @media (max-width: 768px) {
-      .sim-results-grid {
-        grid-template-columns: 1fr;
-      }
-      .calc-results {
-        grid-template-columns: 1fr;
-      }
+      .pron-page { padding: 0 16px 60px; }
+      .sim-selectors { grid-template-columns: 1fr; }
+      .sim-vs-badge { display: none; }
+      .sim-advice-grid { grid-template-columns: 1fr 1fr; }
+      .calc-results { grid-template-columns: 1fr 1fr; }
+      .cmp-row { grid-template-columns: 130px 1fr; }
+      .cmp-fav { display: none; }
+      .model-tab-desc { display: none !important; }
+      .picks-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .sim-advice-grid { grid-template-columns: 1fr; }
+      .calc-results { grid-template-columns: 1fr; }
+      .pron-hero h1 { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
 <script>(async()=>{const r=await requireAuth();if(r){document.getElementById('auth-hide').remove();injectUserBar(r.session);}})();</script>
 
-  <!-- Hero Header -->
-  <header class="hero-pronosticos">
-    <div style="display:flex;gap:0.75rem;flex-wrap:wrap;justify-content:center;margin-bottom:var(--sp-sm);">
-      <a href="index.html" class="back-link" style="margin-bottom:0;">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
-        Fixture Principal
-      </a>
-      <a href="bracket.html" class="back-link" style="margin-bottom:0;color:var(--gold-dark);">
-        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h4m10 0h4M7 12a5 5 0 0 1 10 0M7 12a5 5 0 0 0 10 0M12 7V3m0 18v-4"/></svg>
-        Bracket Probabilístico
-      </a>
-    </div>
-    <span class="brand-badge">📊 Probabilidades &amp; Análisis</span>
-    <h1>Probabilidades y <span>Riesgo</span></h1>
-    <p class="subtitle">Evalúa escenarios probables, compara cuotas y decide con más calma. Modelo interno transparente — no garantiza resultados.</p>
-  </header>
+<div class="pron-page">
 
-  <!-- Disclaimer Banner -->
-  <div class="disclaimer-banner">
-    <strong>AVISO IMPORTANTE:</strong> Esta herramienta es para <strong>uso personal informativo y de entretenimiento</strong>. 
-    Las probabilidades son estimaciones de un modelo simple y <strong>no garantizan resultados</strong>. 
-    Apuesta solo lo que puedas permitirte perder. El juego responsable es fundamental. Si sientes que el juego se convierte en un problema, busca ayuda profesional.
+  <!-- ── HERO ───────────────────────────────────────── -->
+  <div class="pron-hero">
+    <div class="pron-hero-eyebrow">⚗️ Motor Estadístico v2.0</div>
+    <h1>Probabilidades & Modelos</h1>
+    <p class="pron-hero-sub">
+      5 motores de predicción independientes para cada partido.<br>
+      Compara, analiza y elige el modelo que más te convenza.
+    </p>
+    <div class="pron-disclaimer">
+      <strong>⚠</strong>
+      <span>Uso analítico y recreativo únicamente. <strong>No garantiza resultados reales.</strong>
+      Los modelos son estimaciones — no consejo de apuestas.</span>
+    </div>
   </div>
 
-  <div class="model-note" id="model-note">
-    <strong>Fuente del modelo:</strong> ratings internos auditables guardados en <code>pronosticos.js</code>. Antes de usar dinero real, actualiza esos ratings con una fuente verificable y contrasta cada probabilidad con cuotas reales; si la cuota no paga más que el riesgo asumido, no hay valor esperado.
+  <!-- ── MODEL SELECTOR ────────────────────────────── -->
+  <div id="model-selector" class="model-selector-wrap" role="tablist" aria-label="Selector de modelo de predicción">
+    <!-- populated by JS -->
   </div>
 
-  <!-- Section 1: Safe Picks / Value Bets -->
-  <section class="page-section">
-    <h2 class="section-heading"><span class="icon">🔒</span> Escenarios de Mayor Probabilidad (Fase de Grupos)</h2>
-    <div id="safe-picks-container" class="value-grid">
-      <!-- Generated by pronosticos.js -->
+  <!-- ── H2H SIMULATOR ─────────────────────────────── -->
+  <div class="sec-header">
+    <span class="sec-title">Simulador H2H</span>
+    <span class="sec-badge sec-badge-gold">Todos los modelos</span>
+  </div>
+
+  <div class="sim-card">
+    <div class="sim-card-header">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+      <div>
+        <div class="sim-card-header-title">Duelo entre selecciones</div>
+        <div class="sim-card-header-sub">Resultado calculado con el modelo activo · Comparativa de los 5</div>
+      </div>
     </div>
-  </section>
 
-  <!-- Section 2: H2H Simulator -->
-  <section class="page-section">
-    <h2 class="section-heading"><span class="icon">⚔️</span> Simulador Cara a Cara (H2H)</h2>
-    <div class="simulator-panel">
-
-      <!-- Team Selectors -->
-      <div class="sim-teams-row">
-        <div class="sim-team-selector">
-          <label for="sim-team1">Equipo Local</label>
-          <select id="sim-team1"></select>
+    <div class="sim-body">
+      <!-- Team selectors -->
+      <div class="sim-selectors">
+        <div class="sim-sel-group">
+          <label for="sim-team1">Equipo 1 (local)</label>
+          <select id="sim-team1" aria-label="Seleccionar equipo 1"></select>
         </div>
         <div class="sim-vs-badge">VS</div>
-        <div class="sim-team-selector">
-          <label for="sim-team2">Equipo Visitante</label>
-          <select id="sim-team2"></select>
+        <div class="sim-sel-group">
+          <label for="sim-team2">Equipo 2 (visitante)</label>
+          <select id="sim-team2" aria-label="Seleccionar equipo 2"></select>
         </div>
       </div>
 
-      <!-- Results Dashboard -->
-      <div class="sim-results-grid">
-
-        <!-- Probability Bars -->
-        <div class="sim-probs-visual">
-          <h4>📊 Probabilidades Calculadas</h4>
-          <div class="prob-row">
-            <span class="prob-label">Equipo 1</span>
-            <div class="prob-bar-lg">
-              <div id="bar-t1" class="fill green" style="width: 50%;"><span id="sim-prob-t1">50%</span></div>
-            </div>
+      <!-- Probability bars -->
+      <div class="sim-bars-section">
+        <div class="sim-bar-row">
+          <div class="sim-bar-label prob-label">Equipo 1</div>
+          <div class="sim-bar-track" role="meter" aria-label="Probabilidad equipo 1">
+            <div id="bar-t1" class="sim-bar-fill fill-t1" style="width:50%"></div>
           </div>
-          <div class="prob-row">
-            <span class="prob-label">Empate</span>
-            <div class="prob-bar-lg">
-              <div id="bar-draw" class="fill gray" style="width: 20%;"><span id="sim-prob-draw">20%</span></div>
-            </div>
-          </div>
-          <div class="prob-row">
-            <span class="prob-label">Equipo 2</span>
-            <div class="prob-bar-lg">
-              <div id="bar-t2" class="fill blue" style="width: 30%;"><span id="sim-prob-t2">30%</span></div>
-            </div>
-          </div>
+          <div id="sim-prob-t1" class="sim-bar-pct">50%</div>
         </div>
-
-        <!-- Advice Panel -->
-        <div class="sim-advice-panel">
-          <h4>Lectura del Modelo</h4>
-          <div class="advice-item">
-            <span class="advice-label">Nivel de Riesgo</span>
-            <span id="sim-risk-badge" class="badge badge-safe">Bajo Riesgo</span>
+        <div class="sim-bar-row">
+          <div class="sim-bar-label prob-label">Empate</div>
+          <div class="sim-bar-track" role="meter" aria-label="Probabilidad empate">
+            <div id="bar-draw" class="sim-bar-fill fill-draw" style="width:26%"></div>
           </div>
-          <div class="advice-item">
-            <span class="advice-label">Mercado a Evaluar</span>
-            <span id="sim-suggested" class="advice-value gold">-</span>
+          <div id="sim-prob-draw" class="sim-bar-pct">26%</div>
+        </div>
+        <div class="sim-bar-row">
+          <div class="sim-bar-label prob-label">Equipo 2</div>
+          <div class="sim-bar-track" role="meter" aria-label="Probabilidad equipo 2">
+            <div id="bar-t2" class="sim-bar-fill fill-t2" style="width:24%"></div>
           </div>
-          <div class="advice-item">
-            <span class="advice-label">Resultado Estimado</span>
-            <span id="sim-score" class="advice-value green">0 - 0</span>
-          </div>
+          <div id="sim-prob-t2" class="sim-bar-pct">24%</div>
         </div>
       </div>
-    </div>
-  </section>
 
-  <!-- Section 3: Betting Calculator -->
-  <section class="page-section">
-    <h2 class="section-heading"><span class="icon">🧮</span> Calculadora de Apuestas (Soles Peruanos)</h2>
-    <div class="calc-panel">
-      <div class="calc-grid">
-        <div class="calc-input-group">
-          <label for="bet-amount">Monto a Apostar (S/)</label>
-          <input type="number" id="bet-amount" placeholder="Ej. 50" value="50" min="1">
+      <!-- Expected Goals (Dixon-Coles) -->
+      <div class="sim-xg-row">
+        <div class="sim-xg-card">
+          <div class="sim-xg-label">xG Equipo 1</div>
+          <div id="sim-xg1" class="sim-xg-value">—</div>
+          <div class="sim-xg-sub">Goles esperados · Poisson</div>
         </div>
-        <div class="calc-input-group">
-          <label for="bet-odds">Cuota Decimal (Odds)</label>
-          <input type="number" id="bet-odds" placeholder="Ej. 1.45" value="1.45" min="1" step="0.01">
+        <div class="sim-xg-card" style="background:var(--surface-2);border-color:var(--border);">
+          <div class="sim-xg-label">Marcador estimado</div>
+          <div id="sim-score" class="sim-xg-value" style="color:var(--txt-1)">—</div>
+          <div class="sim-xg-sub">Modelo activo</div>
         </div>
-        <div class="calc-input-group">
-          <label for="bet-risk">Nivel de Riesgo</label>
-          <select id="bet-risk">
-            <option value="low">Bajo Riesgo (Favorito claro)</option>
-            <option value="medium" selected>Riesgo Medio (Partido parejo)</option>
-            <option value="high">Alto Riesgo (Underdog / Sorpresa)</option>
-          </select>
+        <div class="sim-xg-card">
+          <div class="sim-xg-label">xG Equipo 2</div>
+          <div id="sim-xg2" class="sim-xg-value">—</div>
+          <div class="sim-xg-sub">Goles esperados · Poisson</div>
         </div>
       </div>
-      <div class="calc-results">
-        <div class="calc-result-card">
-          <div class="calc-label">Retorno Bruto</div>
-          <div id="calc-gross" class="calc-value">S/ 72.50</div>
+
+      <!-- Advice -->
+      <div class="sim-advice-grid">
+        <div class="sim-advice-item">
+          <div class="sim-advice-label">Pronóstico</div>
+          <div id="sim-suggested" class="sim-advice-value gold">—</div>
         </div>
-        <div class="calc-result-card">
-          <div class="calc-label">Ganancia Neta</div>
-          <div id="calc-net" class="calc-value gold">S/ 22.50</div>
+        <div class="sim-advice-item">
+          <div class="sim-advice-label">Nivel de Riesgo</div>
+          <div><span id="sim-risk-badge" class="risk-chip risk-mid">—</span></div>
         </div>
-        <div class="calc-result-card">
-          <div class="calc-label">Fracción de Bankroll Recomendada</div>
-          <div id="calc-recommendation" class="calc-value" style="font-size: 1rem; color: var(--info);">3/10 (Confianza Moderada)</div>
+        <div class="sim-advice-item">
+          <div class="sim-advice-label">Mercado a evaluar</div>
+          <div id="sim-suggested-market" class="sim-advice-value" style="font-size:0.82rem;color:var(--txt-2)">—</div>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Section 4: Full Match Probabilities Table -->
-  <section class="page-section">
-    <h2 class="section-heading"><span class="icon">📋</span> Tabla Completa de Probabilidades (72 Partidos de Grupo)</h2>
-    <div class="full-table-wrapper" id="full-table-wrapper">
-      <!-- Generated by JS below -->
+  <!-- ── MODEL COMPARISON ───────────────────────────── -->
+  <div class="sec-header" style="margin-top:32px;">
+    <span class="sec-title">Comparativa de modelos</span>
+    <span class="sec-badge sec-badge-gold" style="background:rgba(59,130,246,0.1);color:#60a5fa;border-color:rgba(59,130,246,0.3);">5 motores</span>
+  </div>
+
+  <div class="cmp-container">
+    <div class="cmp-header">
+      <div class="cmp-header-title">Resultado por modelo para el duelo seleccionado</div>
+      <div class="cmp-team-labels">
+        <span id="cmp-t1-label" style="color:#10B981">Equipo 1</span>
+        <span style="color:#6B7280">Empate</span>
+        <span id="cmp-t2-label" style="color:#60a5fa">Equipo 2</span>
+      </div>
     </div>
-  </section>
+    <div id="model-comparison-grid">
+      <div style="padding:32px;text-align:center;color:var(--txt-3);font-size:0.82rem;">
+        Selecciona dos equipos arriba para ver la comparativa
+      </div>
+    </div>
+  </div>
 
-  <!-- Autofill Feature -->
-  <section class="page-section autofill-section">
-    <p style="color: var(--text-secondary); margin-bottom: var(--space-md); max-width: 600px; margin-left: auto; margin-right: auto;">
-      ¿Quieres autocompletar la Fase de Grupos del fixture principal con los resultados estimados por el modelo?
-      Esto llena marcadores de simulación, no predicciones garantizadas.
+  <!-- ── SAFE PICKS ─────────────────────────────────── -->
+  <div class="sec-header" style="margin-top:40px;">
+    <span class="sec-title">Partidos más claros</span>
+    <span id="picks-model-badge" class="sec-badge sec-badge-gold">Modelo: Combinado</span>
+  </div>
+
+  <div id="safe-picks-container" class="picks-grid">
+    <!-- populated by JS -->
+  </div>
+
+  <!-- ── FULL TABLE ─────────────────────────────────── -->
+  <div class="sec-header" style="margin-top:40px;">
+    <span class="sec-title">Tabla completa — Fase de Grupos</span>
+    <span class="sec-badge" style="background:rgba(139,92,246,0.1);color:#A78BFA;border:1px solid rgba(139,92,246,0.3);">72 partidos</span>
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-xl);overflow:hidden;box-shadow:var(--sh-md);">
+    <div id="full-table-wrapper">
+      <!-- populated by JS -->
+    </div>
+  </div>
+
+  <!-- ── CALCULATOR ─────────────────────────────────── -->
+  <div class="sec-header" style="margin-top:40px;">
+    <span class="sec-title">Calculadora de retorno</span>
+  </div>
+
+  <div class="calc-card">
+    <div class="calc-inputs">
+      <div class="calc-field">
+        <label for="bet-amount">Monto a invertir (S/)</label>
+        <input type="number" id="bet-amount" value="100" min="1" max="100000" step="10" aria-label="Monto">
+      </div>
+      <div class="calc-field">
+        <label for="bet-odds">Cuota (decimal)</label>
+        <input type="number" id="bet-odds" value="1.85" min="1.01" max="100" step="0.05" aria-label="Cuota">
+      </div>
+      <div class="calc-field">
+        <label for="bet-risk">Nivel de riesgo</label>
+        <select id="bet-risk" aria-label="Nivel de riesgo">
+          <option value="low">Bajo (favorito claro)</option>
+          <option value="medium" selected>Medio (partido abierto)</option>
+          <option value="high">Alto (sorpresa posible)</option>
+        </select>
+      </div>
+    </div>
+    <div class="calc-results">
+      <div class="calc-result-item">
+        <div class="calc-result-label">Retorno bruto</div>
+        <div id="calc-gross" class="calc-result-value">S/ 0.00</div>
+      </div>
+      <div class="calc-result-item">
+        <div class="calc-result-label">Ganancia neta</div>
+        <div id="calc-net" class="calc-result-value gold">S/ 0.00</div>
+      </div>
+      <div class="calc-result-item">
+        <div class="calc-result-label">Stake sugerido</div>
+        <div id="calc-recommendation" class="calc-result-value small">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ACTION BAR ─────────────────────────────────── -->
+  <div class="action-bar">
+    <p>
+      Exporta los marcadores estimados directamente al Fixture principal para ver cómo avanzarían los grupos.
     </p>
-    <button id="autofill-btn" class="autofill-btn">Autocompletar Fixture con Estimaciones</button>
-  </section>
+    <a href="/" class="btn-back" aria-label="Volver al fixture">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Fixture
+    </a>
+    <button id="autofill-btn" class="btn-autofill" aria-label="Autocompletar fixture con estimaciones">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
+      Autocompletar Fixture
+    </button>
+  </div>
 
-  <!-- Footer -->
-  <footer>
-    <p>ANEXO DE PRONÓSTICOS Y CONTROL DE RIESGO | COPA MUNDIAL FIFA 2026™</p>
-    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;">
-      Los pronósticos se basan en modelos matemáticos Elo/FIFA y no constituyen asesoría financiera.
-      Juega responsablemente.
-    </p>
-    <p style="margin-top: 1rem;"><a href="index.html">← Volver al Fixture Interactivo</a></p>
-  </footer>
+</div><!-- /pron-page -->
 
-  <script src="pronosticos.js"></script>
+<script src="/pronosticos.js"></script>
+<script>
+// ── Model Selector UI ─────────────────────────────────────────────
+function buildModelSelector() {
+  const wrap = document.getElementById("model-selector");
+  if (!wrap) return;
+  wrap.innerHTML = PREDICTION_MODELS.map(m => `
+    <button
+      class="model-tab${m.id === activeModelId ? ' active' : ''}"
+      style="--active-color:${m.color}"
+      data-model="${m.id}"
+      role="tab"
+      aria-selected="${m.id === activeModelId}"
+      aria-label="${m.name}: ${m.description}"
+    >
+      <div class="model-tab-dot" style="background:${m.color}"></div>
+      <span class="model-tab-name">${m.shortName}</span>
+      <span class="model-tab-stars" style="color:${m.color}" title="${m.stars}/5 estrellas">${'★'.repeat(m.stars)}${'☆'.repeat(5-m.stars)}</span>
+      <span class="model-tab-desc">${m.description}</span>
+      <span class="model-tab-source">${m.source}</span>
+    </button>
+  `).join('');
 
-  <!-- ══ CUOTAS EN VIVO ══ -->
-  <style>
-    .odds-section { max-width:1100px; margin:0 auto; padding:0 var(--space-md) var(--space-xl); }
-    .odds-section-title { font-family:var(--font-display); font-weight:800; font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:var(--space-md); display:flex; align-items:center; gap:var(--space-sm); }
-    .odds-section-title::after { content:''; flex:1; height:1px; background:var(--card-border); }
-    .odds-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); margin-bottom:var(--space-sm); overflow:hidden; }
-    .odds-card-header { display:flex; align-items:center; justify-content:space-between; padding:0.65rem 1rem; border-bottom:1px solid var(--card-border); flex-wrap:wrap; gap:0.5rem; }
-    .odds-match-title { font-family:var(--font-display); font-weight:800; font-size:0.88rem; color:var(--text-primary); }
-    .odds-match-date { font-size:0.68rem; color:var(--text-muted); }
-    .odds-model-probs { display:flex; gap:0.5rem; font-size:0.7rem; }
-    .odds-table { width:100%; border-collapse:collapse; font-size:0.75rem; }
-    .odds-table th { padding:0.35rem 0.75rem; color:var(--text-muted); font-weight:700; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.05em; text-align:center; border-bottom:1px solid rgba(255,255,255,0.04); }
-    .odds-table th:first-child { text-align:left; }
-    .odds-table td { padding:0.4rem 0.75rem; text-align:center; border-bottom:1px solid rgba(255,255,255,0.03); color:var(--text-primary); font-weight:600; }
-    .odds-table td:first-child { text-align:left; font-weight:700; color:var(--primary); }
-    .odds-table tr:last-child td { border-bottom:none; }
-    .odds-table tr:hover td { background:rgba(255,255,255,0.02); }
-    .ev-positive { background:rgba(16,185,129,0.15); color:#34d399; border-radius:4px; padding:1px 6px; font-size:0.6rem; font-weight:800; }
-    .ev-negative { background:rgba(239,68,68,0.1); color:#f87171; border-radius:4px; padding:1px 6px; font-size:0.6rem; font-weight:800; }
-    .ev-neutral  { background:rgba(100,116,139,0.1); color:#94a3b8; border-radius:4px; padding:1px 6px; font-size:0.6rem; font-weight:800; }
-    .odds-label-best { display:inline-block; background:rgba(251,191,36,0.15); color:#fbbf24; border-radius:4px; padding:1px 5px; font-size:0.58rem; font-weight:800; margin-left:4px; }
-  </style>
+  wrap.querySelectorAll(".model-tab").forEach(btn => {
+    btn.addEventListener("click", () => {
+      activeModelId = btn.dataset.model;
+      wrap.querySelectorAll(".model-tab").forEach(b => {
+        b.classList.toggle("active", b.dataset.model === activeModelId);
+        b.setAttribute("aria-selected", b.dataset.model === activeModelId);
+      });
+      // Update picks badge
+      const m = PREDICTION_MODELS.find(x => x.id === activeModelId);
+      const badge = document.getElementById("picks-model-badge");
+      if (badge && m) {
+        badge.textContent = `Modelo: ${m.name}`;
+        badge.style.color = m.color;
+        badge.style.borderColor = m.color + '44';
+        badge.style.background = m.color + '18';
+      }
+      // Re-render all
+      renderSafePicks();
+      renderFullProbabilityTable();
+      // Re-run H2H with same teams
+      const t1 = document.getElementById("sim-team1")?.value;
+      const t2 = document.getElementById("sim-team2")?.value;
+      if (t1 && t2 && t1 !== t2) {
+        const p = calculateMatchProbabilities(t1, t2);
+        ["t1","draw","t2"].forEach((k,i) => {
+          const pct=[p.p1,p.pDraw,p.p2][i];
+          const el=document.getElementById(`bar-${k}`);
+          const lbl=document.getElementById(`sim-prob-${k}`);
+          if(el) el.style.width=`${pct}%`;
+          if(lbl) lbl.textContent=`${pct}%`;
+        });
+        const scr=document.getElementById("sim-score");
+        if(scr) scr.textContent=`${p.estimatedScore1}–${p.estimatedScore2}`;
+      }
+    });
+  });
+}
 
-  <section class="odds-section">
-    <div class="odds-section-title">Cuotas en vivo · casas de apuesta</div>
-    <div id="odds-loading" style="text-align:center;padding:1.5rem;color:var(--text-muted);font-size:0.85rem">
-      <div style="display:inline-block;width:18px;height:18px;border:2px solid var(--card-border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;margin-right:8px;vertical-align:middle"></div>
-      Obteniendo cuotas actualizadas…
-    </div>
-    <div id="odds-container" style="display:none"></div>
-    <div id="odds-empty" style="display:none;text-align:center;padding:1.5rem;color:var(--text-muted);font-size:0.82rem">
-      Sin cuotas disponibles aún. Los partidos aparecen 24–48 h antes del inicio en TheOddsAPI.<br>
-      Las cuotas de <strong style="color:var(--text-secondary)">Apuesta Total</strong> e <strong style="color:var(--text-secondary)">Inkabet</strong> se ingresan manualmente desde el <a href="/admin" style="color:var(--primary)">Panel Admin</a>.
-    </div>
-    <div style="text-align:right;font-size:0.62rem;color:var(--text-muted);margin-top:0.5rem" id="odds-api-credit"></div>
-  </section>
-
-  <script>
-  // ── Fetch and display odds ──────────────────────────────────────
-  const BK_DISPLAY = {
-    betsson:'Betsson',betano:'Betano',bet365:'Bet365',pinnacle:'Pinnacle',
-    unibet:'Unibet',williamhill:'Wm.Hill',
-    apuestatotal:'Apuesta Total',inkabet:'Inkabet'
+// Update comparison team labels
+const origSetup = setupH2HSimulator;
+window.addEventListener("DOMContentLoaded", () => {
+  buildModelSelector();
+  // Patch H2H to update cmp labels
+  const s1=document.getElementById("sim-team1"), s2=document.getElementById("sim-team2");
+  const updateLabels = () => {
+    const l1=document.getElementById("cmp-t1-label"), l2=document.getElementById("cmp-t2-label");
+    if(l1&&s1) l1.textContent=s1.value||"Equipo 1";
+    if(l2&&s2) l2.textContent=s2.value||"Equipo 2";
+    // patch advice market
+    const t1=s1?.value,t2=s2?.value;
+    if(t1&&t2&&t1!==t2){
+      const p=calculateMatchProbabilities(t1,t2);
+      const mkt=document.getElementById("sim-suggested-market");
+      if(mkt) mkt.textContent=p.suggestedBet;
+      const sug=document.getElementById("sim-suggested");
+      if(sug) sug.textContent=p.recommendation;
+    }
   };
-
-  async function loadOddsSection() {
-    try {
-      // Fetch live odds (TheOddsAPI) + manual odds (Supabase) in parallel
-      const [liveRes, manualRes] = await Promise.all([
-        fetch('/api/live-odds').then(r=>r.json()).catch(()=>({games:[]})),
-        fetch('/api/odds').then(r=>r.json()).catch(()=>[])
-      ]);
-
-      const liveGames = liveRes.games || [];
-      const manualOdds = Array.isArray(manualRes) ? manualRes : [];
-
-      // Group manual odds by match_id
-      const manualByMatch = {};
-      manualOdds.forEach(o => {
-        if (!manualByMatch[o.match_id]) manualByMatch[o.match_id] = [];
-        manualByMatch[o.match_id].push(o);
-      });
-
-      document.getElementById('odds-loading').style.display = 'none';
-
-      // Build combined display: live games + matches that only have manual odds
-      const cards = [];
-
-      // Process live games from TheOddsAPI
-      liveGames.forEach(g => {
-        cards.push(buildOddsCard(null, g.home, g.away, g.commenceAt, g.odds, []));
-      });
-
-      // Process manual-only entries (match IDs not in live)
-      const liveMatchNames = new Set(liveGames.map(g => `${g.home}||${g.away}`));
-      const manualGrouped = {};
-      manualOdds.forEach(o => {
-        const key = `${o.team1||''}||${o.team2||''}||${o.match_id}`;
-        if (!manualGrouped[key]) manualGrouped[key] = { team1:o.team1, team2:o.team2, match_id:o.match_id, date:o.match_date, entries:[] };
-        manualGrouped[key].entries.push(o);
-      });
-      Object.values(manualGrouped).forEach(g => {
-        if (!liveMatchNames.has(`${g.team1}||${g.team2}`)) {
-          const manOdds = {};
-          g.entries.forEach(e => { manOdds[e.bookmaker] = { name: BK_DISPLAY[e.bookmaker]||e.bookmaker, home:e.odd1, draw:e.odd_x, away:e.odd2 }; });
-          cards.push(buildOddsCard(g.match_id, g.team1||'Equipo 1', g.team2||'Equipo 2', g.date, manOdds, []));
-        }
-      });
-
-      if (!cards.length) {
-        document.getElementById('odds-empty').style.display = 'block';
-      } else {
-        document.getElementById('odds-container').style.display = 'block';
-        document.getElementById('odds-container').innerHTML = cards.join('');
-      }
-
-      if (liveRes.remaining !== undefined) {
-        document.getElementById('odds-api-credit').textContent =
-          `TheOddsAPI: ${liveRes.remaining} solicitudes restantes · actualizado ${new Date(liveRes.updatedAt).toLocaleTimeString('es-PE')}`;
-      }
-    } catch(e) {
-      document.getElementById('odds-loading').innerHTML = `<span style="color:var(--danger)">Error al cargar cuotas: ${e.message}</span>`;
-    }
-  }
-
-  function buildOddsCard(matchId, home, away, dateStr, oddsObj, modelProbs) {
-    const bks = Object.entries(oddsObj || {}).filter(([,bk]) => bk.home || bk.draw || bk.away);
-    if (!bks.length) return '';
-
-    const date = dateStr ? new Date(dateStr).toLocaleDateString('es-PE', { weekday:'short', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }) : '';
-
-    // Get model probabilities for home/draw/away
-    let p1 = null, pX = null, p2 = null;
-    if (typeof calculateMatchProbabilities === 'function') {
-      try {
-        const p = calculateMatchProbabilities(home, away);
-        p1 = (p.p1 + p.pDraw * p.p1 / (p.p1 + p.p2 || 1)) / 100;
-        pX = p.pDraw / 100;
-        p2 = (p.p2 + p.pDraw * p.p2 / (p.p1 + p.p2 || 1)) / 100;
-      } catch(_) {}
-    }
-
-    // Find best odds per market
-    const best1 = Math.max(...bks.map(([,b]) => b.home || 0));
-    const bestX = Math.max(...bks.map(([,b]) => b.draw || 0));
-    const best2 = Math.max(...bks.map(([,b]) => b.away || 0));
-
-    const evBadge = (prob, odd) => {
-      if (!prob || !odd) return '';
-      const ev = ((prob * odd) - 1) * 100;
-      if (ev > 3)  return `<span class="ev-positive">EV +${ev.toFixed(0)}%</span>`;
-      if (ev < -5) return `<span class="ev-negative">EV ${ev.toFixed(0)}%</span>`;
-      return `<span class="ev-neutral">EV ${ev.toFixed(0)}%</span>`;
-    };
-
-    const rows = bks.map(([key, bk]) => {
-      const isBest1 = bk.home && bk.home >= best1;
-      const isBestX = bk.draw && bk.draw >= bestX;
-      const isBest2 = bk.away && bk.away >= best2;
-      return `<tr>
-        <td>${BK_DISPLAY[key] || bk.name}</td>
-        <td>${bk.home ? `${bk.home}${isBest1?'<span class="odds-label-best">★</span>':''}` : '—'}</td>
-        <td>${bk.draw ? `${bk.draw}${isBestX?'<span class="odds-label-best">★</span>':''}` : '—'}</td>
-        <td>${bk.away ? `${bk.away}${isBest2?'<span class="odds-label-best">★</span>':''}` : '—'}</td>
-        <td style="text-align:left;padding-left:0.5rem">
-          ${evBadge(p1, bk.home)} ${evBadge(pX, bk.draw)} ${evBadge(p2, bk.away)}
-        </td>
-      </tr>`;
-    }).join('');
-
-    const modelRow = (p1 !== null) ? `
-      <div style="display:flex;gap:1rem;font-size:0.68rem;color:var(--text-muted);padding:0.4rem 0.75rem;background:rgba(16,185,129,0.03);border-top:1px solid rgba(255,255,255,0.04)">
-        <span>Modelo: <strong style="color:var(--primary)">${Math.round(p1*100)}% gana ${home.split(' ')[0]}</strong></span>
-        <span><strong style="color:var(--text-secondary)">${Math.round(pX*100)}% empate</strong></span>
-        <span><strong style="color:var(--info)">${Math.round(p2*100)}% gana ${away.split(' ')[0]}</strong></span>
-        <span style="margin-left:auto;font-size:0.6rem">★ = mejor cuota disponible · EV = valor esperado</span>
-      </div>` : '';
-
-    return `<div class="odds-card">
-      <div class="odds-card-header">
-        <div>
-          <div class="odds-match-title">${home} <span style="color:var(--text-muted);font-weight:400">vs</span> ${away}</div>
-          ${date ? `<div class="odds-match-date">⏰ ${date}</div>` : ''}
-        </div>
-      </div>
-      <div style="overflow-x:auto">
-        <table class="odds-table">
-          <thead><tr>
-            <th>Casa de apuesta</th>
-            <th>1 (${home.split(' ')[0]})</th>
-            <th>X (Empate)</th>
-            <th>2 (${away.split(' ')[0]})</th>
-            <th style="text-align:left;padding-left:0.5rem">Valor esperado</th>
-          </tr></thead>
-          <tbody>${rows}</tbody>
-        </table>
-      </div>
-      ${modelRow}
-    </div>`;
-  }
-
-  document.addEventListener('DOMContentLoaded', loadOddsSection);
-  </script>
+  if(s1) s1.addEventListener("change", updateLabels);
+  if(s2) s2.addEventListener("change", updateLabels);
+  setTimeout(updateLabels, 100);
+});
+</script>
 </body>
 </html>
