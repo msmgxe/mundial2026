@@ -378,19 +378,12 @@
     }
 
     /* ── BRACKET TREE MATCHES ──────────────────── */
-    .btree-match {
-      background: #111A2C !important;
-      border-color: rgba(255,255,255,0.08) !important;
-      box-shadow: none !important;
-      border-left: 3px solid #2DD4BF !important;
-    }
-    [data-side="right"] .btree-match {
-      border-left: 1px solid rgba(255,255,255,0.08) !important;
-      border-right: 3px solid #C084FC !important;
-    }
-    .btree-match:hover {
-      border-color: rgba(212,175,55,0.45) !important;
-      box-shadow: 0 4px 14px rgba(212,175,55,0.12) !important;
+    .btree-col { gap: 6px; }
+    .btree-match-wrap { padding: 3px 0; }
+
+    /* Light mode overrides for bracket section */
+    [data-theme="light"] #bk-content > div:first-child {
+      background: linear-gradient(180deg, #0D1124 0%, #090D18 100%) !important;
     }
 
     /* ── DISCLAIMER ─────────────────────────────── */
@@ -547,12 +540,37 @@
     <!-- ══════════ VISUAL BRACKET TREE ══════════ -->
     <div style="background:linear-gradient(180deg,#0D1124 0%,#090D18 100%);border-bottom:1px solid rgba(212,175,55,0.2);">
 
-      <!-- SEDES BANNER -->
-      <div style="overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,0.06);padding:10px 16px 10px;">
-        <div style="display:flex;gap:8px;min-width:max-content;align-items:center;justify-content:center;">
-          <div style="font-family:'Outfit',sans-serif;font-size:0.55rem;font-weight:900;text-transform:uppercase;letter-spacing:0.15em;color:rgba(212,175,55,0.7);margin-right:4px;white-space:nowrap;border:1px solid rgba(212,175,55,0.3);padding:3px 10px;border-radius:4px;">SEDES</div>
-          <!-- 14 venues -->
-          ${['CDMX·Azteca','Guadalajara·Akron','Monterrey·BBVA','Toronto·BMO','Vancouver·BC Place','Los Ángeles·SoFi','Seattle·Lumen','Arlington·AT&T','Atlanta·M.Benz','Miami·Hard Rock','Nashville·Geodis','Boston·Gillette','N. Jersey·MetLife','Filadelfia·Lincoln'].map(v=>{const[city,st]=v.split('·');return `<div style="text-align:center;flex-shrink:0;"><div style="font-size:0.52rem;font-weight:900;color:#fff;font-family:'Outfit',sans-serif;">${city}</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);margin-top:1px;">${st}</div></div>`;}).join('<div style="width:1px;height:28px;background:rgba(255,255,255,0.08);flex-shrink:0;align-self:center;"></div>')}
+      <!-- SEDES BANNER — 14 venues (static HTML) -->
+      <div style="overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 20px;">
+        <div style="display:flex;gap:0;min-width:max-content;align-items:center;">
+          <div style="font-family:'Outfit',sans-serif;font-size:0.52rem;font-weight:900;text-transform:uppercase;letter-spacing:0.15em;color:#D4AF37;white-space:nowrap;border:1px solid rgba(212,175,55,0.35);padding:3px 10px;border-radius:4px;flex-shrink:0;margin-right:12px;">SEDES</div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">CDMX</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Azteca</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Guadalajara</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Akron</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Monterrey</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">BBVA</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Toronto</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">BMO Field</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Vancouver</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">BC Place</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Los Ángeles</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">SoFi Stadium</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Seattle</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Lumen Field</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Arlington</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">AT&amp;T Stadium</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Atlanta</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">M. Benz</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#2DD4BF;font-family:'Outfit',sans-serif;">Miami</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Hard Rock</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Nashville</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Geodis Park</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Boston</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Gillette</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#F5C400;font-family:'Outfit',sans-serif;">N. Jersey</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">MetLife ★</div></div>
+          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
+          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Filadelfia</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Lincoln Financial</div></div>
         </div>
       </div>
 
@@ -1051,27 +1069,45 @@
   }
 
   function matchCard(m, flipped) {
-    // flipped = true → loser on top (for right half, winner at bottom approaching center)
     const slots = flipped
-      ? [{ team:m.loser, pct: m.winner===m.t1?m.pw2:m.pw1, win:false }, { team:m.winner, pct: m.winner===m.t1?m.pw1:m.pw2, win:true }]
-      : [{ team:m.winner, pct: m.winner===m.t1?m.pw1:m.pw2, win:true }, { team:m.loser, pct: m.winner===m.t1?m.pw2:m.pw1, win:false }];
+      ? [{ team:m.loser, pct: m.winner===m.t1?m.pw2:m.pw1, win:false },
+         { team:m.winner, pct: m.winner===m.t1?m.pw1:m.pw2, win:true }]
+      : [{ team:m.winner, pct: m.winner===m.t1?m.pw1:m.pw2, win:true },
+         { team:m.loser, pct: m.winner===m.t1?m.pw2:m.pw1, win:false }];
 
-    return `<div style="display:flex;flex-direction:column;gap:2px;width:162px;">
+    return `<div style="display:flex;flex-direction:column;gap:3px;width:162px;">
       ${slots.map(s => `
-        <div style="display:flex;align-items:center;gap:5px;padding:4px 7px;border-radius:6px;border:1px solid ${s.win?'rgba(212,175,55,0.45)':'rgba(255,255,255,0.05)'};background:${s.win?'rgba(212,175,55,0.1)':'#111A2C'};opacity:${s.win?1:0.38};min-height:26px;">
-          <span style="font-size:0.82rem;flex-shrink:0">${BFLAGS[s.team]||'🏳'}</span>
-          <span style="flex:1;font-size:0.68rem;font-weight:${s.win?700:500};color:${s.win?'#e8e0c0':'#888'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.team}</span>
-          <span style="font-size:0.68rem;font-weight:900;font-family:'Bebas Neue','Outfit',sans-serif;color:${s.win?'#D4AF37':'#444'};flex-shrink:0">${s.pct}%</span>
+        <div style="
+          display:flex;align-items:center;gap:6px;
+          padding:5px 8px;border-radius:7px;
+          background:${s.win ? 'linear-gradient(90deg,rgba(212,175,55,0.18),rgba(212,175,55,0.06))' : 'rgba(255,255,255,0.04)'};
+          border:1px solid ${s.win ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.08)'};
+          opacity:${s.win ? 1 : 0.42};
+          min-height:28px;
+          transition:all 0.15s;
+        ">
+          <span style="font-size:0.88rem;flex-shrink:0;line-height:1;">${BFLAGS[s.team]||'🏳'}</span>
+          <span style="
+            flex:1;font-size:0.7rem;font-weight:${s.win?800:500};
+            color:${s.win?'#F5E6A0':'rgba(255,255,255,0.45)'};
+            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+            font-family:'Outfit',sans-serif;
+            ${s.win?'text-shadow:0 0 12px rgba(245,196,0,0.25);':''}
+          ">${s.team}</span>
+          <span style="
+            font-size:0.75rem;font-weight:900;
+            font-family:'Bebas Neue','Outfit',sans-serif;
+            color:${s.win?'#F5C400':'rgba(255,255,255,0.25)'};
+            flex-shrink:0;min-width:28px;text-align:right;
+          ">${s.pct}%</span>
         </div>`).join('')}
     </div>`;
   }
 
   function connectorCSS(isLeft) {
-    // Draws bracket ┤ (left side) or ├ (right side) lines using CSS
-    // 4 R16 matches → 2 QF → 1 SF: pairs at slot heights 120px each (total 480px)
     const side = isLeft ? 'right' : 'left';
     const borderSide = isLeft ? 'border-right' : 'border-left';
-    const c = 'rgba(212,175,55,0.3)';
+    const c = isLeft ? 'rgba(45,212,191,0.45)' : 'rgba(192,132,252,0.45)';
     // r16→qf: 2 pairs (each pair spans 240px: slots at 0,120 → connect at midpoint 60-180)
     return `
       <div style="position:absolute;${side}:0;top:60px;height:120px;width:18px;border-top:1px solid ${c};${borderSide}:1px solid ${c};border-bottom:1px solid ${c};"></div>
@@ -1079,10 +1115,9 @@
   }
 
   function connectorQFCSS(isLeft) {
-    // qf→sf: 1 pair spanning 480px (qf at 120 and 360, midpoint 240)
     const side = isLeft ? 'right' : 'left';
     const borderSide = isLeft ? 'border-right' : 'border-left';
-    const c = 'rgba(212,175,55,0.3)';
+    const c = isLeft ? 'rgba(45,212,191,0.45)' : 'rgba(192,132,252,0.45)';
     return `<div style="position:absolute;${side}:0;top:120px;height:240px;width:18px;border-top:1px solid ${c};${borderSide}:1px solid ${c};border-bottom:1px solid ${c};"></div>`;
   }
 
@@ -1114,20 +1149,25 @@
     const fin = b.final;
     const champ = fin.winner;
     document.getElementById('b-center').innerHTML = `
-      <div style="font-family:var(--font-display);font-size:0.58rem;font-weight:800;color:var(--secondary);text-transform:uppercase;letter-spacing:0.1em;text-align:center">🏆 Gran Final</div>
-      <div style="display:flex;flex-direction:column;gap:2px;width:150px;">
+      <div style="font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:900;color:#F5C400;text-transform:uppercase;letter-spacing:0.14em;text-align:center;padding:0 4px;">🏆 Gran Final</div>
+      <div style="display:flex;flex-direction:column;gap:3px;width:160px;">
         ${[{team:fin.t1, pct:fin.pw1, win:fin.winner===fin.t1},{team:fin.t2, pct:fin.pw2, win:fin.winner===fin.t2}].map(s=>`
-          <div style="display:flex;align-items:center;gap:5px;padding:5px 8px;border-radius:7px;border:1px solid ${s.win?'rgba(251,191,36,0.5)':'rgba(255,255,255,0.07)'};background:${s.win?'rgba(251,191,36,0.1)':'rgba(15,22,42,0.9)'};opacity:${s.win?1:0.45}">
-            <span style="font-size:0.85rem">${BFLAGS[s.team]||'🏳'}</span>
-            <span style="flex:1;font-size:0.7rem;font-weight:700;color:${s.win?'#fbbf24':'var(--text-secondary)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${s.team}</span>
-            <span style="font-size:0.6rem;font-weight:800;color:${s.win?'#fbbf24':'var(--text-muted)'}">${s.pct}%</span>
+          <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;
+            border:1px solid ${s.win?'rgba(245,196,0,0.6)':'rgba(255,255,255,0.08)'};
+            background:${s.win?'linear-gradient(90deg,rgba(245,196,0,0.2),rgba(245,196,0,0.06))':'rgba(255,255,255,0.04)'};
+            opacity:${s.win?1:0.42};min-height:30px;">
+            <span style="font-size:0.9rem">${BFLAGS[s.team]||'🏳'}</span>
+            <span style="flex:1;font-size:0.72rem;font-weight:${s.win?800:500};color:${s.win?'#F5E6A0':'rgba(255,255,255,0.4)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Outfit',sans-serif;">${s.team}</span>
+            <span style="font-size:0.78rem;font-weight:900;font-family:'Bebas Neue','Outfit',sans-serif;color:${s.win?'#F5C400':'rgba(255,255,255,0.2)'};">${s.pct}%</span>
           </div>`).join('')}
       </div>
-      <div style="background:linear-gradient(135deg,rgba(212,175,55,0.15),rgba(10,10,10,0.95));border:2px solid #D4AF37;border-radius:12px;padding:0.75rem;text-align:center;width:150px;box-shadow:0 0 32px rgba(212,175,55,0.25),inset 0 1px 0 rgba(255,255,255,0.06)">
-        <div style="font-size:1.6rem">🏆</div>
-        <div style="font-size:1rem">${BFLAGS[champ]||'🏳'}</div>
-        <div style="font-family:var(--font-display);font-size:0.75rem;font-weight:900;color:var(--secondary);margin-top:2px">${champ}</div>
-        <div style="font-size:0.58rem;color:var(--text-muted);margin-top:2px">Campeón proyectado</div>
+      <div style="background:linear-gradient(135deg,rgba(212,175,55,0.2) 0%,rgba(17,26,44,0.98) 100%);
+        border:2px solid #D4AF37;border-radius:14px;padding:14px 12px;text-align:center;width:160px;
+        box-shadow:0 0 40px rgba(212,175,55,0.35),0 8px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);">
+        <div style="font-size:2rem;line-height:1;filter:drop-shadow(0 0 14px rgba(245,196,0,0.7));">🏆</div>
+        <div style="font-size:1.4rem;line-height:1;margin:4px 0 2px;">${BFLAGS[champ]||'🏳'}</div>
+        <div style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:0.95rem;font-weight:900;color:#F5C400;letter-spacing:0.06em;line-height:1.2;">${champ}</div>
+        <div style="font-size:0.54rem;color:rgba(255,255,255,0.4);margin-top:4px;font-family:'Outfit',sans-serif;text-transform:uppercase;letter-spacing:0.1em;">Campeón proyectado</div>
       </div>`;
 
     // ── RIGHT SF ──
@@ -1151,10 +1191,10 @@
         `<div style="height:120px;display:flex;align-items:center;">${matchCard(m,true)}</div>`
       ).join('');
 
-    // SF→Final horizontal connectors
-    const lc = 'rgba(251,191,36,0.35)';
-    document.getElementById('b-left-c3').innerHTML  = `<div style="position:absolute;right:0;top:50%;width:24px;height:1px;background:${lc}"></div>`;
-    document.getElementById('b-right-c3').innerHTML = `<div style="position:absolute;left:0;top:50%;width:24px;height:1px;background:${lc}"></div>`;
+    // SF→Final horizontal connectors (gold, thicker, glowing)
+    const lc = 'rgba(212,175,55,0.7)';
+    document.getElementById('b-left-c3').innerHTML  = `<div style="position:absolute;right:0;top:50%;width:24px;height:2px;background:${lc};box-shadow:0 0 6px rgba(212,175,55,0.5);border-radius:1px;"></div>`;
+    document.getElementById('b-right-c3').innerHTML = `<div style="position:absolute;left:0;top:50%;width:24px;height:2px;background:${lc};box-shadow:0 0 6px rgba(212,175,55,0.5);border-radius:1px;"></div>`;
 
     // 3rd place match (losers of semis)
     const third = document.getElementById('b-third');
