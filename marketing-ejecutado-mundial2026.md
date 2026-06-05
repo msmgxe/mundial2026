@@ -30,9 +30,29 @@ Para grabar, entra a la app en tu celular y haz **screen recording** de estas pa
 | C | **Comparativa de 5 modelos** ⭐ | `/pronosticos` → "Comparativa de modelos" | Reel 3 | Manual·FIFA·Elo·Dixon-Coles·Combinado, % por modelo — EL diferenciador |
 | D | **Fixture dual: Real vs Proyección** | `/bracket` (Fixture) | Reel 2 | Toggle "Real en vivo" / "Proyección" · cuadro completo · campeón proyectado |
 | E | **Ficha de jugador** | `/` → Zona del Fanático → Jugadores 2026 → toca un jugador | Reel 2, 3 | Foto, dorsal, edad, club, bio — profundidad de datos |
-| F | **Modo claro/oscuro** | botón 🌙/☀️ arriba | Story | "Modo día y noche" — detalle premium |
+| F | **Cambio día ↔ noche** | botón 🌙/☀️ arriba | Story / Reel corto | Graba el "antes/después" sobre el Fixture — muy llamativo (ver sección Variantes) |
 
 **Tip de grabación:** activa "No molestar" en el celular, graba en vertical, y usa el countdown real como gancho de urgencia (se actualiza solo en pantalla).
+
+---
+
+## 🌗 VARIANTES MODO CLARO vs OSCURO — cuál usar en cada caso
+
+La app tiene **modo día (claro) y noche (oscuro)** con el botón 🌙/☀️. Graba tus reels en el modo que mejor luzca según el contenido. Regla práctica:
+
+| Pantalla | Modo recomendado | Por qué |
+|----------|------------------|---------|
+| **Hero + Countdown** (A) | **Cualquiera** — ambos lucen bien | En claro el countdown resalta en su caja oscura; en oscuro es más "cinemático" |
+| **Partidos + probabilidad** (B) | **Claro** ☀️ | Las barras verde/azul y los textos se leen mejor sobre fondo claro |
+| **5 modelos** (C) | **Claro** ☀️ (recomendado) | Las 5 barras de colores destacan más sobre crema; menos "ruido" visual |
+| **Fixture / cuadro** (D) | **Oscuro** 🌙 (más impactante) | El navy + dorado + glow del campeón se ve premium tipo "scoreboard" |
+| **Ficha de jugador** (E) | **Cualquiera** | El sub-modal mantiene su estilo en ambos |
+
+**Por qué importa:** algunas capturas (sobre todo tablas y barras de probabilidad) se leen mejor en **modo claro**, mientras que el **Fixture** impacta más en **oscuro**. No estás obligado a un solo modo: **mezcla** según la pantalla. Graba 2 segundos de cada modo y quédate con el que se vea mejor en tu feed.
+
+**Cómo cambiar de modo:** toca el botón **🌙 Noche / ☀️ Día** en la barra superior. El cambio es instantáneo y se mantiene al navegar entre páginas.
+
+> 💡 Idea de Story/Reel corto: graba el botón cambiando de **día a noche** sobre el Fixture — el "antes/después" es muy llamativo y comunica que la app es pulida.
 
 ---
 
