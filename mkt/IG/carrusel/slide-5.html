@@ -5,53 +5,53 @@
   body {
     font-family: -apple-system, 'Helvetica Neue', 'Arial Black', sans-serif;
     background: radial-gradient(ellipse 90% 60% at 50% 0%, #14223f 0%, #0b1424 45%, #070d18 100%);
-    color: #fff; position:relative;
+    color:#fff; position:relative;
   }
-  /* franja superior tricolor (teal-dorado-morado) */
   .topbar { position:absolute; top:0; left:0; right:0; height:14px;
-    background: linear-gradient(90deg,#2DD4BF 0%, #F5C400 50%, #A78BFA 100%); }
-  /* estrellas decorativas */
-  .stars { position:absolute; bottom:120px; left:0; right:0; text-align:center;
+    background:linear-gradient(90deg,#2DD4BF 0%,#F5C400 50%,#A78BFA 100%); }
+  .stars { position:absolute; bottom:118px; left:0; right:0; text-align:center;
     color:rgba(212,175,55,.35); font-size:26px; letter-spacing:24px; }
-  .wrap { position:absolute; inset:0; padding:96px 84px 110px;
+  .wrap { position:absolute; inset:0; padding:96px 84px 120px;
     display:flex; flex-direction:column; }
-  .eyebrow { display:inline-block; align-self:flex-start;
-    font-size:26px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
-    color:#F5C400; background:rgba(212,175,55,.12);
-    border:1px solid rgba(212,175,55,.4); padding:10px 22px; border-radius:99px; }
+  .eyebrow { display:inline-block; align-self:flex-start; font-size:26px;
+    font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:#F5C400;
+    background:rgba(212,175,55,.12); border:1px solid rgba(212,175,55,.4);
+    padding:10px 22px; border-radius:99px; }
   .big { font-weight:900; line-height:.98; letter-spacing:-.01em; text-transform:uppercase; }
-  .gold { color:#F5C400; }
-  .teal { color:#2DD4BF; }
-  .purple { color:#A78BFA; }
-  .muted { color:rgba(255,255,255,.62); font-weight:600; }
-  .footer { position:absolute; left:84px; right:84px; bottom:60px;
+  .t-hero { font-size:120px; } .t-xl { font-size:150px; }
+  .t-lg { font-size:104px; } .t-md { font-size:72px; }
+  .t-price { font-size:240px; }
+  .gold { color:#F5C400; } .teal { color:#2DD4BF; } .purple { color:#A78BFA; }
+  .muted { color:rgba(255,255,255,.62); font-weight:600; font-size:40px; line-height:1.35; }
+  .center-block { margin-top:auto; margin-bottom:auto; }
+  .footer { position:absolute; left:84px; right:84px; bottom:54px;
     display:flex; align-items:center; justify-content:space-between;
     font-size:30px; font-weight:800; }
-  .footer .brand { color:#fff; }
   .footer .handle { color:#F5C400; }
-  .pageno { position:absolute; top:64px; right:84px;
-    font-size:30px; font-weight:900; color:rgba(255,255,255,.35); }
-  .pill { display:inline-flex; align-items:center; gap:18px;
-    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
-    border-radius:22px; padding:26px 34px; font-size:40px; font-weight:800; }
+  .pageno { position:absolute; top:60px; right:84px; font-size:30px;
+    font-weight:900; color:rgba(255,255,255,.35); }
+  .pill { display:inline-flex; align-items:center; gap:18px; background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.12); border-radius:22px; padding:24px 32px;
+    font-size:45px; font-weight:800; }
   .pill .dot { width:22px; height:22px; border-radius:50%; flex-shrink:0; }
-  .bar { height:30px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .bar { height:28px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
   .bar > i { display:block; height:100%; border-radius:99px; }
-</style></head><body>
-<div class="topbar"></div>
-<div class="pageno">05</div>
+  .mrow { margin-bottom:26px; }
+  .mrow .top { display:flex; justify-content:space-between; align-items:center;
+    font-size:38px; font-weight:800; margin-bottom:12px; }
+  .mrow .nm { display:flex; align-items:center; gap:18px; }
+</style></head><body class="fmt-vertical">
+<div class="topbar"></div><div class="pageno">05</div>
 <div class="wrap" style="text-align:center;align-items:center;">
   <span class="eyebrow" style="align-self:center;">🔥 Acceso de lanzamiento</span>
-  <div style="margin-top:auto;margin-bottom:auto;">
-    <p class="muted" style="font-size:44px;">Toda la temporada</p>
-    <div class="big gold" style="font-size:240px;line-height:.9;margin:10px 0;">S/19<span style="font-size:120px;">.90</span></div>
-    <p class="muted" style="font-size:40px;">pago único · por Yape</p>
-    <div style="margin-top:70px;border-top:1px solid rgba(255,255,255,.12);padding-top:60px;">
-      <div class="big" style="font-size:64px;">ESCRÍBEME 👉</div>
-      <div class="big gold" style="font-size:72px;margin-top:14px;">@msmgxe</div>
-      <p class="muted" style="font-size:38px;margin-top:24px;">link en mi bio · mundialpe.vercel.app</p>
+  <div class="center-block">
+    <p class="muted">Toda la temporada</p>
+    <div class="big gold t-price" style="line-height:.9;margin:10px 0;">S/19<span style="font-size:.5em;">.90</span></div>
+    <p class="muted">pago único · por Yape</p>
+    <div style="margin-top:60px;border-top:1px solid rgba(255,255,255,.12);padding-top:54px;">
+      <div class="big t-md">ESCRÍBEME 👉</div>
+      <div class="big gold t-md" style="margin-top:12px;">@msmgxe</div>
+      <p class="muted" style="margin-top:20px;">link en mi bio · mundialpe.vercel.app</p>
     </div>
   </div>
-</div>
-<div class="stars">★ ★ ★ ★ ★</div>
-</body></html>
+</div><div class="stars">★ ★ ★ ★ ★</div></body></html>
