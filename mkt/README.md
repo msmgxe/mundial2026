@@ -24,12 +24,24 @@ mkt/
 │   ├── reel-3-modelos.md       Reel largo 3 ⭐ (dom 8)
 │   ├── reels-cortos-15s.md     3 versiones de 15s para Stories/Reels rápidos
 │   ├── stories.md              Guion de Stories (countdown, antes/después)
-│   └── post-apertura.md        Post del 11 jun
+│   ├── post-apertura.md        Post del 11 jun
+│   ├── hashtags.md             Hashtags optimizados por publicación
+│   ├── pineados.md             Comentarios para fijar (primer comentario)
+│   └── carrusel/               🖼️ 5 imágenes PNG listas (alternativa a videos)
+│       ├── slide-1..5.png
+│       └── README.md
 └── WA/   (WhatsApp)
     ├── link-whatsapp.md        Tu link click-to-chat
     ├── mensaje-1-lanzamiento.md
     └── mensaje-2-urgencia.md
 ```
+
+## 🖼️ Carrusel estático listo
+Si un día no quieres grabar video, publica el carrusel de `IG/carrusel/` (5 imágenes 1080×1350 con tu marca). Comunica todo el producto sin necesidad de grabar.
+
+## #️⃣ Hashtags y pineados
+- `IG/hashtags.md` — sets de hashtags por publicación (rótalos, no repitas)
+- `IG/pineados.md` — el comentario que fijas en cada post (CTA + link + hashtags)
 
 ---
 

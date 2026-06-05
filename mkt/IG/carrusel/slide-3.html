@@ -1,0 +1,74 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:1080px; height:1350px; overflow:hidden; }
+  body {
+    font-family: -apple-system, 'Helvetica Neue', 'Arial Black', sans-serif;
+    background: radial-gradient(ellipse 90% 60% at 50% 0%, #14223f 0%, #0b1424 45%, #070d18 100%);
+    color: #fff; position:relative;
+  }
+  /* franja superior tricolor (teal-dorado-morado) */
+  .topbar { position:absolute; top:0; left:0; right:0; height:14px;
+    background: linear-gradient(90deg,#2DD4BF 0%, #F5C400 50%, #A78BFA 100%); }
+  /* estrellas decorativas */
+  .stars { position:absolute; bottom:120px; left:0; right:0; text-align:center;
+    color:rgba(212,175,55,.35); font-size:26px; letter-spacing:24px; }
+  .wrap { position:absolute; inset:0; padding:96px 84px 110px;
+    display:flex; flex-direction:column; }
+  .eyebrow { display:inline-block; align-self:flex-start;
+    font-size:26px; font-weight:800; letter-spacing:.16em; text-transform:uppercase;
+    color:#F5C400; background:rgba(212,175,55,.12);
+    border:1px solid rgba(212,175,55,.4); padding:10px 22px; border-radius:99px; }
+  .big { font-weight:900; line-height:.98; letter-spacing:-.01em; text-transform:uppercase; }
+  .gold { color:#F5C400; }
+  .teal { color:#2DD4BF; }
+  .purple { color:#A78BFA; }
+  .muted { color:rgba(255,255,255,.62); font-weight:600; }
+  .footer { position:absolute; left:84px; right:84px; bottom:60px;
+    display:flex; align-items:center; justify-content:space-between;
+    font-size:30px; font-weight:800; }
+  .footer .brand { color:#fff; }
+  .footer .handle { color:#F5C400; }
+  .pageno { position:absolute; top:64px; right:84px;
+    font-size:30px; font-weight:900; color:rgba(255,255,255,.35); }
+  .pill { display:inline-flex; align-items:center; gap:18px;
+    background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
+    border-radius:22px; padding:26px 34px; font-size:40px; font-weight:800; }
+  .pill .dot { width:22px; height:22px; border-radius:50%; flex-shrink:0; }
+  .bar { height:30px; border-radius:99px; background:rgba(255,255,255,.08); overflow:hidden; }
+  .bar > i { display:block; height:100%; border-radius:99px; }
+</style></head><body>
+<div class="topbar"></div>
+<div class="pageno">03</div>
+<div class="wrap">
+  <span class="eyebrow">📊 Lo que nadie más tiene</span>
+  <div class="big" style="font-size:104px; margin-top:40px;">NO UN MODELO.<br><span class="gold">CINCO.</span></div>
+  <p class="muted" style="font-size:36px; margin:28px 0 40px;">Probabilidad por partido. No es opinión, son datos.</p>
+  <div><div style="margin-bottom:30px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:38px;font-weight:800;margin-bottom:12px;">
+        <span style="display:flex;align-items:center;gap:18px;"><span class="dot" style="background:#3B82F6;"></span>FIFA Ranking</span>
+        <span style="color:#3B82F6;">45%</span>
+      </div>
+      <div class="bar"><i style="width:45%;background:#3B82F6;"></i></div>
+    </div><div style="margin-bottom:30px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:38px;font-weight:800;margin-bottom:12px;">
+        <span style="display:flex;align-items:center;gap:18px;"><span class="dot" style="background:#A78BFA;"></span>Elo Fútbol</span>
+        <span style="color:#A78BFA;">44%</span>
+      </div>
+      <div class="bar"><i style="width:44%;background:#A78BFA;"></i></div>
+    </div><div style="margin-bottom:30px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:38px;font-weight:800;margin-bottom:12px;">
+        <span style="display:flex;align-items:center;gap:18px;"><span class="dot" style="background:#2DD4BF;"></span>Dixon-Coles</span>
+        <span style="color:#2DD4BF;">38%</span>
+      </div>
+      <div class="bar"><i style="width:38%;background:#2DD4BF;"></i></div>
+    </div><div style="margin-bottom:30px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;font-size:38px;font-weight:800;margin-bottom:12px;">
+        <span style="display:flex;align-items:center;gap:18px;"><span class="dot" style="background:#F5C400;"></span>Combinado</span>
+        <span style="color:#F5C400;">42%</span>
+      </div>
+      <div class="bar"><i style="width:42%;background:#F5C400;"></i></div>
+    </div></div>
+</div>
+<div class="footer"><span class="brand">mundialpe.vercel.app</span><span class="handle">@msmgxe</span></div>
+</body></html>
