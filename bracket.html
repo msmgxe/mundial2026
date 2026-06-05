@@ -380,12 +380,17 @@
     /* ── BRACKET TREE MATCHES ──────────────────── */
     .btree-match {
       background: #111A2C !important;
-      border-color: rgba(255,255,255,0.07) !important;
+      border-color: rgba(255,255,255,0.08) !important;
       box-shadow: none !important;
+      border-left: 3px solid #2DD4BF !important;
+    }
+    [data-side="right"] .btree-match {
+      border-left: 1px solid rgba(255,255,255,0.08) !important;
+      border-right: 3px solid #C084FC !important;
     }
     .btree-match:hover {
-      border-color: rgba(212,175,55,0.35) !important;
-      box-shadow: 0 4px 14px rgba(212,175,55,0.1) !important;
+      border-color: rgba(212,175,55,0.45) !important;
+      box-shadow: 0 4px 14px rgba(212,175,55,0.12) !important;
     }
 
     /* ── DISCLAIMER ─────────────────────────────── */
@@ -540,56 +545,106 @@
   <div id="bk-content" style="display:none;">
 
     <!-- ══════════ VISUAL BRACKET TREE ══════════ -->
-    <div style="background:linear-gradient(180deg,rgba(212,175,55,0.06) 0%,#090D18 100%);border-bottom:1px solid rgba(212,175,55,0.15);padding:1.5rem 0.5rem 1rem;">
-      <div style="text-align:center;margin-bottom:1rem;">
-        <span style="font-family:var(--font-display);font-size:0.68rem;font-weight:800;color:var(--secondary);text-transform:uppercase;letter-spacing:0.1em;">Cuadro de eliminación directa · Octavos en adelante</span>
-        <div style="font-family:var(--font-display);font-size:1rem;font-weight:900;color:var(--text-primary);margin-top:2px;">Bracket más probable · simulación determinista</div>
-      </div>
+    <div style="background:linear-gradient(180deg,#0D1124 0%,#090D18 100%);border-bottom:1px solid rgba(212,175,55,0.2);">
 
-      <!-- Bracket tree (scrollable) -->
-      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
-        <div id="bracket-tree" style="display:flex;align-items:center;justify-content:center;gap:0;min-width:max-content;padding:0.5rem 1rem 1rem;position:relative;">
-
-          <!-- LEFT HALF: R16 → QF → SF (flows left→right toward center) -->
-          <div id="b-left-r16"  class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:480px;"></div>
-          <div id="b-left-c1"   class="btree-conn" style="width:18px;height:480px;position:relative;flex-shrink:0;"></div>
-          <div id="b-left-qf"   class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:480px;"></div>
-          <div id="b-left-c2"   class="btree-conn" style="width:18px;height:480px;position:relative;flex-shrink:0;"></div>
-          <div id="b-left-sf"   class="btree-col" style="display:flex;flex-direction:column;justify-content:center;height:480px;"></div>
-          <div id="b-left-c3"   style="width:24px;height:480px;position:relative;flex-shrink:0;"></div>
-
-          <!-- CENTER: Final + Champion -->
-          <div id="b-center" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:480px;gap:0.75rem;flex-shrink:0;width:160px;"></div>
-
-          <!-- RIGHT HALF: SF → QF → R16 (mirrored) -->
-          <div id="b-right-c3"  style="width:24px;height:480px;position:relative;flex-shrink:0;"></div>
-          <div id="b-right-sf"  class="btree-col" style="display:flex;flex-direction:column;justify-content:center;height:480px;"></div>
-          <div id="b-right-c2"  class="btree-conn" style="width:18px;height:480px;position:relative;flex-shrink:0;"></div>
-          <div id="b-right-qf"  class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:480px;"></div>
-          <div id="b-right-c1"  class="btree-conn" style="width:18px;height:480px;position:relative;flex-shrink:0;"></div>
-          <div id="b-right-r16" class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:480px;"></div>
+      <!-- SEDES BANNER -->
+      <div style="overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,0.06);padding:10px 16px 10px;">
+        <div style="display:flex;gap:8px;min-width:max-content;align-items:center;justify-content:center;">
+          <div style="font-family:'Outfit',sans-serif;font-size:0.55rem;font-weight:900;text-transform:uppercase;letter-spacing:0.15em;color:rgba(212,175,55,0.7);margin-right:4px;white-space:nowrap;border:1px solid rgba(212,175,55,0.3);padding:3px 10px;border-radius:4px;">SEDES</div>
+          <!-- 14 venues -->
+          ${['CDMX·Azteca','Guadalajara·Akron','Monterrey·BBVA','Toronto·BMO','Vancouver·BC Place','Los Ángeles·SoFi','Seattle·Lumen','Arlington·AT&T','Atlanta·M.Benz','Miami·Hard Rock','Nashville·Geodis','Boston·Gillette','N. Jersey·MetLife','Filadelfia·Lincoln'].map(v=>{const[city,st]=v.split('·');return `<div style="text-align:center;flex-shrink:0;"><div style="font-size:0.52rem;font-weight:900;color:#fff;font-family:'Outfit',sans-serif;">${city}</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);margin-top:1px;">${st}</div></div>`;}).join('<div style="width:1px;height:28px;background:rgba(255,255,255,0.08);flex-shrink:0;align-self:center;"></div>')}
         </div>
       </div>
 
-      <!-- Round labels below bracket -->
-      <div style="display:flex;justify-content:center;gap:0;margin-top:0.5rem;overflow-x:auto;">
-        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;padding:0 18px;">Octavos</div>
-        <div style="width:18px"></div>
-        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;padding:0 18px;">Cuartos</div>
-        <div style="width:18px"></div>
-        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;">Semifinal</div>
-        <div style="width:24px"></div>
-        <div style="width:160px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--secondary);text-transform:uppercase;letter-spacing:0.07em;">Final · Campeón</div>
-        <div style="width:24px"></div>
-        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;">Semifinal</div>
-        <div style="width:18px"></div>
-        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;">Cuartos</div>
-        <div style="width:18px"></div>
-        <div style="min-width:162px;text-align:center;font-size:0.6rem;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:0.07em;">Octavos</div>
+      <!-- FASE FINAL TITLE -->
+      <div style="text-align:center;padding:18px 16px 8px;">
+        <div style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;letter-spacing:0.12em;color:#fff;line-height:1;text-shadow:0 2px 24px rgba(212,175,55,0.25);">FASE FINAL</div>
+        <div style="font-size:0.62rem;color:rgba(255,255,255,0.4);font-family:'Outfit',sans-serif;margin-top:4px;letter-spacing:0.08em;">Proyección probabilística · Simulación determinista basada en ratings</div>
       </div>
 
-      <div style="text-align:center;margin-top:0.75rem;font-size:0.62rem;color:var(--text-muted);">
-        ⚠ Pronóstico determinista basado en ratings · No garantiza resultados reales
+      <!-- BRACKET MAIN -->
+      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 8px 8px;">
+        <div style="min-width:max-content;">
+
+          <!-- Round headers -->
+          <div style="display:flex;align-items:flex-end;gap:0;padding:0 0 6px;justify-content:center;">
+            <div style="width:170px;text-align:center;">
+              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#2DD4BF;text-transform:uppercase;letter-spacing:0.1em;">Dieciséisavos</div>
+              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">30 Jun – 3 Jul</div>
+            </div>
+            <div style="width:18px"></div>
+            <div style="width:170px;text-align:center;">
+              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#2DD4BF;text-transform:uppercase;letter-spacing:0.1em;">Octavos</div>
+              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">5 – 6 Jul</div>
+            </div>
+            <div style="width:18px"></div>
+            <div style="width:170px;text-align:center;">
+              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#2DD4BF;text-transform:uppercase;letter-spacing:0.1em;">Cuartos</div>
+              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">9 – 10 Jul</div>
+            </div>
+            <div style="width:18px"></div>
+            <div style="width:140px;text-align:center;">
+              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#D4AF37;text-transform:uppercase;letter-spacing:0.1em;">Semifinal</div>
+              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">14 – 15 Jul</div>
+            </div>
+            <div style="width:24px"></div>
+            <div style="width:170px;text-align:center;">
+              <div style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:0.8rem;font-weight:900;color:#F5C400;text-transform:uppercase;letter-spacing:0.12em;">Final</div>
+              <div style="font-size:0.5rem;color:rgba(245,196,0,0.6);margin-top:1px;">19 Jul · MetLife Stadium</div>
+            </div>
+            <div style="width:24px"></div>
+            <div style="width:140px;text-align:center;">
+              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#C084FC;text-transform:uppercase;letter-spacing:0.1em;">Semifinal</div>
+              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">14 – 15 Jul</div>
+            </div>
+            <div style="width:18px"></div>
+            <div style="width:170px;text-align:center;">
+              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#C084FC;text-transform:uppercase;letter-spacing:0.1em;">Cuartos</div>
+              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">9 – 10 Jul</div>
+            </div>
+            <div style="width:18px"></div>
+            <div style="width:170px;text-align:center;">
+              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#C084FC;text-transform:uppercase;letter-spacing:0.1em;">Octavos</div>
+              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">5 – 6 Jul</div>
+            </div>
+            <div style="width:18px"></div>
+            <div style="width:170px;text-align:center;">
+              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#C084FC;text-transform:uppercase;letter-spacing:0.1em;">Dieciséisavos</div>
+              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">30 Jun – 3 Jul</div>
+            </div>
+          </div>
+
+          <!-- Bracket columns -->
+          <div id="bracket-tree" style="display:flex;align-items:center;justify-content:center;gap:0;min-width:max-content;padding:0 0 8px;position:relative;">
+            <!-- LEFT HALF -->
+            <div id="b-left-r16"  class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:520px;" data-side="left"></div>
+            <div id="b-left-c1"   class="btree-conn" style="width:18px;height:520px;position:relative;flex-shrink:0;"></div>
+            <div id="b-left-qf"   class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:520px;" data-side="left"></div>
+            <div id="b-left-c2"   class="btree-conn" style="width:18px;height:520px;position:relative;flex-shrink:0;"></div>
+            <div id="b-left-sf"   class="btree-col" style="display:flex;flex-direction:column;justify-content:center;height:520px;" data-side="left"></div>
+            <div id="b-left-c3"   style="width:24px;height:520px;position:relative;flex-shrink:0;"></div>
+            <!-- CENTER -->
+            <div id="b-center" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:520px;gap:8px;flex-shrink:0;width:170px;"></div>
+            <!-- RIGHT HALF -->
+            <div id="b-right-c3"  style="width:24px;height:520px;position:relative;flex-shrink:0;"></div>
+            <div id="b-right-sf"  class="btree-col" style="display:flex;flex-direction:column;justify-content:center;height:520px;" data-side="right"></div>
+            <div id="b-right-c2"  class="btree-conn" style="width:18px;height:520px;position:relative;flex-shrink:0;"></div>
+            <div id="b-right-qf"  class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:520px;" data-side="right"></div>
+            <div id="b-right-c1"  class="btree-conn" style="width:18px;height:520px;position:relative;flex-shrink:0;"></div>
+            <div id="b-right-r16" class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:520px;" data-side="right"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3er PUESTO -->
+      <div style="text-align:center;padding:8px 16px 16px;">
+        <div id="b-third" style="display:inline-flex;align-items:center;gap:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 24px;">
+          <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;">🥉 3er Puesto<br><span style="font-size:0.5rem;font-weight:400;color:rgba(255,255,255,0.3);">18 Jul · Hard Rock Stadium · Miami</span></div>
+        </div>
+      </div>
+
+      <div style="text-align:center;padding-bottom:12px;font-size:0.58rem;color:rgba(255,255,255,0.3);font-family:'Outfit',sans-serif;">
+        ⚠ Proyección determinista basada en ratings · No garantiza resultados reales
       </div>
     </div>
     <!-- ══════════ END BRACKET TREE ══════════ -->
@@ -629,7 +684,7 @@
     <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">
       Proyecciones para análisis y entretenimiento. No garantizan resultados reales.
     </p>
-    <p style="margin-top:1rem;">Diseñado con ❤️ por <a href="https://github.com/google-deepmind" target="_blank" rel="noopener">Antigravity AI</a></p>
+    <p style="margin-top:1rem;">Diseñado por <strong style="color:var(--gold-dark,#D4AF37)">Marco Saldarriaga</strong> · Vibe Coding</p>
   </footer>
 
   <!-- Load ratings + probability engine from shared module -->
@@ -1100,6 +1155,27 @@
     const lc = 'rgba(251,191,36,0.35)';
     document.getElementById('b-left-c3').innerHTML  = `<div style="position:absolute;right:0;top:50%;width:24px;height:1px;background:${lc}"></div>`;
     document.getElementById('b-right-c3').innerHTML = `<div style="position:absolute;left:0;top:50%;width:24px;height:1px;background:${lc}"></div>`;
+
+    // 3rd place match (losers of semis)
+    const third = document.getElementById('b-third');
+    if (third) {
+      const t3a = b.lsf.loser, t3b = b.rsf.loser;
+      third.innerHTML = `
+        <div style="font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:900;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;flex-shrink:0;">
+          🥉 3er Puesto<br><span style="font-size:0.48rem;font-weight:400;color:rgba(255,255,255,0.3);">18 Jul · Hard Rock Stadium · Miami</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
+            <span style="font-size:0.9rem">${BFLAGS[t3a]||'🏳'}</span>
+            <span style="font-size:0.72rem;font-weight:700;color:#bbb;font-family:'Outfit',sans-serif">${t3a}</span>
+          </div>
+          <span style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:1rem;color:rgba(255,255,255,0.3)">VS</span>
+          <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
+            <span style="font-size:0.9rem">${BFLAGS[t3b]||'🏳'}</span>
+            <span style="font-size:0.72rem;font-weight:700;color:#bbb;font-family:'Outfit',sans-serif">${t3b}</span>
+          </div>
+        </div>`;
+    }
   }
 
   // ================================================================

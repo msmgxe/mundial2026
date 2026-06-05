@@ -3,6 +3,14 @@
    Copa Mundial FIFA 2026™
    ============================================================ */
 
+// Backward-compat alias used by bracket.html
+const MODEL_METADATA = {
+  name: "Modelo v2.0 · 5 Modelos combinados",
+  updatedAt: "2026-06-04",
+  source: "Manual · FIFA Ranking · Elo · Dixon-Coles · Ensemble",
+  warning: "Probabilidades estimadas; no garantizan resultados reales."
+};
+
 // ── MODEL REGISTRY ────────────────────────────────────────────────
 const PREDICTION_MODELS = [
   {
