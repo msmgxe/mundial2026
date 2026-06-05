@@ -189,9 +189,9 @@ function injectUserBar(session) {
   bar.innerHTML = `
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;">
       <span style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:1rem;color:#E64A26;letter-spacing:0.06em;margin-right:4px;font-weight:900;">WC26</span>
-      ${navLink('/', '⚽ Fixture')}
+      ${navLink('/', '🏆 Torneo')}
       ${navLink('/pronosticos', '📊 Pronósticos')}
-      ${navLink('/bracket', '🌳 Bracket')}
+      ${navLink('/bracket', '⚽ Fixture')}
     </div>
     <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;font-family:'Inter',sans-serif;">
       <!-- Theme toggle -->

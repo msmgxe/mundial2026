@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fixture Interactivo Copa Mundial FIFA 2026™ | Antigravity Engine</title>
+  <title>Torneo · Copa Mundial FIFA 2026™</title>
   <meta name="description" content="Simula y predice el fixture completo de los 104 partidos del Mundial 2026 de forma lúdica y profesional. Tablas de posiciones, bracket de avance y sedes en hora de Lima, Perú.">
   
   <!-- CSS Stylesheet -->
@@ -27,10 +27,10 @@
       <div class="hero-text">
         <span class="brand-badge">⚽ Canadá &middot; México &middot; Estados Unidos &middot; 2026</span>
         <h1 class="hero-title">
-          Fixture Interactivo
+          Torneo Interactivo
           <span class="accent">Mundial 2026</span>
         </h1>
-        <p class="hero-subtitle">Sigue y predice los 104 partidos del torneo más grande de la historia. Tablas, bracket y resultados en vivo — en hora de Lima, Perú.</p>
+        <p class="hero-subtitle">Sigue y predice los 104 partidos del torneo más grande de la historia. Tablas, fixture y resultados en vivo — en hora de Lima, Perú.</p>
 
         <!-- Countdown -->
         <div class="countdown-box">
@@ -141,9 +141,9 @@
   <!-- ── PORTAL NAV PILLS ─────────────────────────────── -->
   <section style="background:var(--surface-2);border-bottom:1px solid var(--border);padding:0 var(--sp-xl);">
     <div style="max-width:1440px;margin:0 auto;display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;">
-      <a href="/" style="display:flex;align-items:center;gap:6px;padding:12px 18px;font-family:var(--font-display);font-size:0.78rem;font-weight:900;color:var(--red);border-bottom:3px solid var(--red);text-decoration:none;white-space:nowrap;letter-spacing:0.04em;">⚽ Fixture</a>
+      <a href="/" style="display:flex;align-items:center;gap:6px;padding:12px 18px;font-family:var(--font-display);font-size:0.78rem;font-weight:900;color:var(--red);border-bottom:3px solid var(--red);text-decoration:none;white-space:nowrap;letter-spacing:0.04em;">🏆 Torneo</a>
       <a href="pronosticos.html" style="display:flex;align-items:center;gap:6px;padding:12px 18px;font-family:var(--font-display);font-size:0.78rem;font-weight:700;color:var(--txt-2);border-bottom:3px solid transparent;text-decoration:none;white-space:nowrap;letter-spacing:0.04em;transition:color 0.15s;" onmouseover="this.style.color='var(--red)'" onmouseout="this.style.color='var(--txt-2)'">📊 Probabilidades</a>
-      <a href="bracket.html" style="display:flex;align-items:center;gap:6px;padding:12px 18px;font-family:var(--font-display);font-size:0.78rem;font-weight:700;color:var(--txt-2);border-bottom:3px solid transparent;text-decoration:none;white-space:nowrap;letter-spacing:0.04em;transition:color 0.15s;" onmouseover="this.style.color='var(--gold-dark)'" onmouseout="this.style.color='var(--txt-2)'">🌳 Bracket</a>
+      <a href="bracket.html" style="display:flex;align-items:center;gap:6px;padding:12px 18px;font-family:var(--font-display);font-size:0.78rem;font-weight:700;color:var(--txt-2);border-bottom:3px solid transparent;text-decoration:none;white-space:nowrap;letter-spacing:0.04em;transition:color 0.15s;" onmouseover="this.style.color='var(--gold-dark)'" onmouseout="this.style.color='var(--txt-2)'">⚽ Fixture</a>
       <div style="margin-left:auto;display:flex;align-items:center;gap:8px;padding:8px 0;flex-shrink:0;">
         <span style="font-size:0.65rem;color:var(--txt-3);font-family:var(--font-body);">48 selecciones · 104 partidos · 16 sedes</span>
       </div>
@@ -225,7 +225,7 @@
           🏆 Eliminatorias (Lista)
         </button>
         <button class="tab-btn" data-tab="llave-bracket">
-          🌳 Bracket Gráfico (Árbol)
+          ⚽ Fixture Gráfico (Árbol)
         </button>
       </div>
 
@@ -258,6 +258,9 @@
   </footer>
 
   <!-- JS Engine -->
+  <!-- Motor de probabilidades (5 modelos) — provee calculateMatchProbabilities, TEAM_RATINGS, PREDICTION_MODELS -->
+  <script src="pronosticos.js"></script>
+  <!-- Lógica principal del Torneo: fixture, tablas, predicciones -->
   <script src="index.js"></script>
 
   <!-- ====== WORLD CUP HISTORY MODAL ====== -->
@@ -287,6 +290,13 @@
       <div id="wc-modal-header" style="padding:1.2rem 1.2rem 0;flex-shrink:0;"></div>
       <div class="wct-tabs" id="wc-tabs"></div>
       <div style="overflow-y:auto;flex:1;" id="wc-modal-body"></div>
+    </div>
+  </div>
+
+  <!-- ══ SUB-MODAL: Ficha individual de jugador ══════════════════ -->
+  <div id="player-modal-overlay" style="display:none;position:fixed;inset:0;z-index:1100;background:rgba(0,0,0,0.9);backdrop-filter:blur(10px);align-items:center;justify-content:center;padding:1rem;">
+    <div id="player-modal" style="background:#080f20;border:1px solid rgba(251,191,36,0.25);border-radius:18px;width:100%;max-width:440px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 40px 80px rgba(0,0,0,0.9);">
+      <div style="overflow-y:auto;flex:1;" id="player-modal-body"></div>
     </div>
   </div>
 
@@ -1021,11 +1031,24 @@
   })();
 
   // ── Open modal ─────────────────────────────────────────────────
-  let _wcTab = 'summary';
+  let _wcTab = 'summary';            // pestaña activa del modal (summary | editions | players)
+  let _activeModalTeam = null;       // equipo actualmente mostrado en el modal
+  /* Abre el modal usando el equipo seleccionado en la Zona del Fanático. */
   function openWCModal() {
     const sel = document.getElementById('fan-zone-select');
     const team = sel ? sel.value : null;
     if (!team || team === 'Todos') return;
+    openTeamModal(team);
+  }
+
+  /**
+   * Abre el modal de estadísticas para un equipo dado. Es la función pública
+   * que invocan los nombres de país clickables en la lista de partidos.
+   * @param {string} team - Nombre de la selección
+   */
+  function openTeamModal(team) {
+    if (!team || team === 'Todos') return;
+    _activeModalTeam = team;          // recordamos el equipo abierto para las pestañas
 
     const d    = WC_HISTORY[team] || {ap:0,ti:0,best:'Debut en 2026',w:0,d:0,l:0,gf:0,ga:0};
     const flag = WC_FLAGS[team] || '🏳';
@@ -1071,8 +1094,9 @@
         || (tab==='players' && label.includes('Jugadores'));
       t.classList.toggle('active', isActive);
     });
-    const sel = document.getElementById('fan-zone-select');
-    const team = sel ? sel.value : null;
+    // Usa el equipo abierto en el modal (no el del select) para soportar
+    // la apertura desde los links de país en la lista de partidos.
+    const team = _activeModalTeam || document.getElementById('fan-zone-select')?.value;
     if (!team) return;
     const d    = WC_HISTORY[team] || {ap:0,ti:0,best:'Debut en 2026',w:0,d:0,l:0,gf:0,ga:0};
     const flag = WC_FLAGS[team] || '🏳';
@@ -1234,8 +1258,10 @@
         const safeId = (p.wiki||p.n).replace(/[^a-zA-Z0-9]/g,'_');
         return `
           <div id="pcard-${safeId}"
-            style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;align-items:center;transition:transform 0.15s,box-shadow 0.15s;cursor:default;"
-            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 16px rgba(0,0,0,0.1)'"
+            style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;align-items:center;transition:transform 0.15s,box-shadow 0.15s;cursor:pointer;"
+            onclick="openPlayerModal('${team.replace(/'/g, "\\'")}','${safeId}')"
+            title="Ver ficha de ${p.n}"
+            onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 16px rgba(0,0,0,0.15)'"
             onmouseout="this.style.transform='';this.style.boxShadow=''">
             <div style="width:100%;height:64px;background:linear-gradient(135deg,${col}18,${col}08);display:flex;align-items:center;justify-content:center;position:relative;">
               ${hasStar ? `<img id="img-${safeId}"
@@ -1304,7 +1330,145 @@
   function closeWCModal() {
     document.getElementById('wc-modal-overlay').style.display = 'none';
   }
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeWCModal(); });
+
+  /* ══ SUB-MODAL DE JUGADOR ═══════════════════════════════════════
+     Muestra la ficha individual: foto grande, datos del jugador y
+     biografía obtenida de Wikipedia. Se abre encima del modal de equipo.
+     ═══════════════════════════════════════════════════════════════ */
+
+  // Etiquetas y colores por posición (reutilizados del panel de plantilla)
+  const _POS_LABEL = { POR:'Portero', DEF:'Defensor', MED:'Mediocampista', DEL:'Delantero' };
+  const _POS_COLOR = { POR:'#22c55e', DEF:'#3b82f6', MED:'#f59e0b', DEL:'#E64A26' };
+  const _POS_ICON  = { POR:'🧤', DEF:'🛡', MED:'⚙️', DEL:'⚽' };
+
+  /**
+   * Intenta extraer la edad a partir del texto de Wikipedia, que suele
+   * contener "(born D Month YYYY)". Devuelve la edad en años o null.
+   * @param {string} extract - Texto biográfico de Wikipedia
+   * @returns {number|null}
+   */
+  function _parseAgeFromExtract(extract) {
+    if (!extract) return null;
+    // Busca un año de nacimiento entre 1975 y 2010 cerca de "born".
+    const m = extract.match(/born[^)]*?\b(19[7-9]\d|200\d|2010)\b/i)
+           || extract.match(/\b(19[7-9]\d|200\d|2010)\b/);
+    if (!m) return null;
+    const year = parseInt(m[1], 10);
+    const age = new Date().getFullYear() - year;
+    return (age > 14 && age < 50) ? age : null;
+  }
+
+  /**
+   * Abre la ficha individual de un jugador.
+   * @param {string} team - Selección a la que pertenece
+   * @param {string} safeId - Id sanitizado del jugador (wiki o nombre)
+   */
+  async function openPlayerModal(team, safeId) {
+    const data = WC2026_PLAYERS[team];
+    if (!data || !data.players) return;
+    // Localiza al jugador por su id sanitizado
+    const p = data.players.find(pl => (pl.wiki || pl.n).replace(/[^a-zA-Z0-9]/g, '_') === safeId);
+    if (!p) return;
+
+    const flag  = WC_FLAGS[team] || '🏳';
+    const col   = _POS_COLOR[p.pos] || '#888';
+    const icon  = _POS_ICON[p.pos] || '⚽';
+    const overlay = document.getElementById('player-modal-overlay');
+    const body    = document.getElementById('player-modal-body');
+
+    // 1) Render inmediato con los datos que ya tenemos (sin esperar a la red)
+    body.innerHTML = `
+      <div style="position:relative;background:linear-gradient(135deg,${col}33,${col}11);padding:1.5rem 1.2rem 1rem;text-align:center;">
+        <button onclick="closePlayerModal()" aria-label="Cerrar"
+          style="position:absolute;top:0.8rem;right:0.8rem;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.15);color:#cbd5e1;border-radius:8px;padding:0.3rem 0.6rem;cursor:pointer;font-size:0.9rem;line-height:1;">✕</button>
+        <div id="pm-photo-wrap" style="width:110px;height:110px;margin:0 auto 0.75rem;border-radius:50%;border:3px solid ${col};overflow:hidden;background:var(--surface-2);display:flex;align-items:center;justify-content:center;font-size:2.5rem;">
+          ${icon}
+        </div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:${col};color:#fff;font-family:'Outfit',sans-serif;font-weight:900;font-size:0.7rem;padding:2px 10px;border-radius:99px;margin-bottom:6px;">#${p.num} · ${(_POS_LABEL[p.pos]||'').toUpperCase()}</div>
+        <div style="font-family:'Outfit',sans-serif;font-weight:900;font-size:1.3rem;color:#f8fafc;line-height:1.1;">${p.n}</div>
+        <div style="font-size:0.78rem;color:#94a3b8;margin-top:3px;">${flag} ${team} · ${p.club}</div>
+      </div>
+      <div style="padding:1rem 1.2rem 1.4rem;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;">
+            <div style="font-size:0.55rem;color:var(--txt-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;">Dorsal</div>
+            <div style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:1.4rem;font-weight:900;color:${col};">#${p.num}</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;">
+            <div style="font-size:0.55rem;color:var(--txt-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;">Edad</div>
+            <div id="pm-age" style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:1.4rem;font-weight:900;color:var(--txt-1);">—</div>
+          </div>
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center;">
+            <div style="font-size:0.55rem;color:var(--txt-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;">Posición</div>
+            <div style="font-family:'Outfit',sans-serif;font-size:0.8rem;font-weight:800;color:var(--txt-1);margin-top:4px;">${icon} ${_POS_LABEL[p.pos]||'—'}</div>
+          </div>
+        </div>
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;margin-bottom:1rem;">
+          <div style="font-size:0.55rem;color:var(--txt-3);text-transform:uppercase;letter-spacing:0.08em;font-weight:700;margin-bottom:2px;">Club actual</div>
+          <div style="font-family:'Outfit',sans-serif;font-size:0.95rem;font-weight:800;color:var(--txt-1);">🏟 ${p.club}</div>
+        </div>
+        <div id="pm-bio" style="font-size:0.8rem;color:var(--txt-2);line-height:1.6;">
+          <div style="color:var(--txt-3);font-style:italic;">Cargando biografía…</div>
+        </div>
+        <div id="pm-wiki-link" style="margin-top:0.9rem;"></div>
+        <div style="text-align:center;font-size:0.56rem;color:var(--txt-3);margin-top:1rem;border-top:1px solid var(--border);padding-top:8px;">
+          Datos referenciales · Fuente: Wikipedia · Plantilla estimada WC2026
+        </div>
+      </div>`;
+
+    overlay.style.display = 'flex';
+    overlay.onclick = e => { if (e.target === overlay) closePlayerModal(); };
+
+    // 2) Si el jugador tiene página de Wikipedia, cargamos foto + bio + edad
+    if (p.wiki) {
+      try {
+        const res  = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(p.wiki)}`);
+        const wd   = await res.json();
+        // Foto (preferimos la original; si no, el thumbnail)
+        const photo = wd.originalimage?.source || wd.thumbnail?.source;
+        if (photo) {
+          const wrap = document.getElementById('pm-photo-wrap');
+          if (wrap) wrap.innerHTML = `<img src="${photo}" alt="${p.n}" style="width:100%;height:100%;object-fit:cover;object-position:top;">`;
+        }
+        // Biografía
+        const bio = document.getElementById('pm-bio');
+        if (bio) {
+          bio.innerHTML = wd.extract
+            ? `${wd.description ? `<div style="font-size:0.62rem;color:${col};text-transform:uppercase;letter-spacing:0.06em;font-weight:800;margin-bottom:4px;">${wd.description}</div>` : ''}${wd.extract}`
+            : '<span style="color:var(--txt-3);">Biografía no disponible.</span>';
+        }
+        // Edad estimada (la fecha puede venir en description o extract)
+        const age = _parseAgeFromExtract(`${wd.description || ''} ${wd.extract || ''}`);
+        const ageEl = document.getElementById('pm-age');
+        if (ageEl && age) ageEl.textContent = age;
+        // Link a Wikipedia
+        const linkEl = document.getElementById('pm-wiki-link');
+        if (linkEl && wd.content_urls?.desktop?.page) {
+          linkEl.innerHTML = `<a href="${wd.content_urls.desktop.page}" target="_blank" rel="noopener"
+            style="display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:700;color:${col};text-decoration:none;border:1px solid ${col}55;border-radius:6px;padding:5px 12px;">
+            📖 Ver en Wikipedia ↗</a>`;
+        }
+      } catch (_) {
+        const bio = document.getElementById('pm-bio');
+        if (bio) bio.innerHTML = '<span style="color:var(--txt-3);">No se pudo cargar la biografía.</span>';
+      }
+    } else {
+      const bio = document.getElementById('pm-bio');
+      if (bio) bio.innerHTML = '<span style="color:var(--txt-3);">Biografía detallada no disponible para este jugador.</span>';
+    }
+  }
+
+  function closePlayerModal() {
+    document.getElementById('player-modal-overlay').style.display = 'none';
+  }
+
+  // Escape cierra primero el sub-modal de jugador; si no, el de equipo.
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    const pm = document.getElementById('player-modal-overlay');
+    if (pm && pm.style.display === 'flex') { closePlayerModal(); }
+    else { closeWCModal(); }
+  });
   </script>
 
   <!-- ══ LIVE RESULTS SYNC ══════════════════════════════════════ -->

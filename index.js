@@ -486,6 +486,65 @@ function getTeamBadgeHtml(teamName) {
   return `<div class="team-badge" title="${teamName}">🏆</div>`;
 }
 
+/**
+ * Construye una mini-barra de probabilidades (Gana1 / Empate / Gana2) para un partido.
+ * Usa calculateMatchProbabilities() del motor de pronosticos.js con el modelo activo
+ * (persistido en localStorage). Devuelve "" si el motor no está cargado o si algún
+ * equipo aún no está definido (ej. "Ganador A" en eliminatorias).
+ *
+ * @param {string} team1 - Nombre del equipo local
+ * @param {string} team2 - Nombre del equipo visitante
+ * @returns {string} HTML de la barra o cadena vacía
+ */
+function getMatchProbBar(team1, team2) {
+  // El motor vive en pronosticos.js; si no está cargado, no mostramos nada.
+  if (typeof calculateMatchProbabilities !== "function") return "";
+  if (typeof TEAM_RATINGS === "undefined") return "";
+  // Sólo calculamos cuando ambos equipos son selecciones reales (con rating).
+  if (!TEAM_RATINGS[team1] || !TEAM_RATINGS[team2]) return "";
+
+  const p = calculateMatchProbabilities(team1, team2);
+  const modelName = (typeof PREDICTION_MODELS !== "undefined" && typeof activeModelId !== "undefined")
+    ? (PREDICTION_MODELS.find(m => m.id === activeModelId)?.shortName || "Combinado")
+    : "Combinado";
+
+  return `
+    <div class="prob-strip" title="Probabilidad según modelo ${modelName}">
+      <div class="prob-strip-bar">
+        <div class="prob-seg prob-seg-1" style="width:${p.p1}%"></div>
+        <div class="prob-seg prob-seg-d" style="width:${p.pDraw}%"></div>
+        <div class="prob-seg prob-seg-2" style="width:${p.p2}%"></div>
+      </div>
+      <div class="prob-strip-labels">
+        <span class="prob-lbl prob-lbl-1">${p.p1}%</span>
+        <span class="prob-lbl prob-lbl-d">Empate ${p.pDraw}%</span>
+        <span class="prob-lbl prob-lbl-2">${p.p2}%</span>
+      </div>
+    </div>`;
+}
+
+/**
+ * Genera el HTML de un nombre de equipo como enlace que abre el modal de
+ * estadísticas del país. Si el equipo no es una selección real (placeholder
+ * de eliminatorias), se devuelve texto plano sin enlace.
+ *
+ * @param {string} team - Nombre del equipo
+ * @param {boolean} isFavorite - Si es el equipo favorito (para resaltar)
+ * @returns {string} HTML del nombre
+ */
+function getTeamNameHtml(team, isFavorite) {
+  const favStyle = isFavorite ? "color:var(--secondary);font-weight:800;" : "";
+  // Es link sólo si tenemos datos del equipo (existe en el catálogo de banderas).
+  const isReal = typeof TEAM_FLAGS !== "undefined" && TEAM_FLAGS[team];
+  if (isReal) {
+    return `<span class="team-name team-name-link" style="${favStyle}"
+      onclick="openTeamModal('${team.replace(/'/g, "\\'")}')"
+      title="Ver estadísticas de ${team}" role="button" tabindex="0"
+      onkeydown="if(event.key==='Enter'||event.key===' ')openTeamModal('${team.replace(/'/g, "\\'")}')">${team}</span>`;
+  }
+  return `<span class="team-name" style="${favStyle}">${team}</span>`;
+}
+
 function renderMatchesList(targetContainerId = "matches-container") {
   const container = document.getElementById(targetContainerId);
   container.innerHTML = "";
@@ -552,21 +611,22 @@ function renderMatchesList(targetContainerId = "matches-container") {
         <div class="team-row">
           <div class="team-info">
             ${getTeamBadgeHtml(match.team1)}
-            <span class="team-name" style="${match.team1 === favoriteTeam ? 'color: var(--secondary); font-weight: 800;' : ''}">${match.team1}</span>
+            ${getTeamNameHtml(match.team1, match.team1 === favoriteTeam)}
           </div>
-          <input type="number" min="0" class="team-score prediction-input" 
-            data-match-id="${match.id}" data-team="1" 
+          <input type="number" min="0" class="team-score prediction-input"
+            data-match-id="${match.id}" data-team="1"
             value="${match.score1 !== null ? match.score1 : ''}" placeholder="-">
         </div>
         <div class="team-row">
           <div class="team-info">
             ${getTeamBadgeHtml(match.team2)}
-            <span class="team-name" style="${match.team2 === favoriteTeam ? 'color: var(--secondary); font-weight: 800;' : ''}">${match.team2}</span>
+            ${getTeamNameHtml(match.team2, match.team2 === favoriteTeam)}
           </div>
-          <input type="number" min="0" class="team-score prediction-input" 
-            data-match-id="${match.id}" data-team="2" 
+          <input type="number" min="0" class="team-score prediction-input"
+            data-match-id="${match.id}" data-team="2"
             value="${match.score2 !== null ? match.score2 : ''}" placeholder="-">
         </div>
+        ${getMatchProbBar(match.team1, match.team2)}
         <div class="match-meta-info">
           <div class="meta-item">
             <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>

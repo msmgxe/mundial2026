@@ -60,7 +60,22 @@ const PREDICTION_MODELS = [
   }
 ];
 
-let activeModelId = "combined";
+/* Modelo activo. Se persiste en localStorage para que el Torneo (index.html)
+   muestre las probabilidades del mismo modelo que el usuario eligió aquí. */
+const MODEL_STORAGE_KEY = "wc_2026_model";
+let activeModelId = (function () {
+  try {
+    const saved = localStorage.getItem(MODEL_STORAGE_KEY);
+    return saved && ["manual", "fifa", "elo", "poisson", "combined"].includes(saved)
+      ? saved : "combined";
+  } catch (_) { return "combined"; }
+})();
+
+/* Guarda el modelo elegido para compartirlo entre páginas. */
+function setActiveModel(id) {
+  activeModelId = id;
+  try { localStorage.setItem(MODEL_STORAGE_KEY, id); } catch (_) {}
+}
 
 // ── MODEL 1: MANUAL RATINGS ───────────────────────────────────────
 const TEAM_RATINGS = {

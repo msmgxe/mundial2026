@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bracket · Copa Mundial FIFA 2026™</title>
+  <title>Fixture · Copa Mundial FIFA 2026™</title>
   <link rel="stylesheet" href="index.css">
   <style id="auth-hide">body{visibility:hidden}</style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
@@ -127,8 +127,12 @@
     .bracket-view-label.real{color:var(--green);}
     .bracket-view-label.proj{color:var(--purple);}
 
+    /* display:flex + justify-content:safe center centra el bracket cuando cabe
+       en la pantalla y lo alinea al inicio (sin recortar) cuando desborda. */
     .bracket-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;
-      scrollbar-width:thin;scrollbar-color:var(--n4) transparent;padding:8px 20px 16px;}
+      scrollbar-width:thin;scrollbar-color:var(--n4) transparent;padding:8px 20px 16px;
+      display:flex;justify-content:safe center;}
+    #bk-bracket-inner{width:fit-content;}
 
     /* Round headers row */
     .rh-row{display:flex;gap:0;padding-bottom:10px;min-width:max-content;}
@@ -241,8 +245,28 @@
       padding:14px;font-size:.68rem;color:var(--txm);line-height:1.7;}
     .bk-footer strong{color:var(--gold);}
 
-    /* Responsive */
-    @media(max-width:600px){.vt-btn{font-size:.68rem;padding:10px 12px;}}
+    /* ── Responsive (tablet y celular) ──────────────────── */
+    @media(max-width:900px){
+      /* El header apila la info y el selector de vista */
+      .bk-hdr-top{flex-direction:column;align-items:stretch;}
+      .bk-hdr-top > div:last-child{align-items:stretch!important;}
+      .view-toggle{width:100%;}
+      #view-status{text-align:left!important;}
+    }
+    @media(max-width:600px){
+      .bk-hdr{padding:16px 16px 0;}
+      .bk-hdr-title{font-size:1.6rem;}
+      .vt-btn{font-size:.66rem;padding:10px 8px;}
+      .vt-btn .vt-dot{display:none;}      /* ahorra espacio en pantallas estrechas */
+      .bracket-scroll{padding:8px 12px 16px;}
+      .sedes-strip{padding:8px 12px;}
+      .groups-grid{grid-template-columns:1fr;}
+      .favs-grid{grid-template-columns:repeat(2,1fr);}
+      .third-match{flex-wrap:wrap;justify-content:center;}
+    }
+    @media(max-width:380px){
+      .favs-grid{grid-template-columns:1fr;}
+    }
   </style>
 </head>
 <body>
@@ -253,7 +277,7 @@
   <div class="bk-hdr-top">
     <div class="bk-hdr-info">
       <div class="bk-hdr-eyebrow">⚽ Copa Mundial FIFA 2026™</div>
-      <div class="bk-hdr-title">Bracket del Torneo</div>
+      <div class="bk-hdr-title">Fixture del Torneo</div>
       <div class="bk-hdr-sub">48 selecciones · 104 partidos · 19 Jul 2026 · MetLife Stadium</div>
     </div>
     <!-- View Toggle -->
@@ -272,9 +296,9 @@
     </div>
   </div>
   <nav class="bk-nav">
-    <a href="/">⚽ Fixture</a>
+    <a href="/">🏆 Torneo</a>
     <a href="/pronosticos">📊 Probabilidades</a>
-    <a href="/bracket" class="active">🌳 Bracket</a>
+    <a href="/bracket" class="active">⚽ Fixture</a>
   </nav>
 </header>
 
@@ -342,7 +366,7 @@
 </div>
 
 <footer class="bk-footer">
-  <div>COPA MUNDIAL DE LA FIFA 2026™ · Bracket del Torneo</div>
+  <div>COPA MUNDIAL DE LA FIFA 2026™ · Fixture del Torneo</div>
   <div style="margin-top:4px;">Proyecciones para análisis y entretenimiento · No garantizan resultados reales</div>
   <div style="margin-top:6px;">Diseñado por <strong>Marco Saldarriaga</strong> · Vibe Coding</div>
 </footer>

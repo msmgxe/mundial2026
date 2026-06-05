@@ -1917,3 +1917,56 @@ footer p { margin-top: 6px; }
 [data-theme="dark"] .portal-group-widget td { border-color: var(--border) !important; }
 [data-theme="dark"] .portal-section-header { border-bottom-color: var(--border) !important; }
 [data-theme="dark"] .scores-ticker { background: #8B0000; }
+
+/* ══════════════════════════════════════════════════════
+   PROBABILIDADES EN PARTIDOS (Torneo)
+   Mini-barra Gana1 / Empate / Gana2 + links de país
+   ══════════════════════════════════════════════════════ */
+
+/* Nombre de país clickable → abre modal de estadísticas */
+.team-name-link {
+  cursor: pointer;
+  border-bottom: 1px dashed transparent;
+  transition: color var(--t-fast), border-color var(--t-fast);
+}
+.team-name-link:hover,
+.team-name-link:focus-visible {
+  color: var(--red) !important;
+  border-bottom-color: var(--red);
+  outline: none;
+}
+
+/* Contenedor de la barra de probabilidad dentro de cada match-card */
+.prob-strip {
+  margin: 8px 0 4px;
+  padding-top: 8px;
+  border-top: 1px dashed var(--border);
+}
+.prob-strip-bar {
+  display: flex;
+  height: 7px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.prob-seg { height: 100%; transition: width 0.4s ease; }
+.prob-seg-1 { background: linear-gradient(90deg, #059669, #34d399); }
+.prob-seg-d { background: linear-gradient(90deg, #4b5563, #9ca3af); }
+.prob-seg-2 { background: linear-gradient(90deg, #1d4ed8, #60a5fa); }
+
+.prob-strip-labels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 0.6rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+}
+.prob-lbl-1 { color: #10B981; }
+.prob-lbl-d { color: var(--txt-3); }
+.prob-lbl-2 { color: #3B82F6; }
+
+/* Dark mode: ajustar fondo de la barra */
+[data-theme="dark"] .prob-strip-bar { background: rgba(255,255,255,0.04); border-color: var(--border); }
+[data-theme="dark"] .prob-strip { border-top-color: var(--border); }

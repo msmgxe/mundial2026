@@ -723,15 +723,15 @@
   <!-- ── ACTION BAR ─────────────────────────────────── -->
   <div class="action-bar">
     <p>
-      Exporta los marcadores estimados directamente al Fixture principal para ver cómo avanzarían los grupos.
+      Exporta los marcadores estimados directamente al Torneo principal para ver cómo avanzarían los grupos.
     </p>
-    <a href="/" class="btn-back" aria-label="Volver al fixture">
+    <a href="/" class="btn-back" aria-label="Volver al torneo">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Fixture
+      Torneo
     </a>
-    <button id="autofill-btn" class="btn-autofill" aria-label="Autocompletar fixture con estimaciones">
+    <button id="autofill-btn" class="btn-autofill" aria-label="Autocompletar torneo con estimaciones">
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-      Autocompletar Fixture
+      Autocompletar Torneo
     </button>
   </div>
 
@@ -762,7 +762,7 @@ function buildModelSelector() {
 
   wrap.querySelectorAll(".model-tab").forEach(btn => {
     btn.addEventListener("click", () => {
-      activeModelId = btn.dataset.model;
+      setActiveModel(btn.dataset.model);  // persiste en localStorage para el Torneo
       wrap.querySelectorAll(".model-tab").forEach(b => {
         b.classList.toggle("active", b.dataset.model === activeModelId);
         b.setAttribute("aria-selected", b.dataset.model === activeModelId);
