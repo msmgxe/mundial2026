@@ -3,1237 +3,994 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bracket Probabilístico · Copa Mundial FIFA 2026™</title>
-  <meta name="description" content="Simulación probabilística del bracket del Mundial 2026 — proyección de quién avanza en cada fase según el modelo estadístico.">
+  <title>Bracket · Copa Mundial FIFA 2026™</title>
   <link rel="stylesheet" href="index.css">
-  <!-- Auth guard -->
   <style id="auth-hide">body{visibility:hidden}</style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script src="/auth.js"></script>
+
   <style>
-    /* ════════════════════════════════════════════════
-       BRACKET — City Guide Premium Dark / Gold
-       Inspired by FIFA WC2026 Ultimate City Guide
-    ════════════════════════════════════════════════ */
+    /* ══════════════════════════════════════════════════════
+       WALL TRACKER — Copa Mundial FIFA 2026™
+       Dark Navy · Gold · Premium Sports Design
+       ══════════════════════════════════════════════════════ */
 
-    /* Default: dark mode (also respects [data-theme="dark"]) */
-    body, html { background: #090D18 !important; }
-    /* Light mode overrides */
-    [data-theme="light"] body,
-    [data-theme="light"] html { background: #F5EFE2 !important; }
+    /* Force full dark navy for this page regardless of theme */
+    html, body { background: #080F1E !important; }
 
-    /* ── PAGE HEADER ───────────────────────────── */
-    .bk-header {
-      position: relative;
-      overflow: hidden;
-      padding: 48px 24px 32px;
+    /* ── Tokens ──────────────────────────────── */
+    :root {
+      --wt-navy:      #080F1E;
+      --wt-navy-2:    #0D1829;
+      --wt-navy-3:    #111E35;
+      --wt-navy-4:    #162040;
+      --wt-gold:      #D4AF37;
+      --wt-gold-b:    #F5C400;
+      --wt-gold-dim:  rgba(212,175,55,0.18);
+      --wt-teal:      #2DD4BF;
+      --wt-teal-dim:  rgba(45,212,191,0.12);
+      --wt-purple:    #A78BFA;
+      --wt-purple-dim:rgba(167,139,250,0.12);
+      --wt-red:       #F97316;
+      --wt-border:    rgba(255,255,255,0.07);
+      --wt-border-g:  rgba(212,175,55,0.25);
+      --wt-text:      rgba(255,255,255,0.88);
+      --wt-text-dim:  rgba(255,255,255,0.45);
+      --wt-text-mute: rgba(255,255,255,0.22);
+      --wt-r: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Outfit', 'Inter', sans-serif; color: var(--wt-text); background: var(--wt-navy); }
+
+    /* ── NAV ─────────────────────────────────── */
+    [data-theme] #wc-user-bar {
+      background: rgba(8,15,30,0.97) !important;
+      border-bottom: 1px solid rgba(212,175,55,0.2) !important;
+    }
+
+    /* ── PAGE WRAPPER ────────────────────────── */
+    .wt-page { min-height: 100vh; background: var(--wt-navy); }
+
+    /* ── HEADER ──────────────────────────────── */
+    .wt-header {
+      position: relative; overflow: hidden;
+      background: linear-gradient(180deg, #0A1428 0%, #080F1E 100%);
+      border-bottom: 1px solid var(--wt-border-g);
+      padding: 32px 24px 20px;
       text-align: center;
-      background:
-        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212,175,55,0.12) 0%, transparent 65%),
-        linear-gradient(180deg, #0D1124 0%, #090D18 100%);
-      border-bottom: 1px solid rgba(212,175,55,0.2);
     }
-
-    /* Gold top stripe */
-    .bk-header::before {
+    .wt-header::before {
       content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #D4AF37 20%, #F5C400 50%, #D4AF37 80%, transparent);
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, transparent, var(--wt-teal) 20%, var(--wt-gold) 50%, var(--wt-purple) 80%, transparent);
     }
-
-    /* Decorative star pattern */
-    .bk-header::after {
-      content: '★  ★  ★  ★  ★';
-      position: absolute;
-      bottom: 12px; left: 50%;
-      transform: translateX(-50%);
-      font-size: 0.55rem;
-      letter-spacing: 0.5em;
-      color: rgba(212,175,55,0.4);
+    .wt-header-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-size: 0.62rem; font-weight: 900; letter-spacing: 0.18em;
+      text-transform: uppercase; color: var(--wt-gold);
+      background: var(--wt-gold-dim); border: 1px solid var(--wt-border-g);
+      padding: 4px 14px; border-radius: 99px; margin-bottom: 12px;
     }
-
-    .bk-nav {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 20px;
-      position: relative;
-      z-index: 1;
-      flex-wrap: wrap;
-    }
-    .bk-nav a {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      color: #9a9a9a;
-      text-decoration: none;
-      font-size: 0.78rem;
-      font-weight: 700;
-      padding: 4px 12px;
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 6px;
-      transition: all 0.15s;
-      font-family: 'Outfit', sans-serif;
-    }
-    .bk-nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
-
-    .bk-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #D4AF37, #F5C400, #D4AF37);
-      color: #0a0a0a;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 900;
-      font-size: 0.65rem;
-      padding: 5px 16px;
-      border-radius: 99px;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-      margin-bottom: 12px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .bk-title {
+    .wt-header-title {
       font-family: 'Bebas Neue', 'Outfit', sans-serif;
-      font-weight: 900;
-      font-size: clamp(2.2rem, 6vw, 4rem);
-      letter-spacing: 0.06em;
-      line-height: 0.95;
-      text-transform: uppercase;
-      background: linear-gradient(135deg, #D4AF37 0%, #F5C400 30%, #ffffff 55%, #F5C400 80%, #D4AF37 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      position: relative;
-      z-index: 1;
-      margin-bottom: 8px;
-      filter: drop-shadow(0 2px 12px rgba(212,175,55,0.3));
-    }
-
-    .bk-subtitle {
-      font-size: 0.82rem;
-      color: #666;
-      position: relative;
-      z-index: 1;
-      letter-spacing: 0.03em;
-    }
-
-    /* ── LOADING ───────────────────────────────── */
-    .bk-loading {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 64px 24px;
-      color: #666;
-      background: #090D18;
-    }
-    .bk-spinner {
-      width: 36px; height: 36px;
-      border: 3px solid rgba(212,175,55,0.15);
-      border-top-color: #D4AF37;
-      border-radius: 50%;
-      animation: bk-spin 0.9s linear infinite;
-    }
-    @keyframes bk-spin { to { transform: rotate(360deg); } }
-    .bk-loading-label { font-size: 0.9rem; font-weight: 600; color: #aaa; }
-    .bk-loading-sub   { font-size: 0.72rem; color: #555; }
-
-    /* ── SECTION ───────────────────────────────── */
-    .bk-section {
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 40px 24px;
-      background: #090D18;
-    }
-    .bk-section-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 900;
-      color: #D4AF37;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    .bk-section-title::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(to right, rgba(212,175,55,0.4), transparent);
-    }
-
-    /* ── TOP FAVORITES GRID ────────────────────── */
-    .bk-favs-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 8px;
-    }
-    .bk-fav {
-      background: #0E1525;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 12px;
-      padding: 16px 8px;
-      text-align: center;
-      position: relative;
-      transition: all 0.2s;
-      cursor: default;
-    }
-    .bk-fav:hover {
-      border-color: rgba(212,175,55,0.4);
-      transform: translateY(-3px);
-      box-shadow: 0 8px 24px rgba(212,175,55,0.12);
-    }
-    .bk-fav.is-top {
-      border-color: #D4AF37;
-      background: linear-gradient(135deg, rgba(212,175,55,0.1) 0%, #0E1525 100%);
-      box-shadow: 0 4px 20px rgba(212,175,55,0.15);
-    }
-    .bk-fav-rank {
-      position: absolute;
-      top: 7px; left: 9px;
-      font-size: 0.58rem;
-      font-weight: 900;
-      color: #444;
-      font-family: 'Outfit', sans-serif;
-    }
-    .bk-fav.is-top .bk-fav-rank { color: #D4AF37; }
-    .bk-fav-flag { font-size: 1.9rem; margin-bottom: 4px; display: block; line-height: 1; }
-    .bk-fav-name {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: #ddd;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 900; letter-spacing: 0.1em; line-height: 1;
+      background: linear-gradient(135deg, var(--wt-gold) 0%, var(--wt-gold-b) 40%, #fff 60%, var(--wt-gold) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 2px 16px rgba(212,175,55,0.3));
       margin-bottom: 6px;
-      line-height: 1.2;
     }
-    .bk-fav-pct {
-      font-family: 'Bebas Neue', 'Outfit', sans-serif;
-      font-size: 1.8rem;
-      font-weight: 900;
-      display: block;
-      line-height: 1;
+    .wt-header-sub {
+      font-size: 0.72rem; color: var(--wt-text-dim); letter-spacing: 0.06em;
     }
-    .bk-fav-pct.gold-pct  { color: #F5C400; }
-    .bk-fav-pct.green-pct { color: #aaa; }
-    .bk-fav-pct.muted-pct { color: #555; }
-    .bk-fav-label {
-      font-size: 0.54rem;
-      color: #444;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      margin-top: 2px;
-      display: block;
+    .wt-header-nav {
+      display: flex; justify-content: center; gap: 8px; margin-top: 16px;
     }
-    .bk-fav.is-top .bk-fav-label { color: #996600; }
-    .bk-fav-bar {
-      margin-top: 6px;
-      height: 2px;
-      background: rgba(255,255,255,0.05);
-      border-radius: 99px;
-      overflow: hidden;
+    .wt-header-nav a {
+      display: inline-flex; align-items: center; gap: 5px;
+      color: var(--wt-text-dim); text-decoration: none;
+      font-size: 0.75rem; font-weight: 700; padding: 5px 14px;
+      border: 1px solid var(--wt-border); border-radius: 6px; transition: all 0.15s;
     }
-    .bk-fav-bar-fill {
-      height: 100%;
-      border-radius: 99px;
-      background: linear-gradient(90deg, #D4AF37, #F5C400);
-    }
+    .wt-header-nav a:hover { background: rgba(255,255,255,0.06); color: #fff; }
+    .wt-header-nav a.active { border-color: var(--wt-gold-b); color: var(--wt-gold-b); background: var(--wt-gold-dim); }
 
-    /* ── FUNNEL COLUMNS ────────────────────────── */
-    .bk-funnel-wrap {
-      background: #090D18;
-      border-top: 1px solid rgba(212,175,55,0.15);
-      border-bottom: 1px solid rgba(212,175,55,0.15);
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: thin;
-      scrollbar-color: #333 #090D18;
+    /* ── SEDES STRIP ─────────────────────────── */
+    .wt-sedes {
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--wt-border);
+      overflow-x: auto; scrollbar-width: none;
+      padding: 8px 20px; white-space: nowrap;
     }
-    .bk-funnel {
-      display: flex;
-      align-items: flex-start;
+    .wt-sedes::-webkit-scrollbar { display: none; }
+    .wt-sedes-inner {
+      display: inline-flex; gap: 0; align-items: center; min-width: max-content;
+    }
+    .wt-sede-label {
+      font-size: 0.5rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.14em; color: var(--wt-gold);
+      border: 1px solid var(--wt-border-g); padding: 2px 8px; border-radius: 4px;
+      margin-right: 10px; white-space: nowrap;
+    }
+    .wt-sede { text-align: center; padding: 0 10px; }
+    .wt-sede-city { font-size: 0.54rem; font-weight: 800; color: var(--wt-text); }
+    .wt-sede-stadium { font-size: 0.42rem; color: var(--wt-text-dim); margin-top: 1px; }
+    .wt-sede-div { width: 1px; height: 24px; background: var(--wt-border); flex-shrink: 0; }
+    .wt-sede-final .wt-sede-city { color: var(--wt-gold-b); }
+    .wt-sede-third .wt-sede-city { color: var(--wt-teal); }
+
+    /* ── MAIN LAYOUT ─────────────────────────── */
+    .wt-body {
+      display: grid;
+      grid-template-columns: 220px 1fr 220px;
+      min-height: calc(100vh - 200px);
       gap: 0;
-      padding: 24px 16px;
+    }
+    @media (max-width: 1100px) { .wt-body { grid-template-columns: 1fr; } }
+
+    /* ── GROUP COLUMNS ───────────────────────── */
+    .wt-groups-col {
+      background: var(--wt-navy-2);
+      border-right: 1px solid var(--wt-border);
+      padding: 12px 8px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .wt-groups-col.right {
+      border-right: none; border-left: 1px solid var(--wt-border);
+    }
+    @media (max-width: 1100px) {
+      .wt-groups-col { display: none; }
+    }
+
+    .wt-group-block { }
+    .wt-group-header {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 8px; border-radius: 5px 5px 0 0;
+      font-size: 0.6rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
+      background: var(--wt-navy-4); border-bottom: 1px solid var(--wt-border);
+    }
+    .wt-group-header.left-color  { color: var(--wt-teal); border-left: 3px solid var(--wt-teal); }
+    .wt-group-header.right-color { color: var(--wt-purple); border-left: 3px solid var(--wt-purple); }
+    .wt-group-match {
+      display: flex; align-items: center; gap: 4px;
+      padding: 3px 8px;
+      font-size: 0.55rem; color: var(--wt-text-dim);
+      background: var(--wt-navy-3);
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .wt-group-match:last-child { border-bottom: none; border-radius: 0 0 4px 4px; }
+    .wt-gm-date { width: 28px; color: var(--wt-text-mute); flex-shrink: 0; font-size: 0.5rem; }
+    .wt-gm-t1 { flex: 1; text-align: right; font-weight: 600; color: var(--wt-text); font-size: 0.56rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60px; }
+    .wt-gm-vs { width: 16px; text-align: center; color: var(--wt-text-mute); font-size: 0.5rem; flex-shrink: 0; }
+    .wt-gm-t2 { flex: 1; text-align: left; font-weight: 600; color: var(--wt-text); font-size: 0.56rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 60px; }
+
+    /* ── BRACKET CENTER ──────────────────────── */
+    .wt-bracket-wrap {
+      overflow-x: auto; -webkit-overflow-scrolling: touch;
+      padding: 16px 0;
+      scrollbar-width: thin;
+      scrollbar-color: var(--wt-navy-4) transparent;
+      background: var(--wt-navy);
+      display: flex; flex-direction: column; align-items: center;
+    }
+
+    /* Trophy + Title above bracket */
+    .wt-bracket-title {
+      text-align: center; padding: 0 16px 16px; flex-shrink: 0;
+    }
+    .wt-bracket-title-main {
+      font-family: 'Bebas Neue', 'Outfit', sans-serif;
+      font-size: 1.1rem; font-weight: 900; letter-spacing: 0.14em;
+      color: #fff;
+    }
+    .wt-bracket-title-sub {
+      font-size: 0.55rem; color: var(--wt-text-dim);
+      text-transform: uppercase; letter-spacing: 0.12em; margin-top: 2px;
+    }
+
+    /* Bracket scroll container */
+    .wt-bracket-scroll {
       min-width: max-content;
-      background: #090D18;
-    }
-    .bk-col {
-      width: 170px;
+      padding: 0 16px;
       flex-shrink: 0;
-      padding: 0 10px;
-      border-right: 1px solid rgba(255,255,255,0.05);
     }
-    .bk-col:last-child { border-right: none; }
-    .bk-col-head {
-      text-align: center;
-      margin-bottom: 16px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid rgba(212,175,55,0.3);
-      position: sticky;
-      top: 0;
-      background: #090D18;
-    }
-    .bk-col.is-champ .bk-col-head {
-      border-color: #D4AF37;
-    }
-    .bk-col-round {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.65rem;
-      font-weight: 900;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-    .bk-col.is-champ .bk-col-round { color: #D4AF37; }
-    .bk-col-count { font-size: 0.55rem; color: #444; margin-top: 2px; }
 
-    /* ── TEAM CHIP ──────────────────────────────── */
-    .bk-chip {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: #111A2C;
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 6px;
-      padding: 5px 7px;
-      margin-bottom: 4px;
+    /* Round headers */
+    .wt-rounds-row {
+      display: flex; gap: 0; align-items: flex-end;
+      padding-bottom: 8px; justify-content: center;
+    }
+    .wt-round-head {
+      text-align: center; flex-shrink: 0;
+    }
+    .wt-round-name {
+      font-size: 0.58rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .wt-round-date { font-size: 0.44rem; color: var(--wt-text-mute); margin-top: 2px; }
+
+    /* Bracket tree */
+    .wt-tree {
+      display: flex; align-items: center; gap: 0;
+    }
+
+    /* Match slot */
+    .wt-slot-col {
+      display: flex; flex-direction: column; flex-shrink: 0;
+    }
+    .wt-slot {
+      display: flex; align-items: center; flex-shrink: 0;
+    }
+    .wt-match {
+      width: 148px; display: flex; flex-direction: column; gap: 2px;
+    }
+    .wt-team {
+      display: flex; align-items: center; gap: 5px;
+      padding: 4px 7px; border-radius: 5px; min-height: 26px;
+      border: 1px solid var(--wt-border); background: var(--wt-navy-3);
+      transition: all 0.15s; cursor: default;
+    }
+    .wt-team.winner {
+      background: linear-gradient(90deg, rgba(212,175,55,0.2), rgba(212,175,55,0.06));
+      border-color: rgba(212,175,55,0.5);
+    }
+    .wt-team.loser { opacity: 0.35; }
+    .wt-team-flag { font-size: 0.85rem; flex-shrink: 0; line-height: 1; }
+    .wt-team-name {
+      flex: 1; font-size: 0.67rem; font-weight: 600; color: var(--wt-text-dim);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .wt-team.winner .wt-team-name { color: #F5E6A0; font-weight: 800; }
+    .wt-team-pct {
+      font-family: 'Bebas Neue', 'Outfit', sans-serif;
+      font-size: 0.72rem; font-weight: 900; flex-shrink: 0; min-width: 26px; text-align: right;
+      color: rgba(255,255,255,0.2);
+    }
+    .wt-team.winner .wt-team-pct { color: var(--wt-gold-b); }
+
+    /* Connectors */
+    .wt-conn {
+      position: relative; flex-shrink: 0; height: 100%;
+    }
+
+    /* Center column */
+    .wt-center-col {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 10px; flex-shrink: 0; padding: 0 4px;
+    }
+    .wt-final-title {
+      font-size: 0.58rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.14em; color: var(--wt-gold-b); text-align: center;
+    }
+    .wt-final-match {
+      width: 160px; display: flex; flex-direction: column; gap: 2px;
+    }
+    .wt-final-match .wt-team {
+      padding: 5px 8px; min-height: 30px;
+      border-color: rgba(212,175,55,0.18);
+    }
+    .wt-final-match .wt-team.winner {
+      background: linear-gradient(90deg, rgba(245,196,0,0.22), rgba(245,196,0,0.06));
+      border-color: rgba(245,196,0,0.6);
+    }
+    .wt-champion-card {
+      width: 160px; border-radius: 12px; padding: 14px 10px;
+      text-align: center;
+      background: linear-gradient(135deg, rgba(212,175,55,0.22) 0%, rgba(17,26,44,0.98) 100%);
+      border: 2px solid var(--wt-gold);
+      box-shadow: 0 0 40px rgba(212,175,55,0.3), 0 8px 24px rgba(0,0,0,0.5),
+                  inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .wt-champion-trophy { font-size: 2rem; filter: drop-shadow(0 0 12px rgba(245,196,0,0.7)); }
+    .wt-champion-flag { font-size: 1.3rem; margin: 3px 0; }
+    .wt-champion-name {
+      font-family: 'Bebas Neue', 'Outfit', sans-serif;
+      font-size: 0.95rem; font-weight: 900; letter-spacing: 0.06em;
+      color: var(--wt-gold-b); line-height: 1.2; margin-top: 2px;
+    }
+    .wt-champion-sub {
+      font-size: 0.5rem; color: var(--wt-text-mute); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-top: 4px;
+    }
+
+    /* Third place */
+    .wt-third {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 12px 16px; gap: 8px;
+      flex-shrink: 0;
+    }
+    .wt-third-title {
+      font-size: 0.58rem; font-weight: 900; text-transform: uppercase;
+      letter-spacing: 0.12em; color: var(--wt-text-dim);
+    }
+    .wt-third-match {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--wt-navy-3); border: 1px solid var(--wt-border);
+      border-radius: 8px; padding: 8px 16px;
+    }
+    .wt-third-team {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 700; color: var(--wt-text-dim);
+    }
+    .wt-third-sep {
+      font-family: 'Bebas Neue', sans-serif; font-size: 1rem;
+      color: var(--wt-text-mute);
+    }
+
+    /* Left/right side teal/purple accents for col containers */
+    .wt-left-col .wt-match { border-left: 2px solid rgba(45,212,191,0.5); border-radius: 0 5px 5px 0; }
+    .wt-right-col .wt-match { border-right: 2px solid rgba(167,139,250,0.5); border-radius: 5px 0 0 5px; }
+
+    /* Connector SVG lines */
+    .wt-conn-svg { display: block; }
+
+    /* Loading */
+    .wt-loading {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 12px; padding: 80px 24px;
+      min-height: 60vh;
+    }
+    .wt-spinner {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 3px solid rgba(212,175,55,0.15);
+      border-top-color: var(--wt-gold);
+      animation: wt-spin 0.8s linear infinite;
+    }
+    @keyframes wt-spin { to { transform: rotate(360deg); } }
+    .wt-loading-title { font-size: 0.9rem; font-weight: 700; color: var(--wt-text); }
+    .wt-loading-sub { font-size: 0.7rem; color: var(--wt-text-dim); }
+
+    /* Footer */
+    .wt-footer {
+      background: var(--wt-navy-2);
+      border-top: 1px solid var(--wt-border);
+      text-align: center; padding: 16px;
+      font-size: 0.7rem; color: var(--wt-text-mute);
+      line-height: 1.7;
+    }
+    .wt-footer strong { color: var(--wt-gold); }
+
+    /* Probability grid (below bracket) */
+    .wt-probs-section {
+      border-top: 1px solid var(--wt-border);
+      padding: 20px 0;
+    }
+    .wt-section-title {
+      font-family: 'Outfit', sans-serif; font-size: 0.62rem; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.16em; color: var(--wt-gold);
+      display: flex; align-items: center; gap: 10px; margin: 0 20px 14px;
+    }
+    .wt-section-title::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(to right, rgba(212,175,55,0.3), transparent);
+    }
+    .wt-favs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 8px; padding: 0 20px;
+    }
+    .wt-fav {
+      background: var(--wt-navy-3); border: 1px solid var(--wt-border);
+      border-radius: 8px; padding: 12px 8px; text-align: center;
+      transition: all 0.2s; cursor: default;
+    }
+    .wt-fav:hover { border-color: rgba(212,175,55,0.3); transform: translateY(-2px); }
+    .wt-fav.top { border-color: var(--wt-gold); background: linear-gradient(135deg, rgba(212,175,55,0.12), var(--wt-navy-3)); box-shadow: 0 4px 16px rgba(212,175,55,0.15); }
+    .wt-fav-rank { font-size: 0.52rem; color: rgba(255,255,255,0.3); font-weight: 700; margin-bottom: 3px; }
+    .wt-fav.top .wt-fav-rank { color: var(--wt-gold); }
+    .wt-fav-flag { font-size: 1.6rem; display: block; line-height: 1; margin-bottom: 4px; }
+    .wt-fav-name { font-size: 0.65rem; font-weight: 700; color: var(--wt-text-dim); margin-bottom: 6px; line-height: 1.2; }
+    .wt-fav-pct { font-family: 'Bebas Neue', 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; display: block; line-height: 1; }
+    .wt-fav-pct.gold { color: var(--wt-gold-b); }
+    .wt-fav-pct.muted { color: rgba(255,255,255,0.35); }
+    .wt-fav-bar { margin-top: 5px; height: 2px; background: rgba(255,255,255,0.06); border-radius: 99px; overflow: hidden; }
+    .wt-fav-bar-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--wt-gold), var(--wt-gold-b)); }
+
+    /* Funnel */
+    .wt-funnel-wrap {
+      overflow-x: auto; scrollbar-width: thin;
+      scrollbar-color: var(--wt-navy-4) transparent;
+      margin-top: 20px;
+    }
+    .wt-funnel { display: flex; gap: 0; padding: 0 20px; min-width: max-content; align-items: flex-start; }
+    .wt-funnel-col { width: 160px; flex-shrink: 0; padding: 0 8px; border-right: 1px solid var(--wt-border); }
+    .wt-funnel-col:last-child { border-right: none; }
+    .wt-funnel-head {
+      font-size: 0.58rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--wt-gold); padding-bottom: 8px; margin-bottom: 8px;
+      border-bottom: 1px solid var(--wt-border-g); text-align: center;
+    }
+    .wt-funnel-chip {
+      display: flex; align-items: center; gap: 5px;
+      background: var(--wt-navy-3); border: 1px solid var(--wt-border);
+      border-radius: 5px; padding: 4px 7px; margin-bottom: 4px; cursor: default;
       transition: all 0.15s;
-      position: relative;
     }
-    .bk-chip:hover { border-color: rgba(212,175,55,0.3); background: #152038; }
-    .bk-chip-flag { font-size: 0.85rem; flex-shrink: 0; line-height: 1; }
-    .bk-chip-name {
-      flex: 1;
-      font-weight: 600;
-      color: #ccc;
-      font-size: 0.68rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-family: 'Inter', sans-serif;
-    }
-    .bk-chip-pct {
-      font-size: 0.6rem;
-      font-weight: 800;
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-family: 'Bebas Neue', 'Outfit', sans-serif;
-      font-size: 0.72rem;
-      flex-shrink: 0;
-    }
-    .bk-chip-pct.p-high  { background: rgba(212,175,55,0.18); color: #D4AF37; }
-    .bk-chip-pct.p-mid   { background: rgba(200,200,200,0.12); color: #aaa; }
-    .bk-chip-pct.p-low   { background: rgba(80,80,80,0.15);   color: #666; }
-    .bk-chip-pct.p-ghost { background: rgba(50,50,50,0.12);   color: #3a3a3a; }
+    .wt-funnel-chip:hover { border-color: rgba(212,175,55,0.25); }
+    .wt-funnel-chip-flag { font-size: 0.8rem; flex-shrink: 0; }
+    .wt-funnel-chip-name { flex: 1; font-size: 0.65rem; font-weight: 600; color: var(--wt-text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .wt-funnel-chip-pct { font-size: 0.65rem; font-weight: 900; font-family: 'Bebas Neue', 'Outfit', sans-serif; flex-shrink: 0; }
+    .wt-funnel-chip-pct.p-high  { color: var(--wt-gold-b); }
+    .wt-funnel-chip-pct.p-mid   { color: rgba(255,255,255,0.55); }
+    .wt-funnel-chip-pct.p-low   { color: rgba(255,255,255,0.28); }
 
-    /* ── CHAMPION CARD ──────────────────────────── */
-    .bk-champ-card {
-      background: linear-gradient(160deg, rgba(212,175,55,0.15) 0%, rgba(245,196,0,0.06) 100%);
-      border: 2px solid #D4AF37;
-      border-radius: 12px;
-      padding: 16px;
-      text-align: center;
-      box-shadow: 0 0 40px rgba(212,175,55,0.2), inset 0 1px 0 rgba(255,255,255,0.06);
-      margin-bottom: 8px;
-    }
-    .bk-champ-trophy {
-      font-size: 2.4rem;
-      display: block;
-      margin-bottom: 4px;
-      line-height: 1;
-      filter: drop-shadow(0 0 12px rgba(212,175,55,0.6));
-    }
-    .bk-champ-flag { font-size: 1.6rem; display: block; margin-bottom: 4px; line-height: 1; }
-    .bk-champ-name {
-      font-family: 'Bebas Neue', 'Outfit', sans-serif;
-      font-size: 1rem;
-      font-weight: 900;
-      color: #F5C400;
-      line-height: 1.2;
-      letter-spacing: 0.04em;
-    }
-    .bk-champ-pct {
-      font-family: 'Bebas Neue', 'Outfit', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: #D4AF37;
-      display: block;
-      margin-top: 3px;
-    }
-    .bk-champ-sub {
-      font-size: 0.55rem;
-      color: #666;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-top: 3px;
-    }
-
-    /* ── BRACKET TREE WRAP ─────────────────────── */
-    #bk-content > div:first-child {
-      background: linear-gradient(180deg, #0D1124 0%, #090D18 100%) !important;
-      border-color: rgba(212,175,55,0.15) !important;
-    }
-
-    /* ── BRACKET TREE MATCHES ──────────────────── */
-    .btree-col { gap: 6px; }
-    .btree-match-wrap { padding: 3px 0; }
-
-    /* Light mode overrides for bracket section */
-    [data-theme="light"] #bk-content > div:first-child {
-      background: linear-gradient(180deg, #0D1124 0%, #090D18 100%) !important;
-    }
-
-    /* ── DISCLAIMER ─────────────────────────────── */
-    .bk-disclaimer {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 24px 16px;
-      text-align: center;
-      background: #090D18;
-    }
-    .bk-disclaimer-box {
+    /* Disclaimer */
+    .wt-disclaimer {
+      margin: 20px; padding: 12px 16px;
       background: rgba(212,175,55,0.04);
-      border: 1px solid rgba(212,175,55,0.15);
-      border-radius: 10px;
-      padding: 16px;
-      font-size: 0.76rem;
-      color: #555;
-      line-height: 1.75;
+      border: 1px solid rgba(212,175,55,0.12);
+      border-radius: 8px; font-size: 0.7rem;
+      color: var(--wt-text-mute); line-height: 1.6; text-align: center;
     }
-
-    /* ── SEPARATOR ──────────────────────────────── */
-    .bk-sep {
-      border: none;
-      border-top: 1px solid rgba(212,175,55,0.1);
-      margin: 0;
-    }
-
-    /* ── LEGEND ─────────────────────────────────── */
-    .bk-legend {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-      gap: 8px;
-      padding: 16px;
-      font-size: 0.7rem;
-      color: #555;
-      background: #090D18;
-    }
-    .bk-legend-item { display: flex; align-items: center; gap: 5px; }
-    .bk-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
-
-    @media (max-width: 640px) {
-      .bk-favs-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-      .bk-fav-flag  { font-size: 1.4rem; }
-      .bk-fav-pct   { font-size: 1.4rem; }
-      .bk-col       { width: 145px; }
-      .bk-title     { font-size: 2rem; }
-    }
-
-    /* ══ LIGHT MODE OVERRIDES ════════════════════════ */
-    [data-theme="light"] .bk-header {
-      background:
-        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(212,175,55,0.18) 0%, transparent 65%),
-        linear-gradient(180deg, #FDF8F0 0%, #F5EFE2 100%) !important;
-      border-bottom: 1px solid rgba(212,175,55,0.3);
-    }
-    [data-theme="light"] .bk-title {
-      background: linear-gradient(135deg, #B8860B 0%, #D4AF37 40%, #8B6914 80%) !important;
-      -webkit-background-clip: text !important;
-      -webkit-text-fill-color: transparent !important;
-      filter: none !important;
-    }
-    [data-theme="light"] .bk-subtitle { color: #6A6458 !important; }
-    [data-theme="light"] .bk-nav a {
-      color: #4A4540 !important;
-      border-color: rgba(0,0,0,0.15) !important;
-    }
-    [data-theme="light"] .bk-nav a:hover { background: rgba(0,0,0,0.05) !important; color: #0A0907 !important; }
-    [data-theme="light"] .bk-loading { background: #F5EFE2 !important; color: #6A6458 !important; }
-    [data-theme="light"] .bk-loading-label { color: #2A2723 !important; }
-    [data-theme="light"] .bk-loading-sub   { color: #6A6458 !important; }
-    [data-theme="light"] .bk-section { background: #F5EFE2 !important; }
-    [data-theme="light"] .bk-section-title { color: #B8860B !important; }
-    [data-theme="light"] .bk-fav {
-      background: #FAF8F4 !important;
-      border-color: rgba(0,0,0,0.1) !important;
-    }
-    [data-theme="light"] .bk-fav.is-top {
-      background: linear-gradient(135deg, rgba(212,175,55,0.12) 0%, #FAF8F4 100%) !important;
-      border-color: #D4AF37 !important;
-    }
-    [data-theme="light"] .bk-fav-name { color: #2A2723 !important; }
-    [data-theme="light"] .bk-fav-rank { color: #AAA49A !important; }
-    [data-theme="light"] .bk-fav.is-top .bk-fav-rank { color: #B8860B !important; }
-    [data-theme="light"] .bk-fav-bar { background: rgba(0,0,0,0.07) !important; }
-    [data-theme="light"] .bk-funnel-wrap {
-      background: #EDE8DE !important;
-      scrollbar-color: #C8C2B6 #EDE8DE !important;
-    }
-    [data-theme="light"] .bk-funnel { background: #EDE8DE !important; }
-    [data-theme="light"] .bk-col { border-right-color: rgba(0,0,0,0.08) !important; }
-    [data-theme="light"] .bk-col-head { background: #EDE8DE !important; }
-    [data-theme="light"] .bk-col-round { color: #6A6458 !important; }
-    [data-theme="light"] .bk-col.is-champ .bk-col-round { color: #B8860B !important; }
-    [data-theme="light"] .bk-col-count { color: #9A9490 !important; }
-    [data-theme="light"] .bk-chip {
-      background: #FAF8F4 !important;
-      border-color: rgba(0,0,0,0.1) !important;
-    }
-    [data-theme="light"] .bk-chip:hover { background: #FFF !important; border-color: rgba(212,175,55,0.5) !important; }
-    [data-theme="light"] .bk-chip-name { color: #2A2723 !important; }
-    [data-theme="light"] .bk-chip-pct.p-mid   { background: rgba(0,0,0,0.07) !important; color: #6A6458 !important; }
-    [data-theme="light"] .bk-chip-pct.p-low   { background: rgba(0,0,0,0.05) !important; color: #9A9490 !important; }
-    [data-theme="light"] .bk-chip-pct.p-ghost { background: rgba(0,0,0,0.04) !important; color: #C8C2B6 !important; }
-    [data-theme="light"] .bk-champ-card {
-      background: linear-gradient(160deg, rgba(212,175,55,0.15) 0%, #FAF8F4 100%) !important;
-    }
-    [data-theme="light"] .bk-champ-sub { color: #9A9490 !important; }
-    [data-theme="light"] #bk-content > div:first-child {
-      background: linear-gradient(180deg, #F5EDE0 0%, #EDE8DE 100%) !important;
-    }
-    [data-theme="light"] .btree-match {
-      background: #FAF8F4 !important;
-      border-color: rgba(0,0,0,0.1) !important;
-    }
-    [data-theme="light"] .btree-match:hover {
-      border-color: rgba(212,175,55,0.6) !important;
-      box-shadow: 0 4px 14px rgba(212,175,55,0.15) !important;
-    }
-    [data-theme="light"] .bk-disclaimer { background: #F5EFE2 !important; }
-    [data-theme="light"] .bk-disclaimer-box {
-      background: rgba(212,175,55,0.06) !important;
-      border-color: rgba(212,175,55,0.25) !important;
-      color: #6A6458 !important;
-    }
-    [data-theme="light"] .bk-legend { background: #F5EFE2 !important; color: #6A6458 !important; }
   </style>
 </head>
 <body>
 <script>(async()=>{const r=await requireAuth();if(r){document.getElementById('auth-hide').remove();injectUserBar(r.session);}})();</script>
 
-  <!-- Header -->
-  <header class="bk-header">
-    <div class="bk-nav">
+<div class="wt-page">
+
+  <!-- ── HEADER ──────────────────────────────── -->
+  <header class="wt-header">
+    <div class="wt-header-eyebrow">⚽ Copa Mundial FIFA 2026™</div>
+    <div class="wt-header-title">Bracket Probabilístico</div>
+    <div class="wt-header-sub">Simulación Monte Carlo · 2,000 torneos · Proyección determinista</div>
+    <nav class="wt-header-nav">
       <a href="/">⚽ Fixture</a>
       <a href="/pronosticos">📊 Probabilidades</a>
-      <a href="/bracket" style="border-color:rgba(251,191,36,0.4);color:var(--secondary)">🌳 Bracket</a>
-    </div>
-    <span class="bk-badge">Copa Mundial FIFA 2026™ · Proyección Probabilística</span>
-    <h1 class="bk-title">Bracket Probabilístico</h1>
-    <p class="bk-subtitle">Árbol de eliminación directa · simulación basada en ratings · no usar como base de apuestas</p>
+      <a href="/bracket" class="active">🌳 Bracket</a>
+    </nav>
   </header>
 
-  <!-- Loading state -->
-  <div id="bk-loading" class="bk-loading">
-    <div class="bk-spinner"></div>
-    <span class="bk-loading-label">Simulando 2,000 torneos…</span>
-    <span class="bk-loading-sub">Calculando probabilidades por fase para las 48 selecciones</span>
+  <!-- ── SEDES ───────────────────────────────── -->
+  <div class="wt-sedes">
+    <div class="wt-sedes-inner">
+      <div class="wt-sede-label">Sedes</div>
+      <div class="wt-sede"><div class="wt-sede-city">CDMX</div><div class="wt-sede-stadium">Azteca</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Guadalajara</div><div class="wt-sede-stadium">Akron</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Monterrey</div><div class="wt-sede-stadium">BBVA</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Toronto</div><div class="wt-sede-stadium">BMO Field</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Vancouver</div><div class="wt-sede-stadium">BC Place</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Los Ángeles</div><div class="wt-sede-stadium">SoFi Stadium</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Seattle</div><div class="wt-sede-stadium">Lumen Field</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Arlington</div><div class="wt-sede-stadium">AT&amp;T Stadium</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Atlanta</div><div class="wt-sede-stadium">M. Benz</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede wt-sede-third"><div class="wt-sede-city">Miami</div><div class="wt-sede-stadium">Hard Rock ★3er</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Nashville</div><div class="wt-sede-stadium">Geodis Park</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Boston</div><div class="wt-sede-stadium">Gillette</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede wt-sede-final"><div class="wt-sede-city">N. Jersey</div><div class="wt-sede-stadium">MetLife ★FINAL</div></div>
+      <div class="wt-sede-div"></div>
+      <div class="wt-sede"><div class="wt-sede-city">Filadelfia</div><div class="wt-sede-stadium">Lincoln Financial</div></div>
+    </div>
   </div>
 
-  <!-- Main content (hidden until simulation finishes) -->
-  <div id="bk-content" style="display:none;">
+  <!-- ── LOADING ─────────────────────────────── -->
+  <div id="wt-loading" class="wt-loading">
+    <div class="wt-spinner"></div>
+    <div class="wt-loading-title">Simulando 2,000 torneos…</div>
+    <div class="wt-loading-sub">Calculando probabilidades para las 48 selecciones</div>
+  </div>
 
-    <!-- ══════════ VISUAL BRACKET TREE ══════════ -->
-    <div style="background:linear-gradient(180deg,#0D1124 0%,#090D18 100%);border-bottom:1px solid rgba(212,175,55,0.2);">
+  <!-- ── MAIN CONTENT ────────────────────────── -->
+  <div id="wt-content" style="display:none;">
 
-      <!-- SEDES BANNER — 14 venues (static HTML) -->
-      <div style="overflow-x:auto;scrollbar-width:none;border-bottom:1px solid rgba(255,255,255,0.07);padding:10px 20px;">
-        <div style="display:flex;gap:0;min-width:max-content;align-items:center;">
-          <div style="font-family:'Outfit',sans-serif;font-size:0.52rem;font-weight:900;text-transform:uppercase;letter-spacing:0.15em;color:#D4AF37;white-space:nowrap;border:1px solid rgba(212,175,55,0.35);padding:3px 10px;border-radius:4px;flex-shrink:0;margin-right:12px;">SEDES</div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">CDMX</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Azteca</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Guadalajara</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Akron</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Monterrey</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">BBVA</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Toronto</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">BMO Field</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Vancouver</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">BC Place</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Los Ángeles</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">SoFi Stadium</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Seattle</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Lumen Field</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Arlington</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">AT&amp;T Stadium</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Atlanta</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">M. Benz</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#2DD4BF;font-family:'Outfit',sans-serif;">Miami</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Hard Rock</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Nashville</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Geodis Park</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Boston</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Gillette</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#F5C400;font-family:'Outfit',sans-serif;">N. Jersey</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">MetLife ★</div></div>
-          <div style="width:1px;height:24px;background:rgba(255,255,255,0.1);flex-shrink:0;"></div>
-          <div style="text-align:center;flex-shrink:0;padding:0 10px;"><div style="font-size:0.54rem;font-weight:800;color:#fff;font-family:'Outfit',sans-serif;">Filadelfia</div><div style="font-size:0.44rem;color:rgba(255,255,255,0.45);">Lincoln Financial</div></div>
+    <!-- Groups + Bracket -->
+    <div class="wt-body">
+
+      <!-- LEFT GROUPS (A–F) -->
+      <div class="wt-groups-col" id="wt-groups-left"></div>
+
+      <!-- BRACKET CENTER -->
+      <div class="wt-bracket-wrap">
+        <div class="wt-bracket-title">
+          <div class="wt-bracket-title-main">⚔ FASE FINAL · ELIMINACIÓN DIRECTA</div>
+          <div class="wt-bracket-title-sub">30 Jun – 19 Jul 2026 · Proyección basada en ratings</div>
         </div>
-      </div>
-
-      <!-- FASE FINAL TITLE -->
-      <div style="text-align:center;padding:18px 16px 8px;">
-        <div style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:clamp(1.6rem,4vw,2.6rem);font-weight:900;letter-spacing:0.12em;color:#fff;line-height:1;text-shadow:0 2px 24px rgba(212,175,55,0.25);">FASE FINAL</div>
-        <div style="font-size:0.62rem;color:rgba(255,255,255,0.4);font-family:'Outfit',sans-serif;margin-top:4px;letter-spacing:0.08em;">Proyección probabilística · Simulación determinista basada en ratings</div>
-      </div>
-
-      <!-- BRACKET MAIN -->
-      <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;padding:0 8px 8px;">
-        <div style="min-width:max-content;">
-
-          <!-- Round headers -->
-          <div style="display:flex;align-items:flex-end;gap:0;padding:0 0 6px;justify-content:center;">
-            <div style="width:170px;text-align:center;">
-              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#2DD4BF;text-transform:uppercase;letter-spacing:0.1em;">Dieciséisavos</div>
-              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">30 Jun – 3 Jul</div>
-            </div>
-            <div style="width:18px"></div>
-            <div style="width:170px;text-align:center;">
-              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#2DD4BF;text-transform:uppercase;letter-spacing:0.1em;">Octavos</div>
-              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">5 – 6 Jul</div>
-            </div>
-            <div style="width:18px"></div>
-            <div style="width:170px;text-align:center;">
-              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#2DD4BF;text-transform:uppercase;letter-spacing:0.1em;">Cuartos</div>
-              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">9 – 10 Jul</div>
-            </div>
-            <div style="width:18px"></div>
-            <div style="width:140px;text-align:center;">
-              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#D4AF37;text-transform:uppercase;letter-spacing:0.1em;">Semifinal</div>
-              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">14 – 15 Jul</div>
-            </div>
-            <div style="width:24px"></div>
-            <div style="width:170px;text-align:center;">
-              <div style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:0.8rem;font-weight:900;color:#F5C400;text-transform:uppercase;letter-spacing:0.12em;">Final</div>
-              <div style="font-size:0.5rem;color:rgba(245,196,0,0.6);margin-top:1px;">19 Jul · MetLife Stadium</div>
-            </div>
-            <div style="width:24px"></div>
-            <div style="width:140px;text-align:center;">
-              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#C084FC;text-transform:uppercase;letter-spacing:0.1em;">Semifinal</div>
-              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">14 – 15 Jul</div>
-            </div>
-            <div style="width:18px"></div>
-            <div style="width:170px;text-align:center;">
-              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#C084FC;text-transform:uppercase;letter-spacing:0.1em;">Cuartos</div>
-              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">9 – 10 Jul</div>
-            </div>
-            <div style="width:18px"></div>
-            <div style="width:170px;text-align:center;">
-              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#C084FC;text-transform:uppercase;letter-spacing:0.1em;">Octavos</div>
-              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">5 – 6 Jul</div>
-            </div>
-            <div style="width:18px"></div>
-            <div style="width:170px;text-align:center;">
-              <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:#C084FC;text-transform:uppercase;letter-spacing:0.1em;">Dieciséisavos</div>
-              <div style="font-size:0.5rem;color:rgba(255,255,255,0.35);margin-top:1px;">30 Jun – 3 Jul</div>
-            </div>
-          </div>
-
-          <!-- Bracket columns -->
-          <div id="bracket-tree" style="display:flex;align-items:center;justify-content:center;gap:0;min-width:max-content;padding:0 0 8px;position:relative;">
-            <!-- LEFT HALF -->
-            <div id="b-left-r16"  class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:520px;" data-side="left"></div>
-            <div id="b-left-c1"   class="btree-conn" style="width:18px;height:520px;position:relative;flex-shrink:0;"></div>
-            <div id="b-left-qf"   class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:520px;" data-side="left"></div>
-            <div id="b-left-c2"   class="btree-conn" style="width:18px;height:520px;position:relative;flex-shrink:0;"></div>
-            <div id="b-left-sf"   class="btree-col" style="display:flex;flex-direction:column;justify-content:center;height:520px;" data-side="left"></div>
-            <div id="b-left-c3"   style="width:24px;height:520px;position:relative;flex-shrink:0;"></div>
-            <!-- CENTER -->
-            <div id="b-center" style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:520px;gap:8px;flex-shrink:0;width:170px;"></div>
-            <!-- RIGHT HALF -->
-            <div id="b-right-c3"  style="width:24px;height:520px;position:relative;flex-shrink:0;"></div>
-            <div id="b-right-sf"  class="btree-col" style="display:flex;flex-direction:column;justify-content:center;height:520px;" data-side="right"></div>
-            <div id="b-right-c2"  class="btree-conn" style="width:18px;height:520px;position:relative;flex-shrink:0;"></div>
-            <div id="b-right-qf"  class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:520px;" data-side="right"></div>
-            <div id="b-right-c1"  class="btree-conn" style="width:18px;height:520px;position:relative;flex-shrink:0;"></div>
-            <div id="b-right-r16" class="btree-col" style="display:flex;flex-direction:column;justify-content:space-around;height:520px;" data-side="right"></div>
-          </div>
+        <div class="wt-bracket-scroll" id="wt-bracket-scroll">
+          <!-- Bracket rendered by JS -->
         </div>
+        <!-- Third Place -->
+        <div class="wt-third" id="wt-third"></div>
       </div>
 
-      <!-- 3er PUESTO -->
-      <div style="text-align:center;padding:8px 16px 16px;">
-        <div id="b-third" style="display:inline-flex;align-items:center;gap:16px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 24px;">
-          <div style="font-family:'Outfit',sans-serif;font-size:0.62rem;font-weight:900;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;">🥉 3er Puesto<br><span style="font-size:0.5rem;font-weight:400;color:rgba(255,255,255,0.3);">18 Jul · Hard Rock Stadium · Miami</span></div>
-        </div>
-      </div>
-
-      <div style="text-align:center;padding-bottom:12px;font-size:0.58rem;color:rgba(255,255,255,0.3);font-family:'Outfit',sans-serif;">
-        ⚠ Proyección determinista basada en ratings · No garantiza resultados reales
-      </div>
-    </div>
-    <!-- ══════════ END BRACKET TREE ══════════ -->
-
-    <!-- Top 12 Candidatos -->
-    <div class="bk-section">
-      <div class="bk-section-title">Candidatos al título · prob. de ser campeón</div>
-      <div class="bk-favs-grid" id="bk-favs"></div>
+      <!-- RIGHT GROUPS (G–L) -->
+      <div class="wt-groups-col right" id="wt-groups-right"></div>
     </div>
 
-    <hr class="bk-sep">
-
-    <!-- Legend -->
-    <div class="bk-legend">
-      <span style="font-weight:700; color:var(--text-secondary);">Probabilidad de avanzar en esa fase:</span>
-      <span class="bk-legend-item"><span class="bk-legend-dot" style="background:#D4AF37;"></span>&ge;60% Alta</span>
-      <span class="bk-legend-item"><span class="bk-legend-dot" style="background:rgba(251,191,36,0.4);"></span>30–59% Media</span>
-      <span class="bk-legend-item"><span class="bk-legend-dot" style="background:rgba(100,116,139,0.25);"></span>10–29% Baja</span>
-      <span class="bk-legend-item"><span class="bk-legend-dot" style="background:rgba(100,116,139,0.1);"></span>&lt;10% Marginal</span>
+    <!-- Probability Rankings -->
+    <div class="wt-probs-section">
+      <div class="wt-section-title">Candidatos al Título · Probabilidad de ser Campeón</div>
+      <div class="wt-favs-grid" id="wt-favs"></div>
     </div>
 
-    <!-- Funnel bracket -->
-    <div class="bk-funnel-wrap">
-      <div class="bk-funnel" id="bk-funnel"></div>
+    <!-- Probability Funnel -->
+    <div class="wt-probs-section" style="padding-top:0;">
+      <div class="wt-section-title">Probabilidad de Avance por Fase</div>
+      <div class="wt-funnel-wrap">
+        <div class="wt-funnel" id="wt-funnel"></div>
+      </div>
     </div>
 
     <!-- Disclaimer -->
-    <div class="bk-disclaimer">
-      <div class="bk-disclaimer-box" id="bk-disc"></div>
+    <div class="wt-disclaimer" id="wt-disc">
+      Resultados de simulación probabilística. No garantizan resultados reales.
     </div>
 
-  </div>
+  </div><!-- /wt-content -->
 
-  <!-- Footer -->
-  <footer>
-    <p>COPA MUNDIAL DE LA FIFA 2026™ | BRACKET PROBABILÍSTICO</p>
-    <p style="font-size:0.75rem;color:var(--text-muted);margin-top:0.5rem;">
-      Proyecciones para análisis y entretenimiento. No garantizan resultados reales.
-    </p>
-    <p style="margin-top:1rem;">Diseñado por <strong style="color:var(--gold-dark,#D4AF37)">Marco Saldarriaga</strong> · Vibe Coding</p>
+  <footer class="wt-footer">
+    <div>COPA MUNDIAL DE LA FIFA 2026™ · Bracket Probabilístico</div>
+    <div style="margin-top:4px;">Proyecciones para análisis y entretenimiento. No garantizan resultados reales.</div>
+    <div style="margin-top:6px;">Diseñado por <strong>Marco Saldarriaga</strong> · Vibe Coding</div>
   </footer>
+</div><!-- /wt-page -->
 
-  <!-- Load ratings + probability engine from shared module -->
-  <script src="pronosticos.js"></script>
+<script src="pronosticos.js"></script>
+<script>
+/* ══════════════════════════════════════════════════════
+   BRACKET WALL TRACKER — Simulation & Render Engine
+   ══════════════════════════════════════════════════════ */
 
-  <script>
-  // ================================================================
-  // BRACKET SIMULATION ENGINE
-  // ================================================================
+const F = {
+  "Argentina":"🇦🇷","Francia":"🇫🇷","España":"🇪🇸","Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Brasil":"🇧🇷",
+  "Países Bajos":"🇳🇱","Portugal":"🇵🇹","Bélgica":"🇧🇪","Colombia":"🇨🇴","Uruguay":"🇺🇾",
+  "Alemania":"🇩🇪","Marruecos":"🇲🇦","Estados Unidos":"🇺🇸","Suiza":"🇨🇭","Japón":"🇯🇵",
+  "Croacia":"🇭🇷","Senegal":"🇸🇳","Corea del Sur":"🇰🇷","Ecuador":"🇪🇨","Suecia":"🇸🇪",
+  "Noruega":"🇳🇴","Austria":"🇦🇹","Turquía":"🇹🇷","Australia":"🇦🇺","República Checa":"🇨🇿",
+  "Egipto":"🇪🇬","Costa de Marfil":"🇨🇮","Paraguay":"🇵🇾","Argelia":"🇩🇿","Arabia Saudita":"🇸🇦",
+  "Ghana":"🇬🇭","Bosnia y Herzegovina":"🇧🇦","Túnez":"🇹🇳","Panamá":"🇵🇦","Catar":"🇶🇦",
+  "Sudáfrica":"🇿🇦","Irak":"🇮🇶","Uzbekistán":"🇺🇿","RD Congo":"🇨🇩","Jordania":"🇯🇴",
+  "Nueva Zelanda":"🇳🇿","Haití":"🇭🇹","Curazao":"🇨🇼","México":"🇲🇽","Canadá":"🇨🇦",
+  "Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Irán":"🇮🇷","Cabo Verde":"🇨🇻"
+};
 
-  const FLAGS = {
-    "Argentina":"🇦🇷","Francia":"🇫🇷","España":"🇪🇸","Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-    "Brasil":"🇧🇷","Países Bajos":"🇳🇱","Portugal":"🇵🇹","Bélgica":"🇧🇪",
-    "Colombia":"🇨🇴","Uruguay":"🇺🇾","Alemania":"🇩🇪","Marruecos":"🇲🇦",
-    "Estados Unidos":"🇺🇸","Suiza":"🇨🇭","Japón":"🇯🇵","Croacia":"🇭🇷",
-    "Senegal":"🇸🇳","Corea del Sur":"🇰🇷","Ecuador":"🇪🇨","Suecia":"🇸🇪",
-    "Noruega":"🇳🇴","Austria":"🇦🇹","Turquía":"🇹🇷","Australia":"🇦🇺",
-    "República Checa":"🇨🇿","Egipto":"🇪🇬","Costa de Marfil":"🇨🇮",
-    "Paraguay":"🇵🇾","Argelia":"🇩🇿","Arabia Saudita":"🇸🇦",
-    "Ghana":"🇬🇭","Bosnia y Herzegovina":"🇧🇦","Túnez":"🇹🇳",
-    "Panamá":"🇵🇦","Catar":"🇶🇦","Sudáfrica":"🇿🇦","Irak":"🇮🇶",
-    "Uzbekistán":"🇺🇿","RD Congo":"🇨🇩","Jordania":"🇯🇴",
-    "Nueva Zelanda":"🇳🇿","Haití":"🇭🇹","Curazao":"🇨🇼",
-    "México":"🇲🇽","Canadá":"🇨🇦","Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Irán":"🇮🇷","Cabo Verde":"🇨🇻"
-  };
+const GROUPS = {
+  "A": ["México","Sudáfrica","Corea del Sur","República Checa"],
+  "B": ["Canadá","Bosnia y Herzegovina","Catar","Suiza"],
+  "C": ["Haití","Escocia","Brasil","Marruecos"],
+  "D": ["Estados Unidos","Paraguay","Australia","Turquía"],
+  "E": ["Costa de Marfil","Ecuador","Alemania","Curazao"],
+  "F": ["Países Bajos","Japón","Suecia","Túnez"],
+  "G": ["Irán","Nueva Zelanda","Bélgica","Egipto"],
+  "H": ["Arabia Saudita","Uruguay","España","Cabo Verde"],
+  "I": ["Francia","Senegal","Irak","Noruega"],
+  "J": ["Argentina","Argelia","Austria","Jordania"],
+  "K": ["Portugal","RD Congo","Uzbekistán","Colombia"],
+  "L": ["Inglaterra","Croacia","Ghana","Panamá"]
+};
 
-  const GROUPS = {
-    A: ["México","Sudáfrica","Corea del Sur","República Checa"],
-    B: ["Canadá","Bosnia y Herzegovina","Catar","Suiza"],
-    C: ["Haití","Escocia","Brasil","Marruecos"],
-    D: ["Estados Unidos","Paraguay","Australia","Turquía"],
-    E: ["Costa de Marfil","Ecuador","Alemania","Curazao"],
-    F: ["Países Bajos","Japón","Suecia","Túnez"],
-    G: ["Irán","Nueva Zelanda","Bélgica","Egipto"],
-    H: ["Arabia Saudita","Uruguay","España","Cabo Verde"],
-    I: ["Francia","Senegal","Irak","Noruega"],
-    J: ["Argentina","Argelia","Austria","Jordania"],
-    K: ["Portugal","RD Congo","Uzbekistán","Colombia"],
-    L: ["Inglaterra","Croacia","Ghana","Panamá"]
-  };
+const GROUP_MATCHES_MAP = {
+  "A": [["México","Sudáfrica","11 Jun"],["Corea del Sur","República Checa","11 Jun"],["Sudáfrica","República Checa","18 Jun"],["México","Corea del Sur","18 Jun"],["República Checa","México","24 Jun"],["Sudáfrica","Corea del Sur","24 Jun"]],
+  "B": [["Canadá","Bosnia y Herzegovina","12 Jun"],["Catar","Suiza","13 Jun"],["Canadá","Catar","18 Jun"],["Bosnia y Herzegovina","Suiza","18 Jun"],["Suiza","Canadá","24 Jun"],["Bosnia y Herzegovina","Catar","24 Jun"]],
+  "C": [["Haití","Escocia","13 Jun"],["Brasil","Marruecos","13 Jun"],["Brasil","Haití","19 Jun"],["Marruecos","Escocia","19 Jun"],["Marruecos","Haití","24 Jun"],["Escocia","Brasil","24 Jun"]],
+  "D": [["Estados Unidos","Paraguay","12 Jun"],["Australia","Turquía","13 Jun"],["Turquía","Paraguay","19 Jun"],["Estados Unidos","Australia","19 Jun"],["Estados Unidos","Turquía","25 Jun"],["Paraguay","Australia","25 Jun"]],
+  "E": [["Costa de Marfil","Ecuador","14 Jun"],["Alemania","Curazao","14 Jun"],["Alemania","Costa de Marfil","20 Jun"],["Ecuador","Curazao","20 Jun"],["Curazao","Costa de Marfil","25 Jun"],["Ecuador","Alemania","25 Jun"]],
+  "F": [["Países Bajos","Japón","14 Jun"],["Suecia","Túnez","14 Jun"],["Países Bajos","Suecia","20 Jun"],["Japón","Túnez","20 Jun"],["Túnez","Países Bajos","25 Jun"],["Japón","Suecia","25 Jun"]],
+  "G": [["Irán","Nueva Zelanda","15 Jun"],["Bélgica","Egipto","15 Jun"],["Bélgica","Irán","21 Jun"],["Nueva Zelanda","Egipto","21 Jun"],["Egipto","Irán","26 Jun"],["Nueva Zelanda","Bélgica","26 Jun"]],
+  "H": [["Arabia Saudita","Uruguay","15 Jun"],["España","Cabo Verde","15 Jun"],["Uruguay","Cabo Verde","21 Jun"],["España","Arabia Saudita","21 Jun"],["Arabia Saudita","Cabo Verde","26 Jun"],["España","Uruguay","26 Jun"]],
+  "I": [["Francia","Senegal","16 Jun"],["Irak","Noruega","16 Jun"],["Noruega","Senegal","22 Jun"],["Francia","Irak","22 Jun"],["Irak","Senegal","26 Jun"],["Noruega","Francia","26 Jun"]],
+  "J": [["Argentina","Argelia","16 Jun"],["Austria","Jordania","16 Jun"],["Argentina","Austria","22 Jun"],["Argelia","Jordania","22 Jun"],["Argelia","Austria","27 Jun"],["Jordania","Argentina","27 Jun"]],
+  "K": [["Portugal","RD Congo","17 Jun"],["Uzbekistán","Colombia","17 Jun"],["Portugal","Uzbekistán","23 Jun"],["Colombia","RD Congo","23 Jun"],["Colombia","Portugal","27 Jun"],["RD Congo","Uzbekistán","27 Jun"]],
+  "L": [["Inglaterra","Croacia","17 Jun"],["Ghana","Panamá","17 Jun"],["Inglaterra","Ghana","23 Jun"],["Panamá","Croacia","23 Jun"],["Panamá","Inglaterra","27 Jun"],["Croacia","Ghana","27 Jun"]]
+};
 
-  const ALL_TEAMS = Object.values(GROUPS).flat();
 
-  // ---- Simulate a single match ----
-  function simMatch(t1, t2, knockout) {
+// ── SIMULATION ─────────────────────────────────────────────────────
+function simGroup(teams) {
+  const standings = {};
+  teams.forEach(t => { standings[t] = { pts:0, gd:0, gf:0 }; });
+  for (let i=0; i<teams.length; i++) for (let j=i+1; j<teams.length; j++) {
+    const t1=teams[i], t2=teams[j];
     const p = calculateMatchProbabilities(t1, t2);
-    const r = Math.random() * 100;
-    if (knockout) {
-      const denom = p.p1 + p.p2 || 1;
-      const pWin1 = p.p1 + p.pDraw * (p.p1 / denom);
-      return r < pWin1 ? t1 : t2;
-    }
-    // Group stage (allows draws)
-    if (r < p.p1)              return { win: t1, gW: 2, gL: 0 };
-    if (r < p.p1 + p.pDraw)   return { draw: true };
-    return                            { win: t2, gW: 2, gL: 0 };
-  }
-
-  // ---- Simulate a full group (round-robin), return teams ranked 1st-4th ----
-  function simGroup(teams) {
-    const s = {};
-    teams.forEach(t => { s[t] = { pts: 0, gd: 0, gf: 0 }; });
-
-    for (let i = 0; i < teams.length; i++) {
-      for (let j = i + 1; j < teams.length; j++) {
-        const r = simMatch(teams[i], teams[j], false);
-        if (r.draw) {
-          s[teams[i]].pts++; s[teams[j]].pts++;
-          s[teams[i]].gf++; s[teams[j]].gf++;
-        } else {
-          s[r.win].pts += 3;
-          s[r.win].gd += 2; s[r.win].gf += 2;
-          const loser = r.win === teams[i] ? teams[j] : teams[i];
-          s[loser].gd -= 2;
-        }
-      }
-    }
-
-    return teams.slice().sort((a, b) =>
-      s[b].pts - s[a].pts ||
-      s[b].gd  - s[a].gd  ||
-      s[b].gf  - s[a].gf  ||
-      (TEAM_RATINGS[b] || 70) - (TEAM_RATINGS[a] || 70)
-    );
-  }
-
-  // ---- Fisher-Yates shuffle ----
-  function shuffle(arr) {
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
-    }
-    return a;
-  }
-
-  // ---- Pair consecutive teams ----
-  function pair(arr) {
-    const out = [];
-    for (let i = 0; i < arr.length; i += 2) out.push([arr[i], arr[i + 1]]);
-    return out;
-  }
-
-  // ---- Main Monte Carlo simulation ----
-  function runSimulations(N) {
-    const cnt = {};
-    ALL_TEAMS.forEach(t => { cnt[t] = { r32:0, r16:0, qf:0, sf:0, fin:0, champ:0 }; });
-
-    for (let i = 0; i < N; i++) {
-      const thirds = [];
-      const r32 = [];
-
-      // Group stage
-      for (const teams of Object.values(GROUPS)) {
-        const ranked = simGroup(teams);
-        r32.push(ranked[0], ranked[1]);
-        thirds.push({ team: ranked[2], rating: TEAM_RATINGS[ranked[2]] || 70 });
-      }
-
-      // Best 8 third-place teams (by rating as proxy for group performance)
-      thirds.sort((a, b) => b.rating - a.rating);
-      thirds.slice(0, 8).forEach(({ team }) => r32.push(team));
-
-      // Track R32 qualifiers
-      r32.forEach(t => cnt[t] && cnt[t].r32++);
-
-      // Knockout rounds (random bracket draw each simulation)
-      let cur = shuffle(r32);
-
-      const r16 = pair(cur).map(([a, b]) => simMatch(a, b, true));
-      r16.forEach(t => cnt[t] && cnt[t].r16++);
-
-      const qf = pair(shuffle(r16)).map(([a, b]) => simMatch(a, b, true));
-      qf.forEach(t => cnt[t] && cnt[t].qf++);
-
-      const sf = pair(shuffle(qf)).map(([a, b]) => simMatch(a, b, true));
-      sf.forEach(t => cnt[t] && cnt[t].sf++);
-
-      // Finalists
-      const [f1, f2] = sf.length >= 2 ? sf : [sf[0], sf[0]];
-      const f1w = simMatch(f1, f2, true);
-      const finalists = pair(sf);
-      finalists.forEach(([a, b]) => {
-        cnt[a] && cnt[a].fin++;
-        cnt[b] && cnt[b].fin++;
-      });
-
-      // Champion
-      const champ = sf.length >= 2 ? simMatch(sf[0], sf[1], true) : sf[0];
-      if (cnt[champ]) cnt[champ].champ++;
-    }
-
-    // Convert to percentages
-    const out = {};
-    for (const [t, c] of Object.entries(cnt)) {
-      out[t] = {
-        r32:   Math.round(c.r32   / N * 100),
-        r16:   Math.round(c.r16   / N * 100),
-        qf:    Math.round(c.qf    / N * 100),
-        sf:    Math.round(c.sf    / N * 100),
-        fin:   Math.round(c.fin   / N * 100),
-        champ: Math.round(c.champ / N * 100)
-      };
-    }
-    return out;
-  }
-
-  // ================================================================
-  // RENDER FUNCTIONS
-  // ================================================================
-
-  function pctClass(pct) {
-    if (pct >= 60) return 'p-high';
-    if (pct >= 30) return 'p-mid';
-    if (pct >= 10) return 'p-low';
-    return 'p-ghost';
-  }
-
-  function chipHtml(team, pct) {
-    return `
-      <div class="bk-chip">
-        <span class="bk-chip-flag">${FLAGS[team] || '🏳'}</span>
-        <span class="bk-chip-name">${team}</span>
-        <span class="bk-chip-pct ${pctClass(pct)}">${pct}%</span>
-      </div>`;
-  }
-
-  function renderFavorites(probs) {
-    const sorted = ALL_TEAMS
-      .map(t => ({ team: t, pct: probs[t]?.champ || 0 }))
-      .filter(x => x.pct > 0)
-      .sort((a, b) => b.pct - a.pct)
-      .slice(0, 12);
-
-    const maxPct = sorted[0]?.pct || 1;
-
-    document.getElementById('bk-favs').innerHTML = sorted.map(({ team, pct }, i) => {
-      const pctCls = i === 0 ? 'gold-pct' : pct >= 10 ? 'green-pct' : 'muted-pct';
-      const fillW = Math.round(pct / maxPct * 100);
-      return `
-        <div class="bk-fav${i === 0 ? ' is-top' : ''}">
-          <span class="bk-fav-rank">#${i + 1}</span>
-          <span class="bk-fav-flag">${FLAGS[team] || '🏳'}</span>
-          <div class="bk-fav-name">${team}</div>
-          <span class="bk-fav-pct ${pctCls}">${pct}%</span>
-          <span class="bk-fav-label">prob. campeón</span>
-          <div class="bk-fav-bar"><div class="bk-fav-bar-fill" style="width:${fillW}%"></div></div>
-        </div>`;
-    }).join('');
-  }
-
-  function renderFunnel(probs) {
-    const rounds = [
-      { key: 'r32', label: '32avos de Final',   n: 32 },
-      { key: 'r16', label: '16avos de Final',   n: 16 },
-      { key: 'qf',  label: 'Cuartos de Final',  n: 8  },
-      { key: 'sf',  label: 'Semifinal',          n: 4  },
-      { key: 'fin', label: 'Final',              n: 2  },
-      { key: 'champ', label: 'Campeón',          n: 1  },
-    ];
-
-    const container = document.getElementById('bk-funnel');
-    container.innerHTML = '';
-
-    for (const round of rounds) {
-      const sorted = ALL_TEAMS
-        .map(t => ({ team: t, pct: probs[t]?.[round.key] || 0 }))
-        .filter(x => x.pct > 0)
-        .sort((a, b) => b.pct - a.pct);
-
-      const col = document.createElement('div');
-      col.className = `bk-col${round.key === 'champ' ? ' is-champ' : ''}`;
-
-      let inner = `
-        <div class="bk-col-head">
-          <div class="bk-col-round">${round.key === 'champ' ? '🏆 ' : ''}${round.label}</div>
-          <div class="bk-col-count">${sorted.length} selecciones</div>
-        </div>`;
-
-      if (round.key === 'champ') {
-        const top = sorted[0];
-        inner += `
-          <div class="bk-champ-card">
-            <span class="bk-champ-trophy">🏆</span>
-            <span class="bk-champ-flag">${FLAGS[top.team] || '🏳'}</span>
-            <div class="bk-champ-name">${top.team}</div>
-            <span class="bk-champ-pct">${top.pct}%</span>
-            <span class="bk-champ-sub">Más probable</span>
-          </div>`;
-        // Show runners-up as chips
-        sorted.slice(1).forEach(({ team, pct }) => {
-          inner += chipHtml(team, pct);
-        });
-      } else {
-        sorted.forEach(({ team, pct }) => {
-          inner += chipHtml(team, pct);
-        });
-      }
-
-      col.innerHTML = inner;
-      container.appendChild(col);
+    const r = Math.random()*100;
+    if (r < p.p1) {
+      standings[t1].pts+=3; standings[t1].gd+=2; standings[t1].gf+=2;
+      standings[t2].gd-=2;
+    } else if (r < p.p1+p.pDraw) {
+      standings[t1].pts+=1; standings[t2].pts+=1;
+      standings[t1].gd+=0; standings[t2].gd+=0;
+      standings[t1].gf+=1; standings[t2].gf+=1;
+    } else {
+      standings[t2].pts+=3; standings[t2].gd+=2; standings[t2].gf+=2;
+      standings[t1].gd-=2;
     }
   }
+  return Object.entries(standings)
+    .sort((a,b)=>b[1].pts-a[1].pts||b[1].gd-a[1].gd||b[1].gf-a[1].gf)
+    .map(([t])=>t);
+}
 
-  function renderDisclaimer(probs) {
-    const top = ALL_TEAMS
-      .map(t => ({ team: t, pct: probs[t]?.champ || 0 }))
-      .sort((a, b) => b.pct - a.pct)[0];
+function simKnockout(t1, t2) {
+  const p = calculateMatchProbabilities(t1, t2);
+  const r = Math.random()*100;
+  const d = p.p1+p.p2||1;
+  const pw1adj = p.p1 + p.pDraw*(p.p1/d);
+  return r < pw1adj ? t1 : t2;
+}
 
-    document.getElementById('bk-disc').innerHTML = `
-      <strong>⚠️ Nota metodológica:</strong> Resultados de 2,000 simulaciones Monte Carlo
-      basadas en ratings internos del modelo (no son datos oficiales FIFA ni Elo certificado).
-      En cada simulación, el bracket de eliminatorias se sorteó aleatoriamente para reflejar
-      la incertidumbre real del torneo. El campeonato <strong>no está determinado</strong>
-      — esta es la proyección más probable según el modelo actual.
-      El favorito estadístico es <strong>${top?.team}</strong> con ${top?.pct}% de probabilidad de título.
-      Fuente: ${MODEL_METADATA.name}, actualizado el ${MODEL_METADATA.updatedAt}.
-      ${MODEL_METADATA.warning}
-    `;
+function runSimulations(N) {
+  const champ = {}, r32 = {}, r16 = {}, qf = {}, sf = {};
+  const allTeams = Object.values(GROUPS).flat();
+  allTeams.forEach(t => { champ[t]=0; r32[t]=0; r16[t]=0; qf[t]=0; sf[t]=0; });
+
+  for (let sim=0; sim<N; sim++) {
+    const qualified = [], thirds = [];
+    for (const [, teams] of Object.entries(GROUPS)) {
+      const ranked = simGroup(teams);
+      qualified.push(ranked[0], ranked[1]);
+      thirds.push({ team: ranked[2], rating: TEAM_RATINGS[ranked[2]]||70 });
+    }
+    thirds.sort((a,b)=>b.rating-a.rating);
+    thirds.slice(0,8).forEach(x => qualified.push(x.team));
+    qualified.sort((a,b)=>(TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
+
+    const S = qualified;
+    qualified.forEach(t => { r32[t]=(r32[t]||0)+1; });
+
+    // R32 → R16
+    const r16teams = [];
+    const pairs32L = [[0,31],[15,16],[7,24],[8,23],[3,28],[12,19],[4,27],[11,20]];
+    const pairs32R = [[1,30],[14,17],[6,25],[9,22],[2,29],[13,18],[5,26],[10,21]];
+    [...pairs32L,...pairs32R].forEach(([a,b])=>{
+      const w = simKnockout(S[a],S[b]);
+      r16teams.push(w); r16[w]=(r16[w]||0)+1;
+    });
+
+    // R16 → QF
+    const qfteams = [];
+    for (let i=0;i<r16teams.length;i+=2) {
+      const w = simKnockout(r16teams[i],r16teams[i+1]);
+      qfteams.push(w); qf[w]=(qf[w]||0)+1;
+    }
+
+    // QF → SF
+    const sfteams = [];
+    for (let i=0;i<qfteams.length;i+=2) {
+      const w = simKnockout(qfteams[i],qfteams[i+1]);
+      sfteams.push(w); sf[w]=(sf[w]||0)+1;
+    }
+
+    // SF → Final
+    const finalists = [];
+    for (let i=0;i<sfteams.length;i+=2) {
+      const w = simKnockout(sfteams[i],sfteams[i+1]);
+      finalists.push(w);
+    }
+    const champion = simKnockout(finalists[0],finalists[1]);
+    champ[champion]=(champ[champion]||0)+1;
   }
 
-  // ================================================================
-  // INIT
-  // ================================================================
-
-  // ================================================================
-  // DETERMINISTIC BRACKET TREE
-  // ================================================================
-
-  const BFLAGS = {"Argentina":"🇦🇷","Francia":"🇫🇷","España":"🇪🇸","Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Brasil":"🇧🇷","Países Bajos":"🇳🇱","Portugal":"🇵🇹","Bélgica":"🇧🇪","Colombia":"🇨🇴","Uruguay":"🇺🇾","Alemania":"🇩🇪","Marruecos":"🇲🇦","Estados Unidos":"🇺🇸","Suiza":"🇨🇭","Japón":"🇯🇵","Croacia":"🇭🇷","Senegal":"🇸🇳","Corea del Sur":"🇰🇷","Ecuador":"🇪🇨","Suecia":"🇸🇪","Noruega":"🇳🇴","Austria":"🇦🇹","Turquía":"🇹🇷","Australia":"🇦🇺","República Checa":"🇨🇿","Egipto":"🇪🇬","Costa de Marfil":"🇨🇮","Paraguay":"🇵🇾","Argelia":"🇩🇿","Arabia Saudita":"🇸🇦","Ghana":"🇬🇭","Bosnia y Herzegovina":"🇧🇦","Túnez":"🇹🇳","Panamá":"🇵🇦","Catar":"🇶🇦","Sudáfrica":"🇿🇦","Irak":"🇮🇶","Uzbekistán":"🇺🇿","RD Congo":"🇨🇩","Jordania":"🇯🇴","Nueva Zelanda":"🇳🇿","Haití":"🇭🇹","Curazao":"🇨🇼","México":"🇲🇽","Canadá":"🇨🇦","Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Irán":"🇮🇷","Cabo Verde":"🇨🇻"};
-
-  function buildDeterministicBracket() {
-    // Step 1: deterministic group stage (sort by rating)
-    const qualified = [];
-    const thirds = [];
-    for (const teams of Object.values(GROUPS)) {
-      const s = [...teams].sort((a,b) => (TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
-      qualified.push(s[0], s[1]);
-      thirds.push(s[2]);
-    }
-    thirds.sort((a,b) => (TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
-    thirds.slice(0,8).forEach(t => qualified.push(t));
-
-    // Step 2: seed by rating
-    qualified.sort((a,b) => (TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
-    const S = qualified; // S[0]=seed1 ... S[31]=seed32
-
-    const w = (a,b) => (TEAM_RATINGS[a]||70) >= (TEAM_RATINGS[b]||70) ? a : b;
-    const winProb = (t1,t2) => {
-      const p = calculateMatchProbabilities(t1, t2);
-      const d = p.p1 + p.p2 || 1;
-      const pw1 = Math.round(p.p1 + p.pDraw * p.p1/d);
-      return { t1, t2, winner: w(t1,t2), loser: w(t1,t2)===t1?t2:t1, pw1, pw2: 100-pw1 };
+  const probs = {};
+  allTeams.forEach(t => {
+    probs[t] = {
+      r32:   Math.round((r32[t]||0)/N*100),
+      r16:   Math.round((r16[t]||0)/N*100),
+      qf:    Math.round((qf[t]||0)/N*100),
+      sf:    Math.round((sf[t]||0)/N*100),
+      champ: Math.round((champ[t]||0)/N*100)
     };
+  });
+  return probs;
+}
 
-    // Step 3: R32 → R16 (8 matches per side, seeding: 1v32,16v17,... )
-    // Left side seeds: 1,32 | 16,17 | 8,25 | 9,24 | 4,29 | 13,20 | 5,28 | 12,21
-    const lr32 = [
-      winProb(S[0],S[31]), winProb(S[15],S[16]),
-      winProb(S[7],S[24]), winProb(S[8],S[23]),
-      winProb(S[3],S[28]), winProb(S[12],S[19]),
-      winProb(S[4],S[27]), winProb(S[11],S[20])
-    ];
-    // Right side seeds: 2,31 | 15,18 | 7,26 | 10,23 | 3,30 | 14,19 | 6,27 | 11,22
-    const rr32 = [
-      winProb(S[1],S[30]), winProb(S[14],S[17]),
-      winProb(S[6],S[25]), winProb(S[9],S[22]),
-      winProb(S[2],S[29]), winProb(S[13],S[18]),
-      winProb(S[5],S[26]), winProb(S[10],S[21])
-    ];
 
-    // Step 4: R16 (4 matches per side; each from 2 R32 winners)
-    const lr16 = [
-      winProb(lr32[0].winner, lr32[1].winner),
-      winProb(lr32[2].winner, lr32[3].winner),
-      winProb(lr32[4].winner, lr32[5].winner),
-      winProb(lr32[6].winner, lr32[7].winner)
-    ];
-    const rr16 = [
-      winProb(rr32[0].winner, rr32[1].winner),
-      winProb(rr32[2].winner, rr32[3].winner),
-      winProb(rr32[4].winner, rr32[5].winner),
-      winProb(rr32[6].winner, rr32[7].winner)
-    ];
-
-    // Step 5: QF (2 per side)
-    const lqf = [
-      winProb(lr16[0].winner, lr16[1].winner),
-      winProb(lr16[2].winner, lr16[3].winner)
-    ];
-    const rqf = [
-      winProb(rr16[0].winner, rr16[1].winner),
-      winProb(rr16[2].winner, rr16[3].winner)
-    ];
-
-    // Step 6: SF (1 per side)
-    const lsf = winProb(lqf[0].winner, lqf[1].winner);
-    const rsf = winProb(rqf[0].winner, rqf[1].winner);
-
-    // Step 7: Final
-    const final = winProb(lsf.winner, rsf.winner);
-
-    return { lr16, rr16, lqf, rqf, lsf, rsf, final };
+// ── DETERMINISTIC BRACKET ──────────────────────────────────────────
+function buildBracket() {
+  const qualified = [], thirds = [];
+  for (const teams of Object.values(GROUPS)) {
+    const s = [...teams].sort((a,b)=>(TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
+    qualified.push(s[0], s[1]);
+    thirds.push({ team:s[2], rating:TEAM_RATINGS[s[2]]||70 });
   }
+  thirds.sort((a,b)=>b.rating-a.rating);
+  thirds.slice(0,8).forEach(x => qualified.push(x.team));
+  qualified.sort((a,b)=>(TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
+  const S = qualified;
 
-  function matchCard(m, flipped) {
-    const slots = flipped
-      ? [{ team:m.loser, pct: m.winner===m.t1?m.pw2:m.pw1, win:false },
-         { team:m.winner, pct: m.winner===m.t1?m.pw1:m.pw2, win:true }]
-      : [{ team:m.winner, pct: m.winner===m.t1?m.pw1:m.pw2, win:true },
-         { team:m.loser, pct: m.winner===m.t1?m.pw2:m.pw1, win:false }];
+  const wp = (t1,t2) => {
+    const p = calculateMatchProbabilities(t1,t2);
+    const d = p.p1+p.p2||1;
+    const pw1 = Math.round(p.p1+p.pDraw*(p.p1/d));
+    const winner = (TEAM_RATINGS[t1]||70)>=(TEAM_RATINGS[t2]||70)?t1:t2;
+    return { t1, t2, winner, loser:winner===t1?t2:t1, pw1, pw2:100-pw1 };
+  };
 
-    return `<div style="display:flex;flex-direction:column;gap:3px;width:162px;">
-      ${slots.map(s => `
-        <div style="
-          display:flex;align-items:center;gap:6px;
-          padding:5px 8px;border-radius:7px;
-          background:${s.win ? 'linear-gradient(90deg,rgba(212,175,55,0.18),rgba(212,175,55,0.06))' : 'rgba(255,255,255,0.04)'};
-          border:1px solid ${s.win ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.08)'};
-          opacity:${s.win ? 1 : 0.42};
-          min-height:28px;
-          transition:all 0.15s;
-        ">
-          <span style="font-size:0.88rem;flex-shrink:0;line-height:1;">${BFLAGS[s.team]||'🏳'}</span>
-          <span style="
-            flex:1;font-size:0.7rem;font-weight:${s.win?800:500};
-            color:${s.win?'#F5E6A0':'rgba(255,255,255,0.45)'};
-            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-            font-family:'Outfit',sans-serif;
-            ${s.win?'text-shadow:0 0 12px rgba(245,196,0,0.25);':''}
-          ">${s.team}</span>
-          <span style="
-            font-size:0.75rem;font-weight:900;
-            font-family:'Bebas Neue','Outfit',sans-serif;
-            color:${s.win?'#F5C400':'rgba(255,255,255,0.25)'};
-            flex-shrink:0;min-width:28px;text-align:right;
-          ">${s.pct}%</span>
-        </div>`).join('')}
+  const lr32 = [wp(S[0],S[31]),wp(S[15],S[16]),wp(S[7],S[24]),wp(S[8],S[23]),wp(S[3],S[28]),wp(S[12],S[19]),wp(S[4],S[27]),wp(S[11],S[20])];
+  const rr32 = [wp(S[1],S[30]),wp(S[14],S[17]),wp(S[6],S[25]),wp(S[9],S[22]),wp(S[2],S[29]),wp(S[13],S[18]),wp(S[5],S[26]),wp(S[10],S[21])];
+  const lr16 = [wp(lr32[0].winner,lr32[1].winner),wp(lr32[2].winner,lr32[3].winner),wp(lr32[4].winner,lr32[5].winner),wp(lr32[6].winner,lr32[7].winner)];
+  const rr16 = [wp(rr32[0].winner,rr32[1].winner),wp(rr32[2].winner,rr32[3].winner),wp(rr32[4].winner,rr32[5].winner),wp(rr32[6].winner,rr32[7].winner)];
+  const lqf  = [wp(lr16[0].winner,lr16[1].winner),wp(lr16[2].winner,lr16[3].winner)];
+  const rqf  = [wp(rr16[0].winner,rr16[1].winner),wp(rr16[2].winner,rr16[3].winner)];
+  const lsf  = wp(lqf[0].winner,lqf[1].winner);
+  const rsf  = wp(rqf[0].winner,rqf[1].winner);
+  const fin  = wp(lsf.winner,rsf.winner);
+
+  return { lr32, rr32, lr16, rr16, lqf, rqf, lsf, rsf, fin,
+    third: { t1:lsf.loser, t2:rsf.loser } };
+}
+
+
+// ── RENDER HELPERS ─────────────────────────────────────────────────
+function teamRow(team, pct, isWinner, flipped=false) {
+  const cls = isWinner ? 'wt-team winner' : 'wt-team loser';
+  return `<div class="${cls}" title="${team} · ${pct}%">
+    <span class="wt-team-flag">${F[team]||'🏳'}</span>
+    <span class="wt-team-name">${team}</span>
+    <span class="wt-team-pct">${pct}%</span>
+  </div>`;
+}
+
+function matchBlock(m, flipped=false) {
+  const slots = flipped
+    ? [{team:m.loser, pct:m.winner===m.t1?m.pw2:m.pw1, w:false},{team:m.winner, pct:m.winner===m.t1?m.pw1:m.pw2, w:true}]
+    : [{team:m.winner, pct:m.winner===m.t1?m.pw1:m.pw2, w:true},{team:m.loser, pct:m.winner===m.t1?m.pw2:m.pw1, w:false}];
+  return `<div class="wt-match">${slots.map(s=>teamRow(s.team,s.pct,s.w,flipped)).join('')}</div>`;
+}
+
+// SVG connector (bracket lines)
+function connSVG(h, n, isLeft) {
+  const slotH = h / n;
+  const midpoints = Array.from({length:n/2},(_, i)=>[
+    slotH * (i*2 + 0.5),
+    slotH * (i*2 + 1.5)
+  ]);
+  const color = isLeft ? 'rgba(45,212,191,0.5)' : 'rgba(167,139,250,0.5)';
+  const lines = midpoints.map(([y1,y2])=>{
+    const ymid = (y1+y2)/2;
+    const x1 = isLeft ? 0 : 18;
+    const x2 = isLeft ? 18 : 0;
+    return `<line x1="${x1}" y1="${y1}" x2="${x1}" y2="${y2}" stroke="${color}" stroke-width="1.5"/>
+            <line x1="${x1}" y1="${ymid}" x2="${x2}" y2="${ymid}" stroke="${color}" stroke-width="1.5"/>`;
+  }).join('');
+  return `<svg class="wt-conn-svg" width="18" height="${h}" viewBox="0 0 18 ${h}">${lines}</svg>`;
+}
+
+// Gold final connector (horizontal line)
+function finalConn(isLeft) {
+  const x1=isLeft?0:8, x2=isLeft?8:0;
+  return `<svg class="wt-conn-svg" width="8" height="60" viewBox="0 0 8 60">
+    <line x1="${x1}" y1="30" x2="${x2}" y2="30" stroke="rgba(212,175,55,0.7)" stroke-width="2"/>
+  </svg>`;
+}
+
+// ── RENDER BRACKET ─────────────────────────────────────────────────
+function renderBracket(b) {
+  const H32 = 520, H16 = H32, HQF = H32, HSF = H32;
+  const slotH32 = H32/8, slotH16 = H16/4, slotHQF = HQF/2;
+  const matchH = 60; // height of one match block (2 team rows)
+
+  function colLeft(matches, slotH, h, label, date) {
+    const slots = matches.map((m,i)=>`
+      <div class="wt-slot" style="height:${slotH}px;align-items:center;">
+        ${matchBlock(m,false)}
+      </div>`).join('');
+    return `<div class="wt-slot-col wt-left-col" style="height:${h}px;">${slots}</div>`;
+  }
+  function colRight(matches, slotH, h) {
+    const slots = matches.map((m,i)=>`
+      <div class="wt-slot" style="height:${slotH}px;align-items:center;">
+        ${matchBlock(m,true)}
+      </div>`).join('');
+    return `<div class="wt-slot-col wt-right-col" style="height:${h}px;">${slots}</div>`;
+  }
+  function conn(h, n, isLeft) {
+    return `<div style="height:${h}px;flex-shrink:0;">${connSVG(h,n,isLeft)}</div>`;
+  }
+  function sfBlock(m, isLeft) {
+    return `<div class="wt-slot-col ${isLeft?'wt-left-col':'wt-right-col'}" style="height:${HSF}px;display:flex;align-items:center;">
+      ${matchBlock(m,!isLeft)}
     </div>`;
   }
 
-  function connectorCSS(isLeft) {
-    const side = isLeft ? 'right' : 'left';
-    const borderSide = isLeft ? 'border-right' : 'border-left';
-    const c = isLeft ? 'rgba(45,212,191,0.45)' : 'rgba(192,132,252,0.45)';
-    // r16→qf: 2 pairs (each pair spans 240px: slots at 0,120 → connect at midpoint 60-180)
-    return `
-      <div style="position:absolute;${side}:0;top:60px;height:120px;width:18px;border-top:1px solid ${c};${borderSide}:1px solid ${c};border-bottom:1px solid ${c};"></div>
-      <div style="position:absolute;${side}:0;top:300px;height:120px;width:18px;border-top:1px solid ${c};${borderSide}:1px solid ${c};border-bottom:1px solid ${c};"></div>`;
+  // Build round-header cells
+  const RH = 36;
+  function rh(label, date, w, color) {
+    return `<div style="width:${w}px;text-align:center;flex-shrink:0;">
+      <div style="font-size:0.6rem;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;color:${color};">${label}</div>
+      <div style="font-size:0.44rem;color:rgba(255,255,255,0.3);margin-top:2px;">${date}</div>
+    </div>`;
   }
+  function rhSpacer(w) { return `<div style="width:${w}px;flex-shrink:0;"></div>`; }
 
-  function connectorQFCSS(isLeft) {
-    const side = isLeft ? 'right' : 'left';
-    const borderSide = isLeft ? 'border-right' : 'border-left';
-    const c = isLeft ? 'rgba(45,212,191,0.45)' : 'rgba(192,132,252,0.45)';
-    return `<div style="position:absolute;${side}:0;top:120px;height:240px;width:18px;border-top:1px solid ${c};${borderSide}:1px solid ${c};border-bottom:1px solid ${c};"></div>`;
-  }
+  const W_MATCH = 148, W_CONN = 18, W_FINAL_CONN = 8, W_SF = 148, W_CENTER = 170;
 
-  function renderBracketTree() {
-    const b = buildDeterministicBracket();
+  const roundHeaders = `
+    <div style="display:flex;gap:0;align-items:flex-end;padding-bottom:8px;justify-content:center;">
+      ${rh('Dieciséisavos','30 Jun – 3 Jul', W_MATCH, '#2DD4BF')}
+      ${rhSpacer(W_CONN)}
+      ${rh('Octavos','5 – 6 Jul', W_MATCH, '#2DD4BF')}
+      ${rhSpacer(W_CONN)}
+      ${rh('Cuartos','9 – 10 Jul', W_MATCH, '#2DD4BF')}
+      ${rhSpacer(W_CONN)}
+      ${rh('Semifinal','14 – 15 Jul', W_SF, '#D4AF37')}
+      ${rhSpacer(W_FINAL_CONN)}
+      <div style="width:${W_CENTER}px;text-align:center;flex-shrink:0;">
+        <div style="font-size:0.72rem;font-weight:900;text-transform:uppercase;letter-spacing:0.12em;color:#F5C400;">FINAL</div>
+        <div style="font-size:0.44rem;color:rgba(245,196,0,0.6);margin-top:2px;">19 Jul · MetLife Stadium</div>
+      </div>
+      ${rhSpacer(W_FINAL_CONN)}
+      ${rh('Semifinal','14 – 15 Jul', W_SF, '#A78BFA')}
+      ${rhSpacer(W_CONN)}
+      ${rh('Cuartos','9 – 10 Jul', W_MATCH, '#A78BFA')}
+      ${rhSpacer(W_CONN)}
+      ${rh('Octavos','5 – 6 Jul', W_MATCH, '#A78BFA')}
+      ${rhSpacer(W_CONN)}
+      ${rh('Dieciséisavos','30 Jun – 3 Jul', W_MATCH, '#A78BFA')}
+    </div>`;
 
-    // ── LEFT R16 (4 matches, 120px slots each = 480px total) ──
-    document.getElementById('b-left-r16').innerHTML =
-      [b.lr16[0], b.lr16[1], b.lr16[2], b.lr16[3]].map(m =>
-        `<div style="height:120px;display:flex;align-items:center;">${matchCard(m,false)}</div>`
-      ).join('');
-
-    // ── LEFT connector R16→QF ──
-    document.getElementById('b-left-c1').innerHTML = connectorCSS(true);
-
-    // ── LEFT QF (2 matches, 240px slots) ──
-    document.getElementById('b-left-qf').innerHTML =
-      [b.lqf[0], b.lqf[1]].map(m =>
-        `<div style="height:240px;display:flex;align-items:center;">${matchCard(m,false)}</div>`
-      ).join('');
-
-    // ── LEFT connector QF→SF ──
-    document.getElementById('b-left-c2').innerHTML = connectorQFCSS(true);
-
-    // ── LEFT SF (1 match centered) ──
-    document.getElementById('b-left-sf').innerHTML = matchCard(b.lsf, false);
-
-    // ── CENTER ──
-    const fin = b.final;
-    const champ = fin.winner;
-    document.getElementById('b-center').innerHTML = `
-      <div style="font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:900;color:#F5C400;text-transform:uppercase;letter-spacing:0.14em;text-align:center;padding:0 4px;">🏆 Gran Final</div>
-      <div style="display:flex;flex-direction:column;gap:3px;width:160px;">
-        ${[{team:fin.t1, pct:fin.pw1, win:fin.winner===fin.t1},{team:fin.t2, pct:fin.pw2, win:fin.winner===fin.t2}].map(s=>`
-          <div style="display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:7px;
-            border:1px solid ${s.win?'rgba(245,196,0,0.6)':'rgba(255,255,255,0.08)'};
-            background:${s.win?'linear-gradient(90deg,rgba(245,196,0,0.2),rgba(245,196,0,0.06))':'rgba(255,255,255,0.04)'};
-            opacity:${s.win?1:0.42};min-height:30px;">
-            <span style="font-size:0.9rem">${BFLAGS[s.team]||'🏳'}</span>
-            <span style="flex:1;font-size:0.72rem;font-weight:${s.win?800:500};color:${s.win?'#F5E6A0':'rgba(255,255,255,0.4)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Outfit',sans-serif;">${s.team}</span>
-            <span style="font-size:0.78rem;font-weight:900;font-family:'Bebas Neue','Outfit',sans-serif;color:${s.win?'#F5C400':'rgba(255,255,255,0.2)'};">${s.pct}%</span>
+  // Center column
+  const center = `
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:${H32}px;width:${W_CENTER}px;gap:10px;flex-shrink:0;">
+      <div style="font-size:0.6rem;font-weight:900;color:#F5C400;text-transform:uppercase;letter-spacing:0.14em;">🏆 Gran Final</div>
+      <div class="wt-final-match">
+        ${[{t:b.fin.t1,p:b.fin.pw1,w:b.fin.winner===b.fin.t1},{t:b.fin.t2,p:b.fin.pw2,w:b.fin.winner===b.fin.t2}]
+          .map(s=>`<div class="wt-team ${s.w?'winner':'loser'}" style="min-height:30px;">
+            <span class="wt-team-flag">${F[s.t]||'🏳'}</span>
+            <span class="wt-team-name">${s.t}</span>
+            <span class="wt-team-pct">${s.p}%</span>
           </div>`).join('')}
       </div>
-      <div style="background:linear-gradient(135deg,rgba(212,175,55,0.2) 0%,rgba(17,26,44,0.98) 100%);
-        border:2px solid #D4AF37;border-radius:14px;padding:14px 12px;text-align:center;width:160px;
-        box-shadow:0 0 40px rgba(212,175,55,0.35),0 8px 24px rgba(0,0,0,0.4),inset 0 1px 0 rgba(255,255,255,0.08);">
-        <div style="font-size:2rem;line-height:1;filter:drop-shadow(0 0 14px rgba(245,196,0,0.7));">🏆</div>
-        <div style="font-size:1.4rem;line-height:1;margin:4px 0 2px;">${BFLAGS[champ]||'🏳'}</div>
-        <div style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:0.95rem;font-weight:900;color:#F5C400;letter-spacing:0.06em;line-height:1.2;">${champ}</div>
-        <div style="font-size:0.54rem;color:rgba(255,255,255,0.4);margin-top:4px;font-family:'Outfit',sans-serif;text-transform:uppercase;letter-spacing:0.1em;">Campeón proyectado</div>
-      </div>`;
+      <div class="wt-champion-card">
+        <div class="wt-champion-trophy">🏆</div>
+        <div class="wt-champion-flag">${F[b.fin.winner]||'🏳'}</div>
+        <div class="wt-champion-name">${b.fin.winner}</div>
+        <div class="wt-champion-sub">Campeón proyectado</div>
+      </div>
+    </div>`;
 
-    // ── RIGHT SF ──
-    document.getElementById('b-right-sf').innerHTML = matchCard(b.rsf, true);
+  document.getElementById('wt-bracket-scroll').innerHTML = `
+    ${roundHeaders}
+    <div class="wt-tree">
+      ${colLeft(b.lr32, slotH32, H32)}
+      ${conn(H32, 8, true)}
+      ${colLeft(b.lr16, slotH16, H16)}
+      ${conn(H16, 4, true)}
+      ${colLeft(b.lqf, slotHQF, HQF)}
+      ${conn(HQF, 2, true)}
+      ${sfBlock(b.lsf, true)}
+      <div style="height:${HSF}px;flex-shrink:0;display:flex;align-items:center;">${finalConn(true)}</div>
+      ${center}
+      <div style="height:${HSF}px;flex-shrink:0;display:flex;align-items:center;">${finalConn(false)}</div>
+      ${sfBlock(b.rsf, false)}
+      ${conn(HQF, 2, false)}
+      ${colRight(b.rqf, slotHQF, HQF)}
+      ${conn(H16, 4, false)}
+      ${colRight(b.rr16, slotH16, H16)}
+      ${conn(H32, 8, false)}
+      ${colRight(b.rr32, slotH32, H32)}
+    </div>`;
+}
 
-    // ── RIGHT connector SF→QF ──
-    document.getElementById('b-right-c2').innerHTML = connectorQFCSS(false);
 
-    // ── RIGHT QF ──
-    document.getElementById('b-right-qf').innerHTML =
-      [b.rqf[0], b.rqf[1]].map(m =>
-        `<div style="height:240px;display:flex;align-items:center;">${matchCard(m,true)}</div>`
-      ).join('');
+// ── RENDER GROUPS ───────────────────────────────────────────────────
+function renderGroups() {
+  const leftGroups  = ['A','B','C','D','E','F'];
+  const rightGroups = ['G','H','I','J','K','L'];
 
-    // ── RIGHT connector QF→R16 ──
-    document.getElementById('b-right-c1').innerHTML = connectorCSS(false);
-
-    // ── RIGHT R16 ──
-    document.getElementById('b-right-r16').innerHTML =
-      [b.rr16[0], b.rr16[1], b.rr16[2], b.rr16[3]].map(m =>
-        `<div style="height:120px;display:flex;align-items:center;">${matchCard(m,true)}</div>`
-      ).join('');
-
-    // SF→Final horizontal connectors (gold, thicker, glowing)
-    const lc = 'rgba(212,175,55,0.7)';
-    document.getElementById('b-left-c3').innerHTML  = `<div style="position:absolute;right:0;top:50%;width:24px;height:2px;background:${lc};box-shadow:0 0 6px rgba(212,175,55,0.5);border-radius:1px;"></div>`;
-    document.getElementById('b-right-c3').innerHTML = `<div style="position:absolute;left:0;top:50%;width:24px;height:2px;background:${lc};box-shadow:0 0 6px rgba(212,175,55,0.5);border-radius:1px;"></div>`;
-
-    // 3rd place match (losers of semis)
-    const third = document.getElementById('b-third');
-    if (third) {
-      const t3a = b.lsf.loser, t3b = b.rsf.loser;
-      third.innerHTML = `
-        <div style="font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:900;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.1em;flex-shrink:0;">
-          🥉 3er Puesto<br><span style="font-size:0.48rem;font-weight:400;color:rgba(255,255,255,0.3);">18 Jul · Hard Rock Stadium · Miami</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
-            <span style="font-size:0.9rem">${BFLAGS[t3a]||'🏳'}</span>
-            <span style="font-size:0.72rem;font-weight:700;color:#bbb;font-family:'Outfit',sans-serif">${t3a}</span>
-          </div>
-          <span style="font-family:'Bebas Neue','Outfit',sans-serif;font-size:1rem;color:rgba(255,255,255,0.3)">VS</span>
-          <div style="display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:6px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);">
-            <span style="font-size:0.9rem">${BFLAGS[t3b]||'🏳'}</span>
-            <span style="font-size:0.72rem;font-weight:700;color:#bbb;font-family:'Outfit',sans-serif">${t3b}</span>
-          </div>
-        </div>`;
-    }
+  function buildGroup(gKey, side) {
+    const color = side==='left' ? 'left-color' : 'right-color';
+    const matches = GROUP_MATCHES_MAP[gKey]||[];
+    const rows = matches.map(([t1,t2,date])=>`
+      <div class="wt-group-match">
+        <span class="wt-gm-date">${date.replace(' Jun','').replace(' Jul','')}</span>
+        <span class="wt-gm-t1">${F[t1]||''} ${t1}</span>
+        <span class="wt-gm-vs">vs</span>
+        <span class="wt-gm-t2">${t2} ${F[t2]||''}</span>
+      </div>`).join('');
+    return `<div class="wt-group-block">
+      <div class="wt-group-header ${color}">Grupo ${gKey}</div>
+      ${rows}
+    </div>`;
   }
 
-  // ================================================================
-  // INIT
-  // ================================================================
+  const leftEl  = document.getElementById('wt-groups-left');
+  const rightEl = document.getElementById('wt-groups-right');
+  if (leftEl)  leftEl.innerHTML  = leftGroups.map(g=>buildGroup(g,'left')).join('');
+  if (rightEl) rightEl.innerHTML = rightGroups.map(g=>buildGroup(g,'right')).join('');
+}
 
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(() => {
-      const probs = runSimulations(2000);
-      renderBracketTree();
-      renderFavorites(probs);
-      renderFunnel(probs);
-      renderDisclaimer(probs);
-      document.getElementById('bk-loading').style.display = 'none';
-      document.getElementById('bk-content').style.display = 'block';
-    }, 60);
-  });
-  </script>
 
+// ── RENDER FAVORITES ────────────────────────────────────────────────
+function renderFavs(probs) {
+  const el = document.getElementById('wt-favs');
+  if (!el) return;
+  const sorted = Object.entries(probs).sort((a,b)=>b[1].champ-a[1].champ).slice(0,16);
+  el.innerHTML = sorted.map(([team,p],i)=>{
+    const isTop = i<3;
+    const pctClass = p.champ>=10?'gold':'muted';
+    return `<div class="wt-fav ${isTop?'top':''}">
+      <div class="wt-fav-rank">#${i+1}</div>
+      <span class="wt-fav-flag">${F[team]||'🏳'}</span>
+      <div class="wt-fav-name">${team}</div>
+      <span class="wt-fav-pct ${pctClass}">${p.champ}%</span>
+      <div style="font-size:0.5rem;color:rgba(255,255,255,0.3);margin-top:2px;">Campeón</div>
+      <div class="wt-fav-bar"><div class="wt-fav-bar-fill" style="width:${Math.min(p.champ*3,100)}%"></div></div>
+    </div>`;
+  }).join('');
+}
+
+
+// ── RENDER FUNNEL ────────────────────────────────────────────────────
+function renderFunnel(probs) {
+  const el = document.getElementById('wt-funnel');
+  if (!el) return;
+  const rounds = [
+    { key:'r32',  label:'Dieciséisavos' },
+    { key:'r16',  label:'Octavos' },
+    { key:'qf',   label:'Cuartos' },
+    { key:'sf',   label:'Semifinal' },
+    { key:'champ',label:'Final / Campeón' }
+  ];
+  el.innerHTML = rounds.map(rd=>{
+    const sorted = Object.entries(probs)
+      .map(([t,p])=>({team:t, pct:p[rd.key]}))
+      .filter(x=>x.pct>0)
+      .sort((a,b)=>b.pct-a.pct)
+      .slice(0,12);
+    const chips = sorted.map(x=>{
+      const cls = x.pct>=40?'p-high':x.pct>=15?'p-mid':'p-low';
+      return `<div class="wt-funnel-chip">
+        <span class="wt-funnel-chip-flag">${F[x.team]||'🏳'}</span>
+        <span class="wt-funnel-chip-name">${x.team}</span>
+        <span class="wt-funnel-chip-pct ${cls}">${x.pct}%</span>
+      </div>`;
+    }).join('');
+    return `<div class="wt-funnel-col"><div class="wt-funnel-head">${rd.label}</div>${chips}</div>`;
+  }).join('');
+}
+
+
+// ── RENDER DISCLAIMER ────────────────────────────────────────────────
+function renderDisc(probs) {
+  const el = document.getElementById('wt-disc');
+  if (!el) return;
+  const top = Object.entries(probs).sort((a,b)=>b[1].champ-a[1].champ)[0];
+  el.innerHTML = `⚠ Resultados de 2,000 simulaciones Monte Carlo basadas en ratings del modelo.
+    El favorito estadístico es <strong style="color:var(--wt-gold)">${top?.[0]}</strong> con
+    <strong style="color:var(--wt-gold)">${top?.[1]?.champ}%</strong> de probabilidad de título.
+    Modelo: ${MODEL_METADATA.name} · ${MODEL_METADATA.updatedAt} · ${MODEL_METADATA.warning}`;
+}
+
+
+// ── INIT ─────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const probs = runSimulations(2000);
+    const b     = buildBracket();
+    renderBracket(b);
+    renderGroups();
+    renderFavs(probs);
+    renderFunnel(probs);
+    renderDisc(probs);
+
+    // Third place
+    const th = document.getElementById('wt-third');
+    if (th) {
+      const t3a=b.lsf.loser, t3b=b.rsf.loser;
+      th.innerHTML = `
+        <div class="wt-third-title">🥉 Tercer Puesto · 18 Jul · Hard Rock Stadium · Miami</div>
+        <div class="wt-third-match">
+          <div class="wt-third-team"><span>${F[t3a]||'🏳'}</span><span>${t3a}</span></div>
+          <div class="wt-third-sep">VS</div>
+          <div class="wt-third-team"><span>${F[t3b]||'🏳'}</span><span>${t3b}</span></div>
+        </div>`;
+    }
+
+    document.getElementById('wt-loading').style.display = 'none';
+    document.getElementById('wt-content').style.display = 'block';
+  }, 60);
+});
+</script>
 </body>
 </html>
