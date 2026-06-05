@@ -13,7 +13,9 @@
        BRACKET — Wall Tracker Premium
        Dark Navy · Gold · Two Views: Real & Proyección
     ════════════════════════════════════════════════════════════ */
-    html,body { background:#080F1E!important; }
+    /* ── Tokens del tema (por defecto: OSCURO navy) ─────────────
+       Todas las superficies usan variables para que el Fixture pueda
+       adaptarse al modo claro u oscuro que elija el usuario. */
     :root {
       --n1:#080F1E; --n2:#0D1829; --n3:#111E35; --n4:#162040;
       --gold:#D4AF37; --goldb:#F5C400; --golddim:rgba(212,175,55,.18);
@@ -22,16 +24,40 @@
       --red:#F97316; --green:#10B981;
       --bdr:rgba(255,255,255,.07); --bdg:rgba(212,175,55,.25);
       --tx:rgba(255,255,255,.88); --txd:rgba(255,255,255,.45); --txm:rgba(255,255,255,.22);
+      /* superficies auxiliares (hover, líneas, casillas TBD) */
+      --hover:rgba(255,255,255,.05); --line:rgba(255,255,255,.03);
+      --strip:rgba(255,255,255,.02); --tbd:rgba(255,255,255,.02); --tbd-bdr:rgba(255,255,255,.05);
+      --hdr-grad:linear-gradient(180deg,#0A1428,#080F1E);
+      --navbar:rgba(8,15,30,.97);
+      --title-shine:#fff;
     }
+
+    /* ── Modo CLARO: superficies crema/beige, mismos acentos dorados ── */
+    html[data-theme="light"] {
+      --n1:#F1EADB; --n2:#E9E2D2; --n3:#FBF9F4; --n4:#EFE8D8;
+      --gold:#B8860B; --goldb:#A8780A; --golddim:rgba(184,134,11,.12);
+      --teal:#0D9488; --tealdim:rgba(13,148,136,.1);
+      --purple:#7C3AED; --purpledim:rgba(124,58,237,.1);
+      --red:#E64A26; --green:#059669;
+      --bdr:rgba(0,0,0,.1); --bdg:rgba(184,134,11,.3);
+      --tx:#2A2723; --txd:#6A6458; --txm:#9A9490;
+      --hover:rgba(0,0,0,.04); --line:rgba(0,0,0,.05);
+      --strip:rgba(0,0,0,.02); --tbd:rgba(0,0,0,.03); --tbd-bdr:rgba(0,0,0,.06);
+      --hdr-grad:linear-gradient(180deg,#FDF8EE,#F1EADB);
+      --navbar:rgba(250,248,244,.98);
+      --title-shine:#E8C766;
+    }
+
+    html,body { background:var(--n1); }
     *{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'Outfit','Inter',sans-serif;color:var(--tx);background:var(--n1);}
 
-    /* NAV override */
-    [data-theme] #wc-user-bar{background:rgba(8,15,30,.97)!important;border-bottom:1px solid var(--bdg)!important;}
+    /* NAV override (se adapta al tema) */
+    #wc-user-bar{background:var(--navbar)!important;border-bottom:1px solid var(--bdg)!important;}
 
     /* ── HEADER ─────────────────────────────────────────── */
     .bk-hdr{
-      background:linear-gradient(180deg,#0A1428,#080F1E);
+      background:var(--hdr-grad);
       border-bottom:1px solid var(--bdg);padding:24px 24px 0;position:relative;overflow:hidden;
     }
     .bk-hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;
@@ -43,7 +69,7 @@
       border:1px solid var(--bdg);padding:3px 12px;border-radius:99px;margin-bottom:8px;}
     .bk-hdr-title{font-family:'Bebas Neue','Outfit',sans-serif;font-size:clamp(1.8rem,4vw,2.8rem);
       font-weight:900;letter-spacing:.1em;
-      background:linear-gradient(135deg,var(--gold),var(--goldb) 40%,#fff 60%,var(--gold));
+      background:linear-gradient(135deg,var(--gold),var(--goldb) 40%,var(--title-shine) 60%,var(--gold));
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;
       filter:drop-shadow(0 2px 12px rgba(212,175,55,.3));line-height:1;}
     .bk-hdr-sub{font-size:.68rem;color:var(--txd);margin-top:4px;}
@@ -57,7 +83,7 @@
       justify-content:center;gap:8px;}
     .vt-btn.active-real{background:linear-gradient(90deg,var(--green),#059669);color:#fff;}
     .vt-btn.active-proj{background:linear-gradient(90deg,#6D28D9,var(--purple));color:#fff;}
-    .vt-btn:hover:not(.active-real):not(.active-proj){background:rgba(255,255,255,.05);color:#fff;}
+    .vt-btn:hover:not(.active-real):not(.active-proj){background:var(--hover);color:var(--tx);}
     .vt-dot{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 1.5s ease-in-out infinite;}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
@@ -65,11 +91,11 @@
     .bk-nav{display:flex;gap:6px;padding:12px 0;}
     .bk-nav a{color:var(--txd);text-decoration:none;font-size:.72rem;font-weight:700;
       padding:4px 12px;border:1px solid var(--bdr);border-radius:5px;transition:all .15s;}
-    .bk-nav a:hover{background:rgba(255,255,255,.05);color:#fff;}
+    .bk-nav a:hover{background:var(--hover);color:var(--tx);}
     .bk-nav a.active{border-color:var(--goldb);color:var(--goldb);background:var(--golddim);}
 
     /* ── SEDES STRIP ────────────────────────────────────── */
-    .sedes-strip{background:rgba(255,255,255,.02);border-bottom:1px solid var(--bdr);
+    .sedes-strip{background:var(--strip);border-bottom:1px solid var(--bdr);
       overflow-x:auto;scrollbar-width:none;padding:8px 20px;}
     .sedes-strip::-webkit-scrollbar{display:none;}
     .sedes-inner{display:inline-flex;gap:0;align-items:center;min-width:max-content;}
@@ -109,7 +135,7 @@
     .grp-head.tl{color:var(--teal);border-left:3px solid var(--teal);}
     .grp-head.pu{color:var(--purple);border-left:3px solid var(--purple);}
     .grp-row{display:flex;align-items:center;gap:4px;padding:3px 10px;
-      font-size:.56rem;color:var(--txd);background:var(--n3);border-bottom:1px solid rgba(255,255,255,.03);}
+      font-size:.56rem;color:var(--txd);background:var(--n3);border-bottom:1px solid var(--line);}
     .grp-row:last-child{border-bottom:none;border-radius:0 0 4px 4px;}
     .gr-date{width:26px;color:var(--txm);flex-shrink:0;font-size:.5rem;}
     .gr-t1{flex:1;text-align:right;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;}
@@ -154,14 +180,14 @@
     .bk-team.win{background:linear-gradient(90deg,rgba(212,175,55,.2),rgba(212,175,55,.05));border-color:rgba(212,175,55,.5);}
     .bk-team.real-win{background:linear-gradient(90deg,rgba(16,185,129,.18),rgba(16,185,129,.04));border-color:rgba(16,185,129,.5);}
     .bk-team.lose{opacity:.33;}
-    .bk-team.tbd{background:rgba(255,255,255,.02);border-color:rgba(255,255,255,.05);}
+    .bk-team.tbd{background:var(--tbd);border-color:var(--tbd-bdr);}
     .bk-flag{font-size:.85rem;flex-shrink:0;line-height:1;}
     .bk-name{flex:1;font-size:.67rem;font-weight:600;color:var(--txd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .bk-team.win  .bk-name{color:#F5E6A0;font-weight:800;}
     .bk-team.real-win .bk-name{color:#6EE7B7;font-weight:800;}
     .bk-team.tbd  .bk-name{color:var(--txm);font-style:italic;}
     .bk-stat{font-family:'Bebas Neue','Outfit',sans-serif;font-size:.72rem;font-weight:900;
-      flex-shrink:0;min-width:28px;text-align:right;color:rgba(255,255,255,.2);}
+      flex-shrink:0;min-width:28px;text-align:right;color:var(--txm);}
     .bk-team.win  .bk-stat{color:var(--goldb);}
     .bk-team.real-win .bk-stat{color:var(--green);}
     .bk-score-chip{font-size:.6rem;font-weight:900;color:var(--goldb);
@@ -185,8 +211,8 @@
       border:2px solid var(--gold);
       box-shadow:0 0 40px rgba(212,175,55,.3),0 8px 24px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.08);
     }
-    .bk-champ-card.real{background:linear-gradient(135deg,rgba(16,185,129,.2),rgba(17,26,44,.98));border-color:var(--green);box-shadow:0 0 40px rgba(16,185,129,.3),0 8px 24px rgba(0,0,0,.5);}
-    .bk-champ-card.proj{background:linear-gradient(135deg,rgba(212,175,55,.2),rgba(17,26,44,.98));}
+    .bk-champ-card.real{background:linear-gradient(135deg,rgba(16,185,129,.2),var(--n3));border-color:var(--green);box-shadow:0 0 40px rgba(16,185,129,.3),0 8px 24px rgba(0,0,0,.25);}
+    .bk-champ-card.proj{background:linear-gradient(135deg,rgba(212,175,55,.2),var(--n3));}
     .bk-champ-trophy{font-size:2rem;filter:drop-shadow(0 0 12px rgba(245,196,0,.7));}
     .bk-champ-flag{font-size:1.3rem;margin:3px 0;}
     .bk-champ-name{font-family:'Bebas Neue','Outfit',sans-serif;font-size:.95rem;font-weight:900;
@@ -222,8 +248,8 @@
     .fav-flag{font-size:1.4rem;display:block;line-height:1;margin-bottom:3px;}
     .fav-name{font-size:.6rem;font-weight:700;color:var(--txd);margin-bottom:5px;line-height:1.2;}
     .fav-pct{font-family:'Bebas Neue','Outfit',sans-serif;font-size:1.4rem;font-weight:900;display:block;line-height:1;}
-    .fav-pct.hi{color:var(--goldb);} .fav-pct.lo{color:rgba(255,255,255,.3);}
-    .fav-bar{margin-top:4px;height:2px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;}
+    .fav-pct.hi{color:var(--goldb);} .fav-pct.lo{color:var(--txm);}
+    .fav-bar{margin-top:4px;height:2px;background:var(--line);border-radius:99px;overflow:hidden;}
     .fav-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold),var(--goldb));}
 
     /* ── LOADING ────────────────────────────────────────── */
