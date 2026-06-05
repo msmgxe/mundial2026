@@ -3,7 +3,7 @@
 > Canales: Instagram Reels + WhatsApp · Audiencia: fans de fútbol peruanos 18–45
 > Basado en `plan-publicidad-mundial2026.md`, con las características REALES de la app desplegada.
 
-🔗 **App en producción (funciona ya):** https://mundial-2026-msmgxe-8385s-projects.vercel.app
+🔗 **App en producción (funciona ya):** https://mundialpe.vercel.app
 🔗 **Dominio final (tras configurar Cloudflare):** https://mundial-2026.app
 💵 **Precio de lanzamiento:** **S/ 19.90** · pago único · toda la temporada
 💳 **Cobro:** **Yape** (QR) → activación manual del acceso por WhatsApp
@@ -240,7 +240,7 @@ Después del partido inaugural el precio sube.
 ```
 ⚽ Mundial 2026 · Torneo + 5 modelos de pronóstico
 📍 Hora Lima · 104 partidos · Cuadro real + proyección
-🔗 mundial-2026.app  (o la URL .vercel.app mientras tanto)
+🔗 mundialpe.vercel.app
 ```
 
 ---
