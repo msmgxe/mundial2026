@@ -1,20 +1,21 @@
 # 🚀 Marketing EJECUTADO — Mundial 2026 Analytics
-> Materializado: 4 de junio de 2026 · Faltan **7 días** para la inauguración (11 jun)
+> Actualizado: 5 de junio de 2026 · Faltan **6 días** para la inauguración (11 jun)
 > Canales: Instagram Reels + WhatsApp · Audiencia: fans de fútbol peruanos 18–45
-> Basado en `plan-publicidad-mundial2026.md`, actualizado con las características REALES de la app desplegada.
+> Basado en `plan-publicidad-mundial2026.md`, con las características REALES de la app desplegada.
 
-🔗 **App en producción:** https://mundial-2026-fixture.vercel.app
+🔗 **App en producción:** https://mundial-2026.app  *(dominio en configuración — ver sección Dominio)*
+💵 **Precio de lanzamiento:** **S/ 19.90** · pago único · toda la temporada
+💳 **Cobro:** **Yape** (QR) → activación manual del acceso por WhatsApp
 
 ---
 
-## ⚠️ LO ÚNICO QUE FALTA (acción del dueño)
+## ✅ DECISIONES YA TOMADAS
 
-El contenido está listo para publicar. Solo necesitas decidir **2 cosas** antes del Reel 1:
+- **Precio:** S/ 19.90 (precio "jala-gente" para volumen rápido)
+- **Cobro:** Yape con QR → confirmas el pago y activas el usuario en el panel admin / Supabase
+- **Acceso público:** habilitado (se quitó la protección de Vercel)
 
-1. **PRECIO** — recomendado para Perú: **S/ 20–30 pago único, toda la temporada** (ver tabla en plan original).
-2. **MÉTODO DE COBRO** — crea un **QR de Yape/Plin** y tenlo en imagen con fondo oscuro.
-
-Una vez tengas precio + QR, reemplaza `[PRECIO]` y `[LINK/QR]` en los textos de abajo y publica.
+**Único pendiente técnico:** apuntar el dominio `mundial-2026.app` a Vercel (pasos al final de este doc).
 
 ---
 
@@ -56,7 +57,7 @@ La app tiene **modo día (claro) y noche (oscuro)** con el botón 🌙/☀️. G
 
 ---
 
-## 📅 CALENDARIO (7 días — ajustado a HOY 4 jun)
+## 📅 CALENDARIO (cuenta regresiva al 11 jun)
 
 | Día | Fecha | Acción | Canal | Activo a usar |
 |---|---|---|---|---|
@@ -100,11 +101,11 @@ FIFA, Elo, un modelo de goles… y un promedio de todos.
 
 Nada de "yo creo que gana Argentina". Cifras. Datos. Transparente.
 
-Ojo: el mundial arranca el 11 de junio. Quedan 7 días.
+Ojo: el mundial arranca el 11 de junio. Quedan pocos días.
 
 REWARD:
 Si quieres el acceso, el link está en mi bio.
-Son [PRECIO]. Una sola vez. Toda la temporada.
+Son S/ 19.90. Una sola vez. Toda la temporada.
 
 GRABACIÓN:
 - Activo A (countdown corriendo) en el hook
@@ -182,7 +183,7 @@ No es opinión. Son datos. Y puedes elegir en qué modelo confías.
 Guárdate este reel. 🔖
 
 REWARD:
-Acceso en el link de mi bio. [PRECIO]. Una vez. Todo el torneo.
+Acceso en el link de mi bio. S/ 19.90. Una vez. Todo el torneo.
 
 GRABACIÓN:
 - Un corte visual por número (1, 2, 3)
@@ -210,10 +211,10 @@ Armé una plataforma con:
 ✅ Fichas de jugadores: foto, edad, club
 ✅ Simulador para armar tu quiniela antes de que empiece
 
-Acceso: *[PRECIO]* · pago único · toda la temporada
-Para entrar: [LINK / YAPE-QR]
+Acceso: *S/ 19.90* · pago único · toda la temporada
+Para entrar: Yape al 👉 (escanea el QR) · acceso por WhatsApp
 
-⏳ El mundial arranca el *11 de junio*. Quedan 7 días.
+⏳ El mundial arranca el *11 de junio*. Quedan pocos días.
 ```
 
 ### WA #2 — Urgencia (enviar 9–10 jun)
@@ -226,7 +227,7 @@ El 11 de junio arranca el partido inaugural en el Estadio Azteca.
 Si todavía no tienes acceso a la plataforma de fixture + 5 modelos de
 pronóstico, quedan pocas horas para entrar al precio de lanzamiento.
 
-👉 [LINK / INSTRUCCIONES DE PAGO]
+👉 Yape S/ 19.90 (QR) → te activo el acceso por WhatsApp
 
 Después del partido inaugural el precio sube.
 ```
@@ -238,7 +239,7 @@ Después del partido inaugural el precio sube.
 ```
 ⚽ Mundial 2026 · Torneo + 5 modelos de pronóstico
 📍 Hora Lima · 104 partidos · Cuadro real + proyección
-🔗 [link de acceso]
+🔗 mundial-2026.app
 ```
 
 ---
@@ -257,8 +258,9 @@ Después del partido inaugural el precio sube.
 
 ## ✅ CHECKLIST DE EJECUCIÓN
 
-- [ ] **PASO 0:** Definir precio + crear QR Yape/Plin
-- [ ] Reemplazar `[PRECIO]` y `[LINK/QR]` en todos los textos de este archivo
+- [x] **Precio definido:** S/ 19.90 · **QR de Yape listo**
+- [x] **Acceso público habilitado** (protección de Vercel desactivada)
+- [ ] **Configurar dominio mundial-2026.app** (ver sección al final)
 - [ ] Grabar screen recordings A–F desde el celular (app ya desplegada)
 - [ ] 4 jun: Publicar Reel 1 + actualizar bio IG
 - [ ] 5 jun: Enviar WA #1
@@ -276,4 +278,32 @@ Después del partido inaugural el precio sube.
 2. **Una sola acción por reel:** siempre "link en bio". Nunca dos CTAs.
 3. **No inventes datos:** 104 partidos, 48 selecciones, 5 modelos, hora Lima — todo es real y verificable en la app.
 4. **El countdown de la app es tu mejor gancho de urgencia** — sale corriendo en pantalla, úsalo en cada reel.
-5. **Sin precio definido, los reels generan curiosidad pero no venden.** Define el precio HOY.
+5. **El precio ya está fijo en S/ 19.90** — comunica siempre "pago único, toda la temporada" para reducir fricción.
+
+---
+
+## 🌐 CONFIGURAR EL DOMINIO mundial-2026.app (1 vez, ~3 min)
+
+El dominio ya está registrado en Vercel, pero su DNS sigue en **Cloudflare** y no apunta a Vercel todavía. Por eso aún muestra contenido viejo. Para apuntarlo a tu app:
+
+### En el panel de Cloudflare (dash.cloudflare.com → dominio mundial-2026.app → DNS):
+
+1. **Borra** cualquier registro `A`, `AAAA` o `CNAME` existente del dominio raíz (`@` / mundial-2026.app) que apunte a otro lado.
+2. **Agrega** este registro:
+   | Tipo | Nombre | Contenido | Proxy |
+   |------|--------|-----------|-------|
+   | `A` | `@` | `76.76.21.21` | **DNS only** (nube gris, NO naranja) |
+3. (Opcional, para `www`) Agrega:
+   | Tipo | Nombre | Contenido | Proxy |
+   |------|--------|-----------|-------|
+   | `CNAME` | `www` | `cname.vercel-dns.com` | **DNS only** (nube gris) |
+
+> ⚠️ **Importante:** la nube debe estar **gris ("DNS only")**, no naranja. Si está en proxy (naranja), Vercel no podrá verificar el dominio ni emitir el certificado SSL.
+
+4. Guarda. En **5–30 minutos** Vercel verifica el dominio automáticamente y emite el SSL. Luego `https://mundial-2026.app` mostrará tu app.
+
+### Verificar (desde terminal):
+```
+curl -sL -o /dev/null -w "%{http_code}\n" https://mundial-2026.app/login
+```
+Cuando devuelva `200`, el dominio ya está sirviendo tu app. Hasta entonces, usa la URL `.vercel.app` para los reels.
