@@ -1,84 +1,80 @@
-# 🚀 Marketing EJECUTADO — Mundial 2026 Analytics
-> Actualizado: 5 de junio de 2026 · Faltan **6 días** para la inauguración (11 jun)
-> Canales: Instagram Reels + WhatsApp · Audiencia: fans de fútbol peruanos 18–45
-> Basado en `plan-publicidad-mundial2026.md`, con las características REALES de la app desplegada.
+# 🚀 LANZAMIENTO LISTO — Mundial 2026 Analytics
+> **HOY es jueves 5 de junio de 2026** · Faltan **6 días** para la inauguración (jue 11 jun · Estadio Azteca)
+> Todo personalizado y listo para copiar-pegar. Solo ejecuta el calendario.
 
-🔗 **App en producción (funciona ya):** https://mundialpe.vercel.app
-🔗 **Dominio final (tras configurar Cloudflare):** https://mundial-2026.app
-💵 **Precio de lanzamiento:** **S/ 19.90** · pago único · toda la temporada
-💳 **Cobro:** **Yape** (QR) → activación manual del acceso por WhatsApp
+| Dato | Valor |
+|---|---|
+| 🔗 **App (URL oficial)** | **https://mundialpe.vercel.app** |
+| 📸 **Instagram** | **@msmgxe** |
+| 💬 **WhatsApp** | **+51 984368710** |
+| 💵 **Precio** | **S/ 19.90** · pago único · toda la temporada |
+| 💳 **Cobro** | **Yape** (QR) → activas el acceso por WhatsApp |
 
----
-
-## ✅ DECISIONES YA TOMADAS
-
-- **Precio:** S/ 19.90 (precio "jala-gente" para volumen rápido)
-- **Cobro:** Yape con QR → confirmas el pago y activas el usuario en el panel admin / Supabase
-- **Acceso público:** habilitado (se quitó la protección de Vercel)
-
-**Único pendiente técnico:** apuntar el dominio `mundial-2026.app` a Vercel (pasos al final de este doc).
+**🔗 Link de WhatsApp para tu bio y CTAs (la gente te escribe con mensaje listo):**
+```
+https://wa.me/51984368710?text=Hola%20Marco%20%F0%9F%91%8B%20quiero%20acceso%20a%20la%20plataforma%20del%20Mundial%202026%20%E2%9A%BD
+```
 
 ---
 
-## 📸 ACTIVOS VISUALES — YA DISPONIBLES (Paso 1 ✅)
+## ⚡ HAZ ESTO HOY (jue 5 jun) — en orden
 
-La app ya está desplegada y se ve premium en móvil (formato vertical ideal para Reels 9:16).
-Para grabar, entra a la app en tu celular y haz **screen recording** de estas pantallas:
+1. **Actualiza tu bio de Instagram** (copia de la sección "Bio" abajo) → pon el link de WhatsApp.
+2. **Graba y publica el Reel 1** (teaser). Guion y assets abajo.
+3. **Envía el Mensaje WA #1** a tus grupos y lista de difusión.
+4. Ten el **QR de Yape** a mano (como imagen) para enviarlo a quien te escriba.
 
-| # | Pantalla | URL / Ruta | Para qué Reel | Qué resaltar |
-|---|----------|-----------|---------------|--------------|
-| A | **Hero + Countdown + Stats** | `/` (Torneo) | Reel 1, 2 | "06 días 14 hrs" en vivo · 104 partidos · 48 selecciones · hora Lima |
-| B | **Partido con barra de probabilidad** | `/` → baja a los partidos | Reel 1, 3 | Cada partido muestra % Gana/Empate/Gana · click al país abre stats |
-| C | **Comparativa de 5 modelos** ⭐ | `/pronosticos` → "Comparativa de modelos" | Reel 3 | Manual·FIFA·Elo·Dixon-Coles·Combinado, % por modelo — EL diferenciador |
-| D | **Fixture dual: Real vs Proyección** | `/bracket` (Fixture) | Reel 2 | Toggle "Real en vivo" / "Proyección" · cuadro completo · campeón proyectado |
-| E | **Ficha de jugador** | `/` → Zona del Fanático → Jugadores 2026 → toca un jugador | Reel 2, 3 | Foto, dorsal, edad, club, bio — profundidad de datos |
-| F | **Cambio día ↔ noche** | botón 🌙/☀️ arriba | Story / Reel corto | Graba el "antes/después" sobre el Fixture — muy llamativo (ver sección Variantes) |
-
-**Tip de grabación:** activa "No molestar" en el celular, graba en vertical, y usa el countdown real como gancho de urgencia (se actualiza solo en pantalla).
+> Regla de oro: **una sola acción por pieza** → siempre "escríbeme al WhatsApp (link en bio)".
 
 ---
 
-## 🌗 VARIANTES MODO CLARO vs OSCURO — cuál usar en cada caso
+## 📅 CALENDARIO — 6 días (5 → 11 jun)
 
-La app tiene **modo día (claro) y noche (oscuro)** con el botón 🌙/☀️. Graba tus reels en el modo que mejor luzca según el contenido. Regla práctica:
+| Día | Fecha | Acción | Canal | Activos |
+|-----|-------|--------|-------|---------|
+| **HOY** | **jue 5 jun** | Bio nueva + **Reel 1** (teaser) + **WA #1** | IG + WhatsApp | A, C, D |
+| D+1 | vie 6 jun | **Reel 2** (demo Torneo + Fixture) | IG | A, B, D, E |
+| D+2 | sáb 7 jun | **Story** countdown + "link en bio" | IG | A, F |
+| D+3 | dom 8 jun | **Reel 3** (5 modelos) ⭐ el más fuerte | IG | C, B |
+| D+4 | lun 9 jun | **WA #2** (urgencia "ya casi") | WhatsApp | C (imagen) |
+| D+5 | mar 10 jun | Último push: "mañana empieza" (reel/story) | IG + WhatsApp | A (countdown casi 0) |
+| **D+6** | **jue 11 jun** | Post de apertura para suscriptores | IG | — |
 
-| Pantalla | Modo recomendado | Por qué |
-|----------|------------------|---------|
-| **Hero + Countdown** (A) | **Cualquiera** — ambos lucen bien | En claro el countdown resalta en su caja oscura; en oscuro es más "cinemático" |
-| **Partidos + probabilidad** (B) | **Claro** ☀️ | Las barras verde/azul y los textos se leen mejor sobre fondo claro |
-| **5 modelos** (C) | **Claro** ☀️ (recomendado) | Las 5 barras de colores destacan más sobre crema; menos "ruido" visual |
-| **Fixture / cuadro** (D) | **Oscuro** 🌙 (más impactante) | El navy + dorado + glow del campeón se ve premium tipo "scoreboard" |
-| **Ficha de jugador** (E) | **Cualquiera** | El sub-modal mantiene su estilo en ambos |
-
-**Por qué importa:** algunas capturas (sobre todo tablas y barras de probabilidad) se leen mejor en **modo claro**, mientras que el **Fixture** impacta más en **oscuro**. No estás obligado a un solo modo: **mezcla** según la pantalla. Graba 2 segundos de cada modo y quédate con el que se vea mejor en tu feed.
-
-**Cómo cambiar de modo:** toca el botón **🌙 Noche / ☀️ Día** en la barra superior. El cambio es instantáneo y se mantiene al navegar entre páginas.
-
-> 💡 Idea de Story/Reel corto: graba el botón cambiando de **día a noche** sobre el Fixture — el "antes/después" es muy llamativo y comunica que la app es pulida.
+*(Fin de semana 7–8 jun = mayor alcance en IG. Reserva el Reel 3, tu mejor activo, para el domingo.)*
 
 ---
 
-## 📅 CALENDARIO (cuenta regresiva al 11 jun)
+## 📸 ACTIVOS VISUALES (grábalos desde tu celular en mundialpe.vercel.app)
 
-| Día | Fecha | Acción | Canal | Activo a usar |
-|---|---|---|---|---|
-| HOY | 4 jun | **Reel 1** (teaser) + actualizar bio | IG | A, D |
-| D+1 | 5 jun | **Mensaje WA #1** a grupos | WhatsApp | A o D (imagen) |
-| D+2 | 6 jun | **Reel 2** (demo Torneo + Fixture) | IG | A, B, D, E |
-| D+3 | 7 jun | **Story** countdown + link bio | IG | A, F |
-| D+4 | 8 jun | **Reel 3** (5 modelos de pronóstico) | IG | C, B |
-| D+5 | 9 jun | **Mensaje WA #2** (urgencia) | WhatsApp | C (imagen) |
-| D+6 | 10 jun | Último reel/story "mañana empieza" | IG + WA | A (countdown casi en 0) |
-| D+7 | 11 jun | Post de apertura para suscriptores | IG | — |
+| # | Pantalla | Ruta | Modo recomendado | Qué resaltar |
+|---|----------|------|------------------|--------------|
+| A | **Hero + Countdown + Stats** | `/` | Cualquiera | Countdown corriendo · 104 partidos · 48 selecciones · hora Lima |
+| B | **Partido + barra de probabilidad** | `/` (baja a partidos) | ☀️ Claro | % Gana/Empate/Gana · toca un país → stats |
+| C | **5 modelos de pronóstico** ⭐ | `/pronosticos` | ☀️ Claro | Manual·FIFA·Elo·Dixon-Coles·Combinado |
+| D | **Fixture: Real vs Proyección** | `/bracket` | 🌙 Oscuro | Toggle Real/Proyección · campeón proyectado |
+| E | **Ficha de jugador** | `/` → Zona Fanático → Jugadores | Cualquiera | Foto, edad, club, bio (Messi, Mbappé…) |
+| F | **Cambio día ↔ noche** | botón 🌙/☀️ | — | "Antes/después" sobre el Fixture |
+
+**Tip:** activa "No molestar", graba en vertical (9:16), y usa el countdown real como gancho de urgencia.
 
 ---
 
-## 🎬 GUIONES DE REELS — ACTUALIZADOS CON FEATURES REALES
+## 📱 BIO DE INSTAGRAM (copia y pega)
 
-> Cambios vs el plan original: ahora son **5 modelos** (no "uno propio") → es un gancho aún más fuerte.
-> La app tiene **vista Real que se actualiza sola** y **fichas de jugadores**. Lo aprovechamos.
+```
+⚽ Mundial 2026 · Torneo + 5 modelos de pronóstico
+📍 Hora Lima · 104 partidos · Cuadro real + proyección
+👇 Acceso S/ 19.90 (pago único) — escríbeme
+🔗 wa.me/51984368710
+```
 
-### 🎥 REEL 1 — Teaser / Lanzamiento (55–65s)
+> En el campo "link" de tu perfil pega el link largo de WhatsApp (el de arriba con mensaje pre-cargado). Así quien lo toque te escribe con el mensaje ya listo. También puedes usar Linktree con 2 botones: "Ver la app" (mundialpe.vercel.app) y "Comprar acceso" (WhatsApp).
+
+---
+
+## 🎬 GUIONES DE REELS (listos para grabar)
+
+### 🎥 REEL 1 — Teaser / Lanzamiento (55–65s) · **HOY**
 
 **Portada:** `No vas a ver el Mundial 2026 igual`
 
@@ -102,23 +98,23 @@ FIFA, Elo, un modelo de goles… y un promedio de todos.
 
 Nada de "yo creo que gana Argentina". Cifras. Datos. Transparente.
 
-Ojo: el mundial arranca el 11 de junio. Quedan pocos días.
+Ojo: el mundial arranca el 11 de junio. Quedan 6 días.
 
 REWARD:
-Si quieres el acceso, el link está en mi bio.
-Son S/ 19.90. Una sola vez. Toda la temporada.
+Acceso por S/ 19.90. Una sola vez. Toda la temporada.
+Escríbeme al WhatsApp — el link está en mi bio.
 
 GRABACIÓN:
-- Activo A (countdown corriendo) en el hook
-- Activo D (Fixture) en "el cuadro entero"
-- Activo C (5 modelos) en "cinco modelos de probabilidad"
-- Último frame: QR de pago / "link en bio"
+- Activo A (countdown) en el hook
+- Activo D (Fixture oscuro) en "el cuadro entero"
+- Activo C (5 modelos claro) en "cinco modelos"
+- Último frame: "Link en bio → WhatsApp" + tu QR de Yape
 - Jump cuts rápidos, pausa 0.5s en "Guárdate esto"
 ```
 
 ---
 
-### 🎥 REEL 2 — Demo del Torneo + Fixture (40–50s)
+### 🎥 REEL 2 — Demo Torneo + Fixture (40–50s) · vie 6 jun
 
 **Portada:** `104 partidos. Hora Lima. Todo en uno.`
 
@@ -132,29 +128,27 @@ Esto es lo que ves cuando tienes acceso:
 cada grupo, cada partido, cada resultado, en tu hora.
 Sin convertir zonas horarias, sin buscar en Google.
 
-Mira el cuadro de eliminación: tiene DOS vistas.
-Una "Real", que se va llenando sola con los resultados de verdad.
-Y otra de "Proyección", que te muestra quién sería campeón según los datos.
+El cuadro de eliminación tiene DOS vistas:
+una "Real", que se llena sola con los resultados de verdad,
+y una "Proyección", que muestra quién sería campeón según los datos.
 
-Y si tocas cualquier selección, te sale la ficha de sus jugadores:
+Y si tocas cualquier selección, sale la ficha de sus jugadores:
 fotos, edad, club, todo.
 
-La mayoría lo usa para armar su quiniela y quedar como el más
-enterado del grupo.
+La mayoría lo usa para armar su quiniela y quedar como
+el más enterado del grupo.
 
 REWARD:
-Acceso en el link de mi bio. El mundial empieza el 11. Entra antes.
+S/ 19.90, una vez, toda la temporada. Escríbeme — link en bio.
 
 GRABACIÓN:
-- Activo A: navegando el Torneo y el countdown
-- Activo D: tocar el toggle Real ↔ Proyección (¡muy visual!)
-- Activo E: abrir la ficha de un jugador (Messi, Mbappé…)
+- Activo A: countdown · Activo D: toggle Real↔Proyección · Activo E: ficha jugador
 - Texto en pantalla: "Hora Lima · 104 partidos · Real + Proyección"
 ```
 
 ---
 
-### 🎥 REEL 3 — Los 5 Modelos de Pronóstico (55–65s) ⭐ EL MÁS FUERTE
+### 🎥 REEL 3 — Los 5 Modelos (55–65s) ⭐ EL MÁS FUERTE · dom 8 jun
 
 **Portada:** `3 cosas que esta web del Mundial tiene y ninguna otra`
 
@@ -166,7 +160,7 @@ La última es la que más me gusta.
 
 RETAIN:
 Número uno: todos los horarios en hora de Lima.
-Nada de "17:00 ET". España vs Marruecos, en tu hora. Directo.
+Nada de "17:00 ET". España vs Marruecos, en tu hora.
 
 Número dos: el cuadro de eliminación interactivo.
 104 partidos. Una vista real que se actualiza sola
@@ -174,137 +168,131 @@ y una proyección de quién llega a la final.
 
 Número tres, la que más me gusta:
 no tiene UN modelo de probabilidades… tiene CINCO.
+El ranking FIFA, el Elo del fútbol, un modelo de goles tipo Poisson,
+y un promedio que combina todos.
+Cada partido te dice quién tiene más chance — con números.
 
-El ranking FIFA. El Elo del fútbol. Un modelo de goles tipo Poisson.
-Y un promedio que combina todos.
-Cada partido te dice quién tiene más chance de ganar — con números.
-
-No es opinión. Son datos. Y puedes elegir en qué modelo confías.
+No es opinión. Son datos. Y eliges en qué modelo confías.
 
 Guárdate este reel. 🔖
 
 REWARD:
-Acceso en el link de mi bio. S/ 19.90. Una vez. Todo el torneo.
+S/ 19.90. Una vez. Todo el torneo. Escríbeme — link en bio.
 
 GRABACIÓN:
-- Un corte visual por número (1, 2, 3)
-- Punto 2: Activo D (toggle Real/Proyección)
-- Punto 3: Activo C (la comparativa de 5 modelos con sus %)
+- Punto 2: Activo D · Punto 3: Activo C (las 5 barras con %)
 - Baja el ritmo en "la que más me gusta"
-- Texto en pantalla punto 3: "5 modelos · No es opinión · Son datos"
+- Texto punto 3: "5 modelos · No es opinión · Son datos"
 ```
 
 ---
 
-## 💬 MENSAJES DE WHATSAPP — LISTOS PARA COPIAR
+## 💬 MENSAJES DE WHATSAPP (copia y pega)
 
-### WA #1 — Lanzamiento (enviar 5–6 jun)
+### WA #1 — Lanzamiento (envía HOY, jue 5 jun)
 
 ```
-🏆 *Mundial 2026 — Acceso exclusivo*
+🏆 *Mundial 2026 — Acceso exclusivo* ⚽
 
-Para los que quieren seguir el torneo de verdad 👇
+Armé una plataforma para seguir el torneo de verdad 👇
 
-Armé una plataforma con:
 ✅ Los 104 partidos en *hora Lima* (sin convertir zonas horarias)
-✅ Cuadro de eliminación con vista *real* (se actualiza sola) + *proyección* de campeón
+✅ Cuadro de eliminación *real* (se actualiza solo) + *proyección* de campeón
 ✅ *5 modelos* de probabilidad por partido (FIFA, Elo, Poisson y un combinado)
 ✅ Fichas de jugadores: foto, edad, club
 ✅ Simulador para armar tu quiniela antes de que empiece
 
+Míralo aquí 👉 https://mundialpe.vercel.app
+
 Acceso: *S/ 19.90* · pago único · toda la temporada
-Para entrar: Yape al 👉 (escanea el QR) · acceso por WhatsApp
+Pago por *Yape* → te activo al toque.
 
-⏳ El mundial arranca el *11 de junio*. Quedan pocos días.
+⏳ El mundial arranca el *11 de junio*. Quedan 6 días.
+¿Te animo? Respóndeme por aquí 🙌
 ```
 
-### WA #2 — Urgencia (enviar 9–10 jun)
+### WA #2 — Urgencia (envía lun 9 jun)
 
 ```
-⏳ *Últimas horas antes del Mundial 2026*
+⏳ *Ya casi arranca el Mundial 2026*
 
-El 11 de junio arranca el partido inaugural en el Estadio Azteca.
+El jueves 11 es el partido inaugural en el Estadio Azteca.
 
-Si todavía no tienes acceso a la plataforma de fixture + 5 modelos de
-pronóstico, quedan pocas horas para entrar al precio de lanzamiento.
+Si todavía no tienes acceso a la plataforma (fixture + 5 modelos
+de pronóstico, todo en hora Lima), este es el momento:
 
-👉 Yape S/ 19.90 (QR) → te activo el acceso por WhatsApp
+👉 https://mundialpe.vercel.app
+*S/ 19.90* por Yape y te activo el acceso hoy mismo.
 
-Después del partido inaugural el precio sube.
-```
-
----
-
-## 📱 BIO DE INSTAGRAM — LISTA PARA PEGAR
-
-```
-⚽ Mundial 2026 · Torneo + 5 modelos de pronóstico
-📍 Hora Lima · 104 partidos · Cuadro real + proyección
-🔗 mundialpe.vercel.app
+Después del partido inaugural subo el precio. Escríbeme 👇
 ```
 
 ---
 
-## 📊 MÉTRICAS A REVISAR (post-publicación)
+## 📲 POST DE APERTURA (publica el jue 11 jun)
+
+```
+PORTADA: "HOY ARRANCA EL MUNDIAL ⚽🔥"
+
+HOY empieza el Mundial 2026.
+Mientras todos buscan a qué hora juega su equipo,
+tú lo tienes en hora Lima, con probabilidades por partido
+y el cuadro completo en una sola pantalla.
+
+¿Ya tienes acceso? Entra a mundialpe.vercel.app y arma tu quiniela.
+¿Aún no? Estás a tiempo: S/ 19.90, escríbeme — link en bio.
+
+¡Que empiece la fiesta! 🌎🏆
+```
+
+---
+
+## 📊 MÉTRICAS (revisa cada 48h)
 
 | Métrica | Dónde | Meta |
 |---|---|---|
 | Plays de reels | IG Insights | >500 en 48h |
-| Guardados | IG Insights | Altos = contenido útil (el Reel 3 debería liderar) |
-| Clicks link bio | Linktree / IG | Conversión directa |
+| Guardados | IG Insights | El Reel 3 debería liderar |
+| Clicks al link de bio | IG Insights | Conversión a WhatsApp |
 | Mensajes WA | WhatsApp | Interés de compra |
 | Nuevos usuarios | Supabase admin (`/admin`) | Conversiones reales |
 
 ---
 
-## ✅ CHECKLIST DE EJECUCIÓN
+## 🌗 VARIANTES MODO CLARO vs OSCURO
 
-- [x] **Precio definido:** S/ 19.90 · **QR de Yape listo**
-- [x] **Acceso público habilitado** (protección de Vercel desactivada)
-- [ ] **Configurar dominio mundial-2026.app** (ver sección al final)
-- [ ] Grabar screen recordings A–F desde el celular (app ya desplegada)
-- [ ] 4 jun: Publicar Reel 1 + actualizar bio IG
-- [ ] 5 jun: Enviar WA #1
-- [ ] 6 jun: Publicar Reel 2
-- [ ] 7 jun: Story countdown
-- [ ] 8 jun: Publicar Reel 3 (el más fuerte)
-- [ ] 9 jun: Enviar WA #2
-- [ ] 10 jun: Último push
-- [ ] 11 jun: Post de apertura
+| Pantalla | Modo | Por qué |
+|----------|------|---------|
+| Hero + Countdown (A) | Cualquiera | Ambos lucen bien |
+| Partidos + probabilidad (B) | ☀️ Claro | Barras y textos se leen mejor |
+| 5 modelos (C) | ☀️ Claro | Las 5 barras de colores destacan en crema |
+| Fixture (D) | 🌙 Oscuro | Navy + dorado + glow = premium |
+| Ficha jugador (E) | Cualquiera | Igual en ambos |
+
+> 💡 Story extra: graba el botón cambiando **día ↔ noche** sobre el Fixture — el "antes/después" es muy llamativo.
 
 ---
 
-### Recordatorios clave
-1. **El Reel 3 (5 modelos) es tu mejor activo** — es lo más difícil de copiar y lo más "premium".
-2. **Una sola acción por reel:** siempre "link en bio". Nunca dos CTAs.
-3. **No inventes datos:** 104 partidos, 48 selecciones, 5 modelos, hora Lima — todo es real y verificable en la app.
-4. **El countdown de la app es tu mejor gancho de urgencia** — sale corriendo en pantalla, úsalo en cada reel.
-5. **El precio ya está fijo en S/ 19.90** — comunica siempre "pago único, toda la temporada" para reducir fricción.
+## ✅ CHECKLIST
+
+- [x] App pública lista → **mundialpe.vercel.app**
+- [x] Precio S/ 19.90 + Yape definidos
+- [x] Link de WhatsApp click-to-chat generado
+- [ ] **HOY:** bio IG + Reel 1 + WA #1
+- [ ] vie 6: Reel 2
+- [ ] sáb 7: Story countdown
+- [ ] dom 8: Reel 3 (el fuerte)
+- [ ] lun 9: WA #2
+- [ ] mar 10: último push
+- [ ] jue 11: post de apertura
 
 ---
 
-## 🌐 CONFIGURAR EL DOMINIO mundial-2026.app (1 vez, ~3 min)
+### Recordatorios
+1. **El Reel 3 (5 modelos) es tu mejor activo** — guárdalo para el domingo (mayor alcance).
+2. **Una sola acción por pieza:** siempre "escríbeme — link en bio".
+3. **Datos reales:** 104 partidos · 48 selecciones · 5 modelos · hora Lima. Todo verificable en la app.
+4. **El countdown corriendo en pantalla es tu mejor gancho de urgencia.**
+5. **Precio fijo S/ 19.90** — comunica siempre "pago único, toda la temporada".
 
-El dominio ya está registrado en Vercel, pero su DNS sigue en **Cloudflare** y no apunta a Vercel todavía. Por eso aún muestra contenido viejo. Para apuntarlo a tu app:
-
-### En el panel de Cloudflare (dash.cloudflare.com → dominio mundial-2026.app → DNS):
-
-1. **Borra** cualquier registro `A`, `AAAA` o `CNAME` existente del dominio raíz (`@` / mundial-2026.app) que apunte a otro lado.
-2. **Agrega** este registro:
-   | Tipo | Nombre | Contenido | Proxy |
-   |------|--------|-----------|-------|
-   | `A` | `@` | `76.76.21.21` | **DNS only** (nube gris, NO naranja) |
-3. (Opcional, para `www`) Agrega:
-   | Tipo | Nombre | Contenido | Proxy |
-   |------|--------|-----------|-------|
-   | `CNAME` | `www` | `cname.vercel-dns.com` | **DNS only** (nube gris) |
-
-> ⚠️ **Importante:** la nube debe estar **gris ("DNS only")**, no naranja. Si está en proxy (naranja), Vercel no podrá verificar el dominio ni emitir el certificado SSL.
-
-4. Guarda. En **5–30 minutos** Vercel verifica el dominio automáticamente y emite el SSL. Luego `https://mundial-2026.app` mostrará tu app.
-
-### Verificar (desde terminal):
-```
-curl -sL -o /dev/null -w "%{http_code}\n" https://mundial-2026.app/login
-```
-Cuando devuelva `200`, el dominio ya está sirviendo tu app. Hasta entonces, usa la URL `.vercel.app` para los reels.
+> Nota: `mundial-2026.app` (dominio premium) sigue pendiente en Cloudflare; **no lo necesitas** para lanzar. Cuando se resuelva, ambos funcionarán a la vez.
