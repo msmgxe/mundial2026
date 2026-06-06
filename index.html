@@ -1664,5 +1664,67 @@
     });
   }
   </script>
+
+  <!-- ── BOTÓN FLOTANTE: subir al inicio del Torneo ──────────────── -->
+  <button id="fab-top" aria-label="Subir al inicio" title="Subir al inicio">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M12 19V5"/><path d="M5 12l7-7 7 7"/>
+    </svg>
+  </button>
+  <style>
+    /* FAB para volver rápido al inicio de la página (el Torneo es largo: 104 partidos) */
+    #fab-top {
+      position: fixed;
+      bottom: 22px;
+      right: 22px;
+      z-index: 900;
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--gold, #F5C400), #e6b800);
+      color: #1a1207;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(245,196,0,0.3);
+      /* oculto por defecto; aparece al hacer scroll */
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px);
+      transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    }
+    #fab-top.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    #fab-top:hover {
+      transform: translateY(-3px) scale(1.06);
+      box-shadow: 0 10px 28px rgba(245,196,0,0.4);
+    }
+    #fab-top:active { transform: translateY(-1px) scale(1.02); }
+    @media (max-width: 480px) {
+      #fab-top { bottom: 16px; right: 16px; width: 48px; height: 48px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #fab-top { transition: opacity 0.2s ease; }
+    }
+  </style>
+  <script>
+  // Muestra el FAB al bajar ~400px y sube suavemente al inicio al hacer click.
+  (function () {
+    const fab = document.getElementById('fab-top');
+    if (!fab) return;
+    const toggle = () => fab.classList.toggle('show', window.scrollY > 400);
+    window.addEventListener('scroll', toggle, { passive: true });
+    toggle();
+    fab.addEventListener('click', () => {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    });
+  })();
+  </script>
 </body>
 </html>
