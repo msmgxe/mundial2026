@@ -518,6 +518,118 @@
       .calc-results { grid-template-columns: 1fr; }
       .pron-hero h1 { font-size: 2rem; }
     }
+
+    /* ── DATE PICKER ──────────────────────────────────── */
+    .day-picker-wrap {
+      margin: 0 0 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      overflow: hidden;
+      box-shadow: var(--sh-md);
+    }
+    .day-picker-header {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      background: var(--surface-2);
+    }
+    .day-picker-title {
+      font-family: var(--font-display); font-size: 0.78rem; font-weight: 900;
+      text-transform: uppercase; letter-spacing: 0.1em; color: var(--txt-2);
+      margin-right: 4px;
+    }
+    .day-date-input {
+      padding: 7px 12px; border: 1.5px solid var(--border);
+      border-radius: 8px; background: var(--surface); color: var(--txt-1);
+      font-family: var(--font-display); font-size: 0.82rem; font-weight: 700;
+      cursor: pointer; transition: border-color .2s;
+    }
+    .day-date-input:focus { outline: none; border-color: var(--gold); }
+    .day-btn-today {
+      padding: 7px 14px; background: var(--gold); color: #000;
+      border: none; border-radius: 8px; font-weight: 800; font-size: 0.75rem;
+      cursor: pointer; font-family: var(--font-display); letter-spacing: 0.04em;
+      transition: opacity .15s;
+    }
+    .day-btn-today:hover { opacity: .85; }
+    .day-count-badge {
+      margin-left: auto; font-size: 0.68rem; color: var(--txt-3);
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 99px; padding: 3px 10px;
+    }
+    .day-matches-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 14px; padding: 18px 20px;
+    }
+    .day-empty {
+      padding: 36px 20px; text-align: center;
+      color: var(--txt-3); font-size: 0.85rem;
+    }
+    .day-card {
+      border: 1px solid var(--border); border-radius: 12px;
+      background: var(--surface-2); padding: 14px 16px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .day-card:hover { border-color: rgba(212,175,55,.4); box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+    .day-card-top {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .day-card-time {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(212,175,55,.12); color: var(--gold-dark);
+      border: 1px solid rgba(212,175,55,.25); border-radius: 6px;
+      font-family: var(--font-display); font-size: 0.72rem; font-weight: 900;
+      padding: 3px 8px; letter-spacing: .04em;
+    }
+    .day-card-group {
+      font-size: 0.6rem; color: var(--txt-3); font-weight: 700;
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+    .day-card-teams {
+      display: flex; align-items: center; gap: 8px;
+    }
+    .day-card-team {
+      flex: 1; display: flex; align-items: center; gap: 6px;
+    }
+    .day-card-team.right { flex-direction: row-reverse; }
+    .day-card-flag { font-size: 1.1rem; flex-shrink: 0; }
+    .day-card-name {
+      font-size: 0.75rem; font-weight: 700; color: var(--txt-1);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .day-card-vs {
+      font-size: 0.62rem; font-weight: 900; color: var(--txt-3);
+      flex-shrink: 0; padding: 0 2px;
+    }
+    .day-card-probs {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .day-prob-bar-track {
+      height: 5px; border-radius: 99px; background: var(--border);
+      display: flex; overflow: hidden; gap: 2px;
+    }
+    .day-prob-seg { height: 100%; border-radius: 99px; }
+    .day-prob-seg-1  { background: #10B981; }
+    .day-prob-seg-d  { background: #6B7280; }
+    .day-prob-seg-2  { background: #3B82F6; }
+    .day-prob-labels {
+      display: flex; justify-content: space-between;
+      font-size: 0.63rem; font-weight: 700;
+    }
+    .day-prob-lbl-1  { color: #10B981; }
+    .day-prob-lbl-d  { color: var(--txt-3); }
+    .day-prob-lbl-2  { color: #3B82F6; }
+    .day-card-venue {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 0.62rem; color: var(--txt-3); border-top: 1px solid var(--border);
+      padding-top: 8px;
+    }
+    @media (max-width: 600px) {
+      .day-matches-grid { grid-template-columns: 1fr; }
+      .day-picker-header { gap: 8px; }
+    }
   </style>
 </head>
 <body>
@@ -543,6 +655,20 @@
   <!-- ── MODEL SELECTOR ────────────────────────────── -->
   <div id="model-selector" class="model-selector-wrap" role="tablist" aria-label="Selector de modelo de predicción">
     <!-- populated by JS -->
+  </div>
+
+  <!-- ── DATE PICKER ──────────────────────────────── -->
+  <div class="day-picker-wrap">
+    <div class="day-picker-header">
+      <span class="day-picker-title">📅 Partidos del día</span>
+      <input type="date" id="day-date-input" class="day-date-input"
+        min="2026-06-11" max="2026-07-19">
+      <button class="day-btn-today" onclick="setDayToday()">Hoy</button>
+      <span class="day-count-badge" id="day-count-badge">— partidos</span>
+    </div>
+    <div id="day-matches-container">
+      <div class="day-empty">Selecciona una fecha para ver los partidos.</div>
+    </div>
   </div>
 
   <!-- ── H2H SIMULATOR ─────────────────────────────── -->
@@ -860,6 +986,195 @@ window.addEventListener("DOMContentLoaded", () => {
   if(s1) s1.addEventListener("change", updateLabels);
   if(s2) s2.addEventListener("change", updateLabels);
   setTimeout(updateLabels, 100);
+});
+
+// ── DATE PICKER — Partidos del día ────────────────────────────
+const _DP_FLAGS = {
+  "México":"🇲🇽","Sudáfrica":"🇿🇦","Corea del Sur":"🇰🇷","República Checa":"🇨🇿",
+  "Canadá":"🇨🇦","Bosnia y Herzegovina":"🇧🇦","Catar":"🇶🇦","Suiza":"🇨🇭",
+  "Brasil":"🇧🇷","Marruecos":"🇲🇦","Haití":"🇭🇹","Escocia":"🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  "Estados Unidos":"🇺🇸","Paraguay":"🇵🇾","Australia":"🇦🇺","Turquía":"🇹🇷",
+  "Alemania":"🇩🇪","Curazao":"🇨🇼","Costa de Marfil":"🇨🇮","Ecuador":"🇪🇨",
+  "Países Bajos":"🇳🇱","Japón":"🇯🇵","Suecia":"🇸🇪","Túnez":"🇹🇳",
+  "Bélgica":"🇧🇪","Egipto":"🇪🇬","Irán":"🇮🇷","Nueva Zelanda":"🇳🇿",
+  "España":"🇪🇸","Cabo Verde":"🇨🇻","Arabia Saudita":"🇸🇦","Uruguay":"🇺🇾",
+  "Francia":"🇫🇷","Senegal":"🇸🇳","Irak":"🇮🇶","Noruega":"🇳🇴",
+  "Argentina":"🇦🇷","Argelia":"🇩🇿","Austria":"🇦🇹","Jordania":"🇯🇴",
+  "Portugal":"🇵🇹","RD Congo":"🇨🇩","Uzbekistán":"🇺🇿","Colombia":"🇨🇴",
+  "Inglaterra":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croacia":"🇭🇷","Ghana":"🇬🇭","Panamá":"🇵🇦"
+};
+
+// id → { time, venue } para los 72 partidos de grupos
+const _DP_META = {
+  1:{time:"14:00",venue:"Estadio Azteca · CDMX"},
+  2:{time:"20:00",venue:"Estadio Guadalajara · Guadalajara"},
+  3:{time:"14:00",venue:"BMO Field · Toronto"},
+  4:{time:"20:00",venue:"SoFi Stadium · Los Ángeles"},
+  5:{time:"14:00",venue:"Gillette Stadium · Boston"},
+  6:{time:"17:00",venue:"BC Place · Vancouver"},
+  7:{time:"17:00",venue:"MetLife Stadium · Nueva York"},
+  8:{time:"20:00",venue:"Levi's Stadium · San Francisco"},
+  9:{time:"14:00",venue:"Lincoln Financial Field · Filadelfia"},
+  10:{time:"17:00",venue:"NRG Stadium · Houston"},
+  11:{time:"20:00",venue:"AT&T Stadium · Dallas"},
+  12:{time:"20:00",venue:"Estadio Monterrey · Monterrey"},
+  13:{time:"14:00",venue:"Hard Rock Stadium · Miami"},
+  14:{time:"17:00",venue:"Mercedes-Benz Stadium · Atlanta"},
+  15:{time:"20:00",venue:"SoFi Stadium · Los Ángeles"},
+  16:{time:"20:00",venue:"Lumen Field · Seattle"},
+  17:{time:"14:00",venue:"MetLife Stadium · Nueva York"},
+  18:{time:"17:00",venue:"Gillette Stadium · Boston"},
+  19:{time:"20:00",venue:"Arrowhead Stadium · Kansas City"},
+  20:{time:"20:00",venue:"Levi's Stadium · San Francisco"},
+  21:{time:"14:00",venue:"NRG Stadium · Houston"},
+  22:{time:"20:00",venue:"AT&T Stadium · Dallas"},
+  23:{time:"20:00",venue:"BMO Field · Toronto"},
+  24:{time:"17:00",venue:"Estadio Azteca · CDMX"},
+  25:{time:"14:00",venue:"Mercedes-Benz Stadium · Atlanta"},
+  26:{time:"14:00",venue:"SoFi Stadium · Los Ángeles"},
+  27:{time:"17:00",venue:"BC Place · Vancouver"},
+  28:{time:"20:00",venue:"Estadio Guadalajara · Guadalajara"},
+  29:{time:"14:00",venue:"Lincoln Financial Field · Filadelfia"},
+  30:{time:"17:00",venue:"Gillette Stadium · Boston"},
+  31:{time:"17:00",venue:"Levi's Stadium · San Francisco"},
+  32:{time:"20:00",venue:"Lumen Field · Seattle"},
+  33:{time:"14:00",venue:"BMO Field · Toronto"},
+  34:{time:"17:00",venue:"Arrowhead Stadium · Kansas City"},
+  35:{time:"20:00",venue:"NRG Stadium · Houston"},
+  36:{time:"20:00",venue:"Estadio Monterrey · Monterrey"},
+  37:{time:"14:00",venue:"Hard Rock Stadium · Miami"},
+  38:{time:"17:00",venue:"Mercedes-Benz Stadium · Atlanta"},
+  39:{time:"20:00",venue:"SoFi Stadium · Los Ángeles"},
+  40:{time:"20:00",venue:"BC Place · Vancouver"},
+  41:{time:"14:00",venue:"MetLife Stadium · Nueva York"},
+  42:{time:"17:00",venue:"Lincoln Financial Field · Filadelfia"},
+  43:{time:"20:00",venue:"AT&T Stadium · Dallas"},
+  44:{time:"20:00",venue:"Levi's Stadium · San Francisco"},
+  45:{time:"20:00",venue:"Gillette Stadium · Boston"},
+  46:{time:"20:00",venue:"BMO Field · Toronto"},
+  47:{time:"14:00",venue:"NRG Stadium · Houston"},
+  48:{time:"17:00",venue:"Estadio Akron · Guadalajara"},
+  49:{time:"17:00",venue:"Hard Rock Stadium · Miami"},
+  50:{time:"17:00",venue:"Mercedes-Benz Stadium · Atlanta"},
+  51:{time:"20:00",venue:"BC Place · Vancouver"},
+  52:{time:"20:00",venue:"Lumen Field · Seattle"},
+  53:{time:"20:00",venue:"Estadio Azteca · CDMX"},
+  54:{time:"20:00",venue:"Estadio Monterrey · Monterrey"},
+  55:{time:"17:00",venue:"Lincoln Financial Field · Filadelfia"},
+  56:{time:"17:00",venue:"MetLife Stadium · Nueva York"},
+  57:{time:"14:00",venue:"AT&T Stadium · Dallas"},
+  58:{time:"14:00",venue:"Arrowhead Stadium · Kansas City"},
+  59:{time:"20:00",venue:"SoFi Stadium · Los Ángeles"},
+  60:{time:"20:00",venue:"Levi's Stadium · San Francisco"},
+  61:{time:"14:00",venue:"Gillette Stadium · Boston"},
+  62:{time:"14:00",venue:"BMO Field · Toronto"},
+  63:{time:"20:00",venue:"Lumen Field · Seattle"},
+  64:{time:"20:00",venue:"BC Place · Vancouver"},
+  65:{time:"17:00",venue:"NRG Stadium · Houston"},
+  66:{time:"17:00",venue:"Estadio Akron · Guadalajara"},
+  67:{time:"17:00",venue:"MetLife Stadium · Nueva York"},
+  68:{time:"17:00",venue:"Lincoln Financial Field · Filadelfia"},
+  69:{time:"14:00",venue:"Arrowhead Stadium · Kansas City"},
+  70:{time:"14:00",venue:"AT&T Stadium · Dallas"},
+  71:{time:"20:00",venue:"Hard Rock Stadium · Miami"},
+  72:{time:"20:00",venue:"Mercedes-Benz Stadium · Atlanta"}
+};
+
+function renderDayMatches(dateStr) {
+  // dateStr = "2026-06-11"
+  const [,, day] = dateStr.split('-').map(Number);
+  const months = ['','','','','','','jun','jul'];
+  const monthN = parseInt(dateStr.split('-')[1]);
+  const dateLabel = `${day} ${months[monthN]}`;
+
+  const matches = (typeof GROUP_MATCHES !== 'undefined' ? GROUP_MATCHES : [])
+    .filter(m => {
+      // m.date = "11 Jun"
+      const [d, mon] = m.date.split(' ');
+      const monIdx = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7}[mon] || 0;
+      return parseInt(d) === day && monIdx === monthN;
+    })
+    .map(m => ({ ...m, ..._DP_META[m.id] }))
+    .sort((a, b) => (a.time || '').localeCompare(b.time || ''));
+
+  const container = document.getElementById('day-matches-container');
+  const badge = document.getElementById('day-count-badge');
+  if (!container) return;
+
+  if (!matches.length) {
+    container.innerHTML = `<div class="day-empty">No hay partidos de grupos el ${dateLabel}.</div>`;
+    if (badge) badge.textContent = '0 partidos';
+    return;
+  }
+
+  if (badge) badge.textContent = `${matches.length} partido${matches.length>1?'s':''}`;
+
+  const cards = matches.map(m => {
+    const meta = _DP_META[m.id] || {};
+    const time = meta.time || '--:--';
+    const venue = meta.venue || '';
+    const flag1 = _DP_FLAGS[m.t1] || '🏳️';
+    const flag2 = _DP_FLAGS[m.t2] || '🏳️';
+    let p1=33, pDraw=34, p2=33;
+    if (typeof calculateMatchProbabilities === 'function' && m.t1 && m.t2) {
+      try { const p = calculateMatchProbabilities(m.t1, m.t2); p1=p.p1; pDraw=p.pDraw; p2=p.p2; } catch(_){}
+    }
+    const favColor = p1 >= p2 ? '#10B981' : '#3B82F6';
+    const favTeam  = p1 >= p2 ? m.t1 : m.t2;
+    const favPct   = Math.max(p1, p2);
+    return `
+    <div class="day-card">
+      <div class="day-card-top">
+        <span class="day-card-time">🕐 ${time} <span style="font-size:.55rem;opacity:.7">Lima</span></span>
+        <span class="day-card-group">${m.group ? 'Grupo '+m.group+' · P'+m.id : m.phase+' · P'+m.id}</span>
+      </div>
+      <div class="day-card-teams">
+        <div class="day-card-team">
+          <span class="day-card-flag">${flag1}</span>
+          <span class="day-card-name">${m.t1}</span>
+        </div>
+        <span class="day-card-vs">vs</span>
+        <div class="day-card-team right">
+          <span class="day-card-flag">${flag2}</span>
+          <span class="day-card-name" style="text-align:right">${m.t2}</span>
+        </div>
+      </div>
+      <div class="day-card-probs">
+        <div class="day-prob-bar-track">
+          <div class="day-prob-seg day-prob-seg-1" style="width:${p1}%"></div>
+          <div class="day-prob-seg day-prob-seg-d" style="width:${pDraw}%"></div>
+          <div class="day-prob-seg day-prob-seg-2" style="width:${p2}%"></div>
+        </div>
+        <div class="day-prob-labels">
+          <span class="day-prob-lbl-1">${p1}%</span>
+          <span class="day-prob-lbl-d">Empate ${pDraw}%</span>
+          <span class="day-prob-lbl-2">${p2}%</span>
+        </div>
+      </div>
+      ${venue ? `<div class="day-card-venue">📍 ${venue}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  container.innerHTML = `<div class="day-matches-grid">${cards}</div>`;
+}
+
+function setDayToday() {
+  const today = new Date();
+  const y = today.getFullYear();
+  const m = String(today.getMonth()+1).padStart(2,'0');
+  const d = String(today.getDate()).padStart(2,'0');
+  const val = `${y}-${m}-${d}`;
+  const inp = document.getElementById('day-date-input');
+  if (inp) { inp.value = val; renderDayMatches(val); }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('day-date-input');
+  if (inp) {
+    inp.addEventListener('change', e => renderDayMatches(e.target.value));
+    // Pre-select today
+    setDayToday();
+  }
 });
 </script>
 </body>
