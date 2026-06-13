@@ -465,13 +465,28 @@ function savePredictions() {
   localStorage.setItem("wc_2026_predictions", JSON.stringify(saveObj));
 }
 
-// Reset predictions
+// Reset predictions — conserva resultados oficiales sincronizados de la API
 function resetPredictions() {
+  const liveIds = new Set(
+    JSON.parse(localStorage.getItem('wc_2026_live_ids') || '[]').map(Number)
+  );
+
   matchesData.forEach(m => {
-    m.score1 = null;
-    m.score2 = null;
+    if (!liveIds.has(m.id)) {
+      m.score1 = null;
+      m.score2 = null;
+    }
   });
-  localStorage.removeItem("wc_2026_predictions");
+
+  // Reconstruye localStorage conservando solo los scores oficiales
+  const saveObj = {};
+  matchesData.forEach(m => {
+    if (m.score1 !== null || m.score2 !== null) {
+      saveObj[m.id] = { score1: m.score1, score2: m.score2 };
+    }
+  });
+  localStorage.setItem("wc_2026_predictions", JSON.stringify(saveObj));
+
   updateKnockoutQualifiers();
   updateProgressStepper();
   updateFanZoneStats();
@@ -1046,7 +1061,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Reset button
   document.getElementById("reset-predictions-btn").addEventListener("click", () => {
-    if (confirm("¿Estás seguro de que deseas borrar todas tus predicciones?")) {
+    if (confirm("¿Borrar tus predicciones personales? Los resultados oficiales de partidos ya jugados se conservarán.")) {
       resetPredictions();
     }
   });
