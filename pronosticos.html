@@ -571,8 +571,10 @@
       background: var(--surface-2); padding: 14px 16px;
       display: flex; flex-direction: column; gap: 10px;
       transition: border-color .2s, box-shadow .2s;
+      cursor: pointer;
     }
     .day-card:hover { border-color: rgba(212,175,55,.4); box-shadow: 0 4px 16px rgba(0,0,0,.1); }
+    .day-card.selected { border-color: rgba(212,175,55,.8); box-shadow: 0 0 0 2px rgba(212,175,55,.3); }
     .day-card-top {
       display: flex; align-items: center; justify-content: space-between;
     }
@@ -672,7 +674,7 @@
   </div>
 
   <!-- ── H2H SIMULATOR ─────────────────────────────── -->
-  <div class="sec-header">
+  <div class="sec-header" id="h2h-section">
     <span class="sec-title">Simulador H2H</span>
     <span class="sec-badge sec-badge-gold">Todos los modelos</span>
   </div>
@@ -1123,7 +1125,7 @@ function renderDayMatches(dateStr) {
     const favTeam  = p1 >= p2 ? m.t1 : m.t2;
     const favPct   = Math.max(p1, p2);
     return `
-    <div class="day-card">
+    <div class="day-card" data-t1="${m.t1}" data-t2="${m.t2}">
       <div class="day-card-top">
         <span class="day-card-time">🕐 ${time} <span style="font-size:.55rem;opacity:.7">Lima</span></span>
         <span class="day-card-group">${m.group ? 'Grupo '+m.group+' · P'+m.id : m.phase+' · P'+m.id}</span>
@@ -1156,6 +1158,31 @@ function renderDayMatches(dateStr) {
   }).join('');
 
   container.innerHTML = `<div class="day-matches-grid">${cards}</div>`;
+
+  // Clic en tarjeta → preseleccionar equipos en simulador H2H y hacer scroll
+  container.querySelectorAll('.day-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const t1 = card.dataset.t1;
+      const t2 = card.dataset.t2;
+      const sel1 = document.getElementById('sim-team1');
+      const sel2 = document.getElementById('sim-team2');
+      if (!sel1 || !sel2) return;
+
+      // Actualizar ambos valores antes de disparar el evento para que run() los lea correctamente
+      sel1.value = t1;
+      sel2.value = t2;
+      sel1.dispatchEvent(new Event('change'));
+      sel2.dispatchEvent(new Event('change'));
+
+      // Marcar tarjeta seleccionada visualmente
+      container.querySelectorAll('.day-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+
+      // Scroll suave al simulador H2H
+      const h2h = document.getElementById('h2h-section');
+      if (h2h) h2h.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
 }
 
 function setDayToday() {
