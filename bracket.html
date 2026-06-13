@@ -137,7 +137,7 @@
     .grp-row{display:flex;align-items:center;gap:4px;padding:3px 10px;
       font-size:.56rem;color:var(--txd);background:var(--n3);border-bottom:1px solid var(--line);}
     .grp-row:last-child{border-bottom:none;border-radius:0 0 4px 4px;}
-    .gr-date{width:26px;color:var(--txm);flex-shrink:0;font-size:.5rem;}
+    .gr-date{width:48px;color:var(--txm);flex-shrink:0;font-size:.5rem;white-space:nowrap;}
     .gr-t1{flex:1;text-align:right;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;}
     .gr-vs{width:14px;text-align:center;color:var(--txm);flex-shrink:0;font-size:.5rem;}
     .gr-t2{flex:1;text-align:left;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px;}
@@ -440,6 +440,44 @@ const GROUPS = {
   "J":["Argentina","Argelia","Austria","Jordania"],
   "K":["Portugal","RD Congo","Uzbekistán","Colombia"],
   "L":["Inglaterra","Croacia","Ghana","Panamá"]
+};
+
+// Team name map: football-data.org (English) → Spanish
+const _BK_FD_MAP = {
+  "Mexico":"México","South Africa":"Sudáfrica","Korea Republic":"Corea del Sur",
+  "Czech Republic":"República Checa","Czechia":"República Checa",
+  "Canada":"Canadá","Bosnia and Herzegovina":"Bosnia y Herzegovina",
+  "Qatar":"Catar","Switzerland":"Suiza","Brazil":"Brasil","Morocco":"Marruecos",
+  "Haiti":"Haití","Scotland":"Escocia","United States":"Estados Unidos",
+  "USA":"Estados Unidos","Paraguay":"Paraguay","Australia":"Australia",
+  "Turkey":"Turquía","Türkiye":"Turquía","Germany":"Alemania",
+  "Curaçao":"Curazao","Curacao":"Curazao","Ivory Coast":"Costa de Marfil",
+  "Côte d'Ivoire":"Costa de Marfil","Ecuador":"Ecuador",
+  "Netherlands":"Países Bajos","Japan":"Japón","Sweden":"Suecia",
+  "Tunisia":"Túnez","Belgium":"Bélgica","Egypt":"Egipto","Iran":"Irán",
+  "IR Iran":"Irán","New Zealand":"Nueva Zelanda","Spain":"España",
+  "Cape Verde":"Cabo Verde","Saudi Arabia":"Arabia Saudita","Uruguay":"Uruguay",
+  "France":"Francia","Senegal":"Senegal","Iraq":"Irak","Norway":"Noruega",
+  "Argentina":"Argentina","Algeria":"Argelia","Austria":"Austria",
+  "Jordan":"Jordania","Portugal":"Portugal","DR Congo":"RD Congo",
+  "Congo DR":"RD Congo","Uzbekistan":"Uzbekistán","Colombia":"Colombia",
+  "England":"Inglaterra","Croatia":"Croacia","Ghana":"Ghana","Panama":"Panamá"
+};
+
+// Kick-off times (Lima / PET UTC-5) per match id
+const GM_TIMES = {
+  1:"14:00",2:"20:00",25:"14:00",28:"20:00",53:"20:00",54:"20:00",
+  3:"14:00",8:"20:00",26:"14:00",27:"17:00",51:"20:00",52:"20:00",
+  5:"14:00",7:"17:00",29:"14:00",30:"17:00",49:"17:00",50:"17:00",
+  4:"20:00",6:"17:00",31:"17:00",32:"20:00",59:"20:00",60:"20:00",
+  9:"14:00",10:"17:00",33:"14:00",34:"17:00",55:"17:00",56:"17:00",
+  11:"20:00",12:"20:00",35:"20:00",36:"20:00",57:"14:00",58:"14:00",
+  15:"20:00",16:"20:00",39:"20:00",40:"20:00",63:"20:00",64:"20:00",
+  13:"14:00",14:"17:00",37:"14:00",38:"17:00",65:"17:00",66:"17:00",
+  17:"14:00",18:"17:00",41:"14:00",42:"17:00",61:"14:00",62:"14:00",
+  19:"20:00",20:"20:00",43:"20:00",44:"20:00",69:"14:00",70:"14:00",
+  21:"14:00",24:"17:00",47:"14:00",48:"17:00",71:"20:00",72:"20:00",
+  22:"20:00",23:"20:00",45:"20:00",46:"20:00",67:"17:00",68:"17:00"
 };
 
 // Group matches with IDs (mirrors pronosticos.js GROUP_MATCHES)
@@ -747,8 +785,10 @@ function renderGroups(scores) {
       const sc = scores[m.id];
       const hasScore = sc&&sc.score1!==null&&sc.score2!==null;
       const scoreStr = hasScore?`${sc.score1}–${sc.score2}`:'';
+      const dateDay = m.date.replace(/ Jun| Jul/,'');
+      const matchTime = GM_TIMES[m.id] ? GM_TIMES[m.id].slice(0,2)+'h' : '';
       return `<div class="grp-row">
-        <span class="gr-date">${m.date.replace(' Jun','').replace(' Jul','')}</span>
+        <span class="gr-date">${dateDay} ${matchTime}</span>
         <span class="gr-t1">${F[m.t1]||''} ${m.t1}</span>
         ${hasScore
           ? `<span class="gr-score">${scoreStr}</span>`
@@ -885,21 +925,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   realScores = loadRealScores();
   const scoreCount = Object.keys(realScores).length;
 
-  // 2. Try to sync from API
+  // 2. Try to sync from API (use proper name map to avoid accent mismatches)
   try {
     const r = await fetch('/api/live-results');
     if (r.ok) {
       const data = await r.json();
+      const gmLookup = {};
+      GM.forEach(x => {
+        gmLookup[`${x.t1}||${x.t2}`] = x.id;
+        gmLookup[`${x.t2}||${x.t1}`] = x.id;
+      });
+      let apiUpdated = false;
       (data.matches||[]).forEach(m=>{
-        if (m.score1!==null&&m.score2!==null) {
-          const gm = GM.find(x=>{
-            const h=(m.home||'').toLowerCase(), a=(m.away||'').toLowerCase();
-            return (x.t1.toLowerCase().includes(h.slice(0,4))||h.includes(x.t1.toLowerCase().slice(0,4)))&&
-                   (x.t2.toLowerCase().includes(a.slice(0,4))||a.includes(x.t2.toLowerCase().slice(0,4)));
-          });
-          if (gm) realScores[gm.id]={score1:m.score1,score2:m.score2};
+        if ((m.status==='FINISHED'||m.status==='IN_PLAY'||m.status==='PAUSED') && m.score1!==null && m.score2!==null) {
+          const h = _BK_FD_MAP[m.home] || m.home;
+          const a = _BK_FD_MAP[m.away] || m.away;
+          const id = gmLookup[`${h}||${a}`] || gmLookup[`${a}||${h}`];
+          if (id) {
+            let s1 = m.score1, s2 = m.score2;
+            if (!gmLookup[`${h}||${a}`] && gmLookup[`${a}||${h}`]) { s1 = m.score2; s2 = m.score1; }
+            realScores[id] = {score1:s1, score2:s2};
+            apiUpdated = true;
+          }
         }
       });
+      if (apiUpdated) {
+        localStorage.setItem('wc_2026_predictions', JSON.stringify(realScores));
+      }
     }
   } catch(_){}
 
@@ -927,11 +979,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     Favorito estadístico: <strong style="color:var(--goldb)">${top?.[0]}</strong> · ${top?.[1]?.champ}% probabilidad de título · ${MODEL_METADATA.warning}`;
 
   // 9. Auto-refresh real scores every 3 min
+  let _lastScoreJson = JSON.stringify(realScores);
   setInterval(async()=>{
-    const saved=loadRealScores();
-    if(Object.keys(saved).length!==scoreCount) {
-      realScores=saved;
-      if(currentView==='real') switchView('real');
+    const saved = loadRealScores();
+    const newJson = JSON.stringify(saved);
+    if (newJson !== _lastScoreJson) {
+      _lastScoreJson = newJson;
+      realScores = saved;
+      if (currentView==='real') switchView('real');
       renderGroups(realScores);
     }
   }, 3*60*1000);

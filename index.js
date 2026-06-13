@@ -630,7 +630,7 @@ function renderMatchesList(targetContainerId = "matches-container") {
         <div class="match-meta-info">
           <div class="meta-item">
             <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-            <span>${match.date} &middot; <strong>${match.time} Lima</strong></span>
+            <span>${match.date.replace(' 2026','').toLowerCase()} &middot; <strong>${match.time}</strong></span>
           </div>
           <div class="meta-item venue">
             <svg width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -768,7 +768,7 @@ function renderBracket() {
       const isWinner2 = match.score1 !== null && match.score2 !== null && match.score2 > match.score1;
 
       card.innerHTML = `
-        <div class="bracket-match-num">P${match.id} - ${match.date}</div>
+        <div class="bracket-match-num">P${match.id} · ${match.date.replace(' 2026','').toLowerCase()} ${match.time}</div>
         <div class="bracket-team ${isWinner1 ? 'winner' : ''}">
           <span style="${match.team1 === favoriteTeam ? 'color: var(--secondary); font-weight: 800;' : ''}">${flag1} ${match.team1}</span>
           <input type="number" min="0" class="prediction-input"

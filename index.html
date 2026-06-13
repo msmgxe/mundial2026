@@ -1573,8 +1573,12 @@
       localStorage.setItem('wc_2026_predictions', JSON.stringify(saved));
       localStorage.setItem(_LIVE_KEY, JSON.stringify([...liveSet]));
 
-      // Re-render
+      // Re-render with updated standings and bracket state
+      if (typeof updateKnockoutQualifiers === 'function') updateKnockoutQualifiers();
+      if (typeof updateProgressStepper === 'function') updateProgressStepper();
+      if (typeof updateFanZoneStats === 'function') updateFanZoneStats();
       if (typeof renderApp === 'function') renderApp();
+      buildScoresTicker();
 
       // Highlight official results
       _markOfficialScores([...liveSet]);
@@ -1651,14 +1655,17 @@
       const hasScore = m.score1 !== null && m.score2 !== null;
       const item = document.createElement('div');
       item.className = 'scores-ticker-item';
-      const dateStr = m.date ? new Date(m.date).toLocaleDateString('es-PE', {day:'2-digit',month:'short'}) : '';
+      // Parse "DD Mon YYYY" without relying on Date constructor locale quirks
+      const dateParts = (m.date || '').split(' ');
+      const dateStr = dateParts.length >= 2 ? `${dateParts[0]} ${dateParts[1].toLowerCase()}` : '';
+      const timeStr = m.time ? ` · ${m.time}` : '';
       item.innerHTML = `
         <span class="scores-ticker-team">${flag(m.team1)} ${m.team1}</span>
         ${hasScore
           ? `<span class="scores-ticker-score">${m.score1} - ${m.score2}</span>`
           : `<span class="scores-ticker-vs">vs</span>`}
         <span class="scores-ticker-team">${m.team2} ${flag(m.team2)}</span>
-        <span class="scores-ticker-date">${dateStr}</span>
+        <span class="scores-ticker-date">${dateStr}${timeStr}</span>
       `;
       inner.appendChild(item);
     });
