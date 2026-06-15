@@ -36,141 +36,141 @@ const TEAM_FLAGS = {
 // 2. Full 104 Matches Database
 let matchesData = [
   // --- GRUPO A ---
-  { id: 1, phase: "Fase de Grupos", group: "Grupo A", team1: "México", team2: "Sudáfrica", date: "11 Jun 2026", time: "14:00", venue: "Estadio Azteca, CDMX (MEX)", score1: null, score2: null },
-  { id: 2, phase: "Fase de Grupos", group: "Grupo A", team1: "Corea del Sur", team2: "República Checa", date: "11 Jun 2026", time: "20:00", venue: "Estadio Guadalajara, Guadalajara (MEX)", score1: null, score2: null },
-  { id: 25, phase: "Fase de Grupos", group: "Grupo A", team1: "Sudáfrica", team2: "República Checa", date: "18 Jun 2026", time: "14:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
+  { id: 1, phase: "Fase de Grupos", group: "Grupo A", team1: "México", team2: "Sudáfrica", date: "11 Jun 2026", time: "14:00", venue: "Estadio Azteca, CDMX (MEX)", score1: 2, score2: 0 },
+  { id: 2, phase: "Fase de Grupos", group: "Grupo A", team1: "Corea del Sur", team2: "República Checa", date: "11 Jun 2026", time: "21:00", venue: "Estadio Guadalajara, Guadalajara (MEX)", score1: 2, score2: 1 },
+  { id: 25, phase: "Fase de Grupos", group: "Grupo A", team1: "Sudáfrica", team2: "República Checa", date: "18 Jun 2026", time: "11:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
   { id: 28, phase: "Fase de Grupos", group: "Grupo A", team1: "México", team2: "Corea del Sur", date: "18 Jun 2026", time: "20:00", venue: "Estadio Guadalajara, Guadalajara (MEX)", score1: null, score2: null },
   { id: 53, phase: "Fase de Grupos", group: "Grupo A", team1: "República Checa", team2: "México", date: "24 Jun 2026", time: "20:00", venue: "Estadio Azteca, CDMX (MEX)", score1: null, score2: null },
   { id: 54, phase: "Fase de Grupos", group: "Grupo A", team1: "Sudáfrica", team2: "Corea del Sur", date: "24 Jun 2026", time: "20:00", venue: "Estadio Monterrey, Monterrey (MEX)", score1: null, score2: null },
 
   // --- GRUPO B ---
-  { id: 3, phase: "Fase de Grupos", group: "Grupo B", team1: "Canadá", team2: "Bosnia y Herzegovina", date: "12 Jun 2026", time: "14:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
-  { id: 8, phase: "Fase de Grupos", group: "Grupo B", team1: "Catar", team2: "Suiza", date: "13 Jun 2026", time: "20:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
-  { id: 26, phase: "Fase de Grupos", group: "Grupo B", team1: "Canadá", team2: "Catar", date: "18 Jun 2026", time: "14:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
-  { id: 27, phase: "Fase de Grupos", group: "Grupo B", team1: "Bosnia y Herzegovina", team2: "Suiza", date: "18 Jun 2026", time: "17:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
-  { id: 51, phase: "Fase de Grupos", group: "Grupo B", team1: "Suiza", team2: "Canadá", date: "24 Jun 2026", time: "20:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
-  { id: 52, phase: "Fase de Grupos", group: "Grupo B", team1: "Bosnia y Herzegovina", team2: "Catar", date: "24 Jun 2026", time: "20:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
+  { id: 3, phase: "Fase de Grupos", group: "Grupo B", team1: "Canadá", team2: "Bosnia y Herzegovina", date: "12 Jun 2026", time: "14:00", venue: "BMO Field, Toronto (CAN)", score1: 1, score2: 1 },
+  { id: 8, phase: "Fase de Grupos", group: "Grupo B", team1: "Catar", team2: "Suiza", date: "13 Jun 2026", time: "14:00", venue: "Levi's Stadium, San Francisco (USA)", score1: 1, score2: 1 },
+  { id: 26, phase: "Fase de Grupos", group: "Grupo B", team1: "Canadá", team2: "Catar", date: "18 Jun 2026", time: "17:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
+  { id: 27, phase: "Fase de Grupos", group: "Grupo B", team1: "Bosnia y Herzegovina", team2: "Suiza", date: "18 Jun 2026", time: "14:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
+  { id: 51, phase: "Fase de Grupos", group: "Grupo B", team1: "Suiza", team2: "Canadá", date: "24 Jun 2026", time: "14:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
+  { id: 52, phase: "Fase de Grupos", group: "Grupo B", team1: "Bosnia y Herzegovina", team2: "Catar", date: "24 Jun 2026", time: "14:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
 
   // --- GRUPO C ---
-  { id: 5, phase: "Fase de Grupos", group: "Grupo C", team1: "Haití", team2: "Escocia", date: "13 Jun 2026", time: "14:00", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
-  { id: 7, phase: "Fase de Grupos", group: "Grupo C", team1: "Brasil", team2: "Marruecos", date: "13 Jun 2026", time: "17:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
-  { id: 29, phase: "Fase de Grupos", group: "Grupo C", team1: "Brasil", team2: "Haití", date: "19 Jun 2026", time: "14:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
+  { id: 5, phase: "Fase de Grupos", group: "Grupo C", team1: "Haití", team2: "Escocia", date: "13 Jun 2026", time: "20:00", venue: "Gillette Stadium, Boston (USA)", score1: 0, score2: 1 },
+  { id: 7, phase: "Fase de Grupos", group: "Grupo C", team1: "Brasil", team2: "Marruecos", date: "13 Jun 2026", time: "17:00", venue: "MetLife Stadium, New York (USA)", score1: 1, score2: 1 },
+  { id: 29, phase: "Fase de Grupos", group: "Grupo C", team1: "Brasil", team2: "Haití", date: "19 Jun 2026", time: "19:30", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
   { id: 30, phase: "Fase de Grupos", group: "Grupo C", team1: "Marruecos", team2: "Escocia", date: "19 Jun 2026", time: "17:00", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
   { id: 49, phase: "Fase de Grupos", group: "Grupo C", team1: "Marruecos", team2: "Haití", date: "24 Jun 2026", time: "17:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
   { id: 50, phase: "Fase de Grupos", group: "Grupo C", team1: "Escocia", team2: "Brasil", date: "24 Jun 2026", time: "17:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
 
   // --- GRUPO D ---
-  { id: 4, phase: "Fase de Grupos", group: "Grupo D", team1: "Estados Unidos", team2: "Paraguay", date: "12 Jun 2026", time: "20:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
-  { id: 6, phase: "Fase de Grupos", group: "Grupo D", team1: "Australia", team2: "Turquía", date: "13 Jun 2026", time: "17:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
-  { id: 31, phase: "Fase de Grupos", group: "Grupo D", team1: "Turquía", team2: "Paraguay", date: "19 Jun 2026", time: "17:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
-  { id: 32, phase: "Fase de Grupos", group: "Grupo D", team1: "Estados Unidos", team2: "Australia", date: "19 Jun 2026", time: "20:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
-  { id: 59, phase: "Fase de Grupos", group: "Grupo D", team1: "Estados Unidos", team2: "Turquía", date: "25 Jun 2026", time: "20:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
-  { id: 60, phase: "Fase de Grupos", group: "Grupo D", team1: "Paraguay", team2: "Australia", date: "25 Jun 2026", time: "20:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
+  { id: 4, phase: "Fase de Grupos", group: "Grupo D", team1: "Estados Unidos", team2: "Paraguay", date: "12 Jun 2026", time: "20:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: 4, score2: 1 },
+  { id: 6, phase: "Fase de Grupos", group: "Grupo D", team1: "Australia", team2: "Turquía", date: "13 Jun 2026", time: "23:00", venue: "BC Place, Vancouver (CAN)", score1: 2, score2: 0 },
+  { id: 31, phase: "Fase de Grupos", group: "Grupo D", team1: "Turquía", team2: "Paraguay", date: "19 Jun 2026", time: "22:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
+  { id: 32, phase: "Fase de Grupos", group: "Grupo D", team1: "Estados Unidos", team2: "Australia", date: "19 Jun 2026", time: "14:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
+  { id: 59, phase: "Fase de Grupos", group: "Grupo D", team1: "Estados Unidos", team2: "Turquía", date: "25 Jun 2026", time: "21:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
+  { id: 60, phase: "Fase de Grupos", group: "Grupo D", team1: "Paraguay", team2: "Australia", date: "25 Jun 2026", time: "21:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
 
   // --- GRUPO E ---
-  { id: 9, phase: "Fase de Grupos", group: "Grupo E", team1: "Costa de Marfil", team2: "Ecuador", date: "14 Jun 2026", time: "14:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
-  { id: 10, phase: "Fase de Grupos", group: "Grupo E", team1: "Alemania", team2: "Curazao", date: "14 Jun 2026", time: "17:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
-  { id: 33, phase: "Fase de Grupos", group: "Grupo E", team1: "Alemania", team2: "Costa de Marfil", date: "20 Jun 2026", time: "14:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
-  { id: 34, phase: "Fase de Grupos", group: "Grupo E", team1: "Ecuador", team2: "Curazao", date: "20 Jun 2026", time: "17:00", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
-  { id: 55, phase: "Fase de Grupos", group: "Grupo E", team1: "Curazao", team2: "Costa de Marfil", date: "25 Jun 2026", time: "17:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
-  { id: 56, phase: "Fase de Grupos", group: "Grupo E", team1: "Ecuador", team2: "Alemania", date: "25 Jun 2026", time: "17:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
+  { id: 9, phase: "Fase de Grupos", group: "Grupo E", team1: "Costa de Marfil", team2: "Ecuador", date: "14 Jun 2026", time: "18:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: 1, score2: 0 },
+  { id: 10, phase: "Fase de Grupos", group: "Grupo E", team1: "Alemania", team2: "Curazao", date: "14 Jun 2026", time: "12:00", venue: "NRG Stadium, Houston (USA)", score1: 7, score2: 1 },
+  { id: 33, phase: "Fase de Grupos", group: "Grupo E", team1: "Alemania", team2: "Costa de Marfil", date: "20 Jun 2026", time: "15:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
+  { id: 34, phase: "Fase de Grupos", group: "Grupo E", team1: "Ecuador", team2: "Curazao", date: "20 Jun 2026", time: "19:00", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
+  { id: 55, phase: "Fase de Grupos", group: "Grupo E", team1: "Curazao", team2: "Costa de Marfil", date: "25 Jun 2026", time: "15:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
+  { id: 56, phase: "Fase de Grupos", group: "Grupo E", team1: "Ecuador", team2: "Alemania", date: "25 Jun 2026", time: "15:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
 
   // --- GRUPO F ---
-  { id: 11, phase: "Fase de Grupos", group: "Grupo F", team1: "Países Bajos", team2: "Japón", date: "14 Jun 2026", time: "20:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
-  { id: 12, phase: "Fase de Grupos", group: "Grupo F", team1: "Suecia", team2: "Túnez", date: "14 Jun 2026", time: "20:00", venue: "Estadio Monterrey, Monterrey (MEX)", score1: null, score2: null },
-  { id: 35, phase: "Fase de Grupos", group: "Grupo F", team1: "Países Bajos", team2: "Suecia", date: "20 Jun 2026", time: "20:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
-  { id: 36, phase: "Fase de Grupos", group: "Grupo F", team1: "Japón", team2: "Túnez", date: "20 Jun 2026", time: "20:00", venue: "Estadio Monterrey, Monterrey (MEX)", score1: null, score2: null },
-  { id: 57, phase: "Fase de Grupos", group: "Grupo F", team1: "Túnez", team2: "Países Bajos", date: "25 Jun 2026", time: "14:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
-  { id: 58, phase: "Fase de Grupos", group: "Grupo F", team1: "Japón", team2: "Suecia", date: "25 Jun 2026", time: "14:00", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
+  { id: 11, phase: "Fase de Grupos", group: "Grupo F", team1: "Países Bajos", team2: "Japón", date: "14 Jun 2026", time: "15:00", venue: "AT&T Stadium, Dallas (USA)", score1: 2, score2: 2 },
+  { id: 12, phase: "Fase de Grupos", group: "Grupo F", team1: "Suecia", team2: "Túnez", date: "14 Jun 2026", time: "21:00", venue: "Estadio Monterrey, Monterrey (MEX)", score1: null, score2: null },
+  { id: 35, phase: "Fase de Grupos", group: "Grupo F", team1: "Países Bajos", team2: "Suecia", date: "20 Jun 2026", time: "12:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
+  { id: 36, phase: "Fase de Grupos", group: "Grupo F", team1: "Japón", team2: "Túnez", date: "20 Jun 2026", time: "23:00", venue: "Estadio Monterrey, Monterrey (MEX)", score1: null, score2: null },
+  { id: 57, phase: "Fase de Grupos", group: "Grupo F", team1: "Túnez", team2: "Países Bajos", date: "25 Jun 2026", time: "18:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
+  { id: 58, phase: "Fase de Grupos", group: "Grupo F", team1: "Japón", team2: "Suecia", date: "25 Jun 2026", time: "18:00", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
 
   // --- GRUPO G ---
   { id: 15, phase: "Fase de Grupos", group: "Grupo G", team1: "Irán", team2: "Nueva Zelanda", date: "15 Jun 2026", time: "20:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
-  { id: 16, phase: "Fase de Grupos", group: "Grupo G", team1: "Bélgica", team2: "Egipto", date: "15 Jun 2026", time: "20:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
-  { id: 39, phase: "Fase de Grupos", group: "Grupo G", team1: "Bélgica", team2: "Irán", date: "21 Jun 2026", time: "20:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
+  { id: 16, phase: "Fase de Grupos", group: "Grupo G", team1: "Bélgica", team2: "Egipto", date: "15 Jun 2026", time: "14:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
+  { id: 39, phase: "Fase de Grupos", group: "Grupo G", team1: "Bélgica", team2: "Irán", date: "21 Jun 2026", time: "14:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
   { id: 40, phase: "Fase de Grupos", group: "Grupo G", team1: "Nueva Zelanda", team2: "Egipto", date: "21 Jun 2026", time: "20:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
-  { id: 63, phase: "Fase de Grupos", group: "Grupo G", team1: "Egipto", team2: "Irán", date: "26 Jun 2026", time: "20:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
-  { id: 64, phase: "Fase de Grupos", group: "Grupo G", team1: "Nueva Zelanda", team2: "Bélgica", date: "26 Jun 2026", time: "20:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
+  { id: 63, phase: "Fase de Grupos", group: "Grupo G", team1: "Egipto", team2: "Irán", date: "26 Jun 2026", time: "22:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
+  { id: 64, phase: "Fase de Grupos", group: "Grupo G", team1: "Nueva Zelanda", team2: "Bélgica", date: "26 Jun 2026", time: "22:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
 
   // --- GRUPO H ---
-  { id: 13, phase: "Fase de Grupos", group: "Grupo H", team1: "Arabia Saudita", team2: "Uruguay", date: "15 Jun 2026", time: "14:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
-  { id: 14, phase: "Fase de Grupos", group: "Grupo H", team1: "España", team2: "Cabo Verde", date: "15 Jun 2026", time: "17:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
-  { id: 37, phase: "Fase de Grupos", group: "Grupo H", team1: "Uruguay", team2: "Cabo Verde", date: "21 Jun 2026", time: "14:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
-  { id: 38, phase: "Fase de Grupos", group: "Grupo H", team1: "España", team2: "Arabia Saudita", date: "21 Jun 2026", time: "17:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
-  { id: 65, phase: "Fase de Grupos", group: "Grupo H", team1: "Arabia Saudita", team2: "Cabo Verde", date: "26 Jun 2026", time: "17:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
-  { id: 66, phase: "Fase de Grupos", group: "Grupo H", team1: "España", team2: "Uruguay", date: "26 Jun 2026", time: "17:00", venue: "Estadio Akron, Guadalajara (MEX)", score1: null, score2: null },
+  { id: 13, phase: "Fase de Grupos", group: "Grupo H", team1: "Arabia Saudita", team2: "Uruguay", date: "15 Jun 2026", time: "17:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
+  { id: 14, phase: "Fase de Grupos", group: "Grupo H", team1: "España", team2: "Cabo Verde", date: "15 Jun 2026", time: "11:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
+  { id: 37, phase: "Fase de Grupos", group: "Grupo H", team1: "Uruguay", team2: "Cabo Verde", date: "21 Jun 2026", time: "17:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
+  { id: 38, phase: "Fase de Grupos", group: "Grupo H", team1: "España", team2: "Arabia Saudita", date: "21 Jun 2026", time: "11:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
+  { id: 65, phase: "Fase de Grupos", group: "Grupo H", team1: "Arabia Saudita", team2: "Cabo Verde", date: "26 Jun 2026", time: "19:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
+  { id: 66, phase: "Fase de Grupos", group: "Grupo H", team1: "España", team2: "Uruguay", date: "26 Jun 2026", time: "19:00", venue: "Estadio Akron, Guadalajara (MEX)", score1: null, score2: null },
 
   // --- GRUPO I ---
   { id: 17, phase: "Fase de Grupos", group: "Grupo I", team1: "Francia", team2: "Senegal", date: "16 Jun 2026", time: "14:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
   { id: 18, phase: "Fase de Grupos", group: "Grupo I", team1: "Irak", team2: "Noruega", date: "16 Jun 2026", time: "17:00", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
-  { id: 41, phase: "Fase de Grupos", group: "Grupo I", team1: "Noruega", team2: "Senegal", date: "22 Jun 2026", time: "14:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
-  { id: 42, phase: "Fase de Grupos", group: "Grupo I", team1: "Francia", team2: "Irak", date: "22 Jun 2026", time: "17:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
+  { id: 41, phase: "Fase de Grupos", group: "Grupo I", team1: "Noruega", team2: "Senegal", date: "22 Jun 2026", time: "19:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
+  { id: 42, phase: "Fase de Grupos", group: "Grupo I", team1: "Francia", team2: "Irak", date: "22 Jun 2026", time: "16:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
   { id: 61, phase: "Fase de Grupos", group: "Grupo I", team1: "Irak", team2: "Senegal", date: "26 Jun 2026", time: "14:00", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
   { id: 62, phase: "Fase de Grupos", group: "Grupo I", team1: "Noruega", team2: "Francia", date: "26 Jun 2026", time: "14:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
 
   // --- GRUPO J ---
   { id: 19, phase: "Fase de Grupos", group: "Grupo J", team1: "Argentina", team2: "Argelia", date: "16 Jun 2026", time: "20:00", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
-  { id: 20, phase: "Fase de Grupos", group: "Grupo J", team1: "Austria", team2: "Jordania", date: "16 Jun 2026", time: "20:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
-  { id: 43, phase: "Fase de Grupos", group: "Grupo J", team1: "Argentina", team2: "Austria", date: "22 Jun 2026", time: "20:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
-  { id: 44, phase: "Fase de Grupos", group: "Grupo J", team1: "Argelia", team2: "Jordania", date: "22 Jun 2026", time: "20:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
-  { id: 69, phase: "Fase de Grupos", group: "Grupo J", team1: "Argelia", team2: "Austria", date: "27 Jun 2026", time: "14:00", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
-  { id: 70, phase: "Fase de Grupos", group: "Grupo J", team1: "Jordania", team2: "Argentina", date: "27 Jun 2026", time: "14:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
+  { id: 20, phase: "Fase de Grupos", group: "Grupo J", team1: "Austria", team2: "Jordania", date: "16 Jun 2026", time: "23:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
+  { id: 43, phase: "Fase de Grupos", group: "Grupo J", team1: "Argentina", team2: "Austria", date: "22 Jun 2026", time: "12:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
+  { id: 44, phase: "Fase de Grupos", group: "Grupo J", team1: "Argelia", team2: "Jordania", date: "22 Jun 2026", time: "22:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
+  { id: 69, phase: "Fase de Grupos", group: "Grupo J", team1: "Argelia", team2: "Austria", date: "27 Jun 2026", time: "21:00", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
+  { id: 70, phase: "Fase de Grupos", group: "Grupo J", team1: "Jordania", team2: "Argentina", date: "27 Jun 2026", time: "21:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
 
   // --- GRUPO K ---
-  { id: 21, phase: "Fase de Grupos", group: "Grupo K", team1: "Portugal", team2: "RD Congo", date: "17 Jun 2026", time: "14:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
-  { id: 24, phase: "Fase de Grupos", group: "Grupo K", team1: "Uzbekistán", team2: "Colombia", date: "17 Jun 2026", time: "17:00", venue: "Estadio Azteca, CDMX (MEX)", score1: null, score2: null },
-  { id: 47, phase: "Fase de Grupos", group: "Grupo K", team1: "Portugal", team2: "Uzbekistán", date: "23 Jun 2026", time: "14:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
-  { id: 48, phase: "Fase de Grupos", group: "Grupo K", team1: "Colombia", team2: "RD Congo", date: "23 Jun 2026", time: "17:00", venue: "Estadio Akron, Guadalajara (MEX)", score1: null, score2: null },
-  { id: 71, phase: "Fase de Grupos", group: "Grupo K", team1: "Colombia", team2: "Portugal", date: "27 Jun 2026", time: "20:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
-  { id: 72, phase: "Fase de Grupos", group: "Grupo K", team1: "RD Congo", team2: "Uzbekistán", date: "27 Jun 2026", time: "20:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
+  { id: 21, phase: "Fase de Grupos", group: "Grupo K", team1: "Portugal", team2: "RD Congo", date: "17 Jun 2026", time: "12:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
+  { id: 24, phase: "Fase de Grupos", group: "Grupo K", team1: "Uzbekistán", team2: "Colombia", date: "17 Jun 2026", time: "21:00", venue: "Estadio Azteca, CDMX (MEX)", score1: null, score2: null },
+  { id: 47, phase: "Fase de Grupos", group: "Grupo K", team1: "Portugal", team2: "Uzbekistán", date: "23 Jun 2026", time: "12:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
+  { id: 48, phase: "Fase de Grupos", group: "Grupo K", team1: "Colombia", team2: "RD Congo", date: "23 Jun 2026", time: "21:00", venue: "Estadio Akron, Guadalajara (MEX)", score1: null, score2: null },
+  { id: 71, phase: "Fase de Grupos", group: "Grupo K", team1: "Colombia", team2: "Portugal", date: "27 Jun 2026", time: "18:30", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
+  { id: 72, phase: "Fase de Grupos", group: "Grupo K", team1: "RD Congo", team2: "Uzbekistán", date: "27 Jun 2026", time: "18:30", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
 
   // --- GRUPO L ---
-  { id: 22, phase: "Fase de Grupos", group: "Grupo L", team1: "Inglaterra", team2: "Croacia", date: "17 Jun 2026", time: "20:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
-  { id: 23, phase: "Fase de Grupos", group: "Grupo L", team1: "Ghana", team2: "Panamá", date: "17 Jun 2026", time: "20:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
-  { id: 45, phase: "Fase de Grupos", group: "Grupo L", team1: "Inglaterra", team2: "Ghana", date: "23 Jun 2026", time: "20:00", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
-  { id: 46, phase: "Fase de Grupos", group: "Grupo L", team1: "Panamá", team2: "Croacia", date: "23 Jun 2026", time: "20:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
-  { id: 67, phase: "Fase de Grupos", group: "Grupo L", team1: "Panamá", team2: "Inglaterra", date: "27 Jun 2026", time: "17:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
-  { id: 68, phase: "Fase de Grupos", group: "Grupo L", team1: "Croacia", team2: "Ghana", date: "27 Jun 2026", time: "17:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
+  { id: 22, phase: "Fase de Grupos", group: "Grupo L", team1: "Inglaterra", team2: "Croacia", date: "17 Jun 2026", time: "15:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
+  { id: 23, phase: "Fase de Grupos", group: "Grupo L", team1: "Ghana", team2: "Panamá", date: "17 Jun 2026", time: "18:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
+  { id: 45, phase: "Fase de Grupos", group: "Grupo L", team1: "Inglaterra", team2: "Ghana", date: "23 Jun 2026", time: "15:00", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
+  { id: 46, phase: "Fase de Grupos", group: "Grupo L", team1: "Panamá", team2: "Croacia", date: "23 Jun 2026", time: "18:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
+  { id: 67, phase: "Fase de Grupos", group: "Grupo L", team1: "Panamá", team2: "Inglaterra", date: "27 Jun 2026", time: "16:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
+  { id: 68, phase: "Fase de Grupos", group: "Grupo L", team1: "Croacia", team2: "Ghana", date: "27 Jun 2026", time: "16:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
 
   // --- DIECISEISAVOS DE FINAL (ROUND OF 32) ---
-  { id: 73, phase: "16avos de Final", group: null, team1: "2° Grupo A", team2: "2° Grupo B", date: "28 Jun 2026", time: "20:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
-  { id: 74, phase: "16avos de Final", group: null, team1: "1° Grupo E", team2: "3° Grupo A/B/C/D/F", date: "29 Jun 2026", time: "14:00", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
-  { id: 76, phase: "16avos de Final", group: null, team1: "1° Grupo C", team2: "2° Grupo F", date: "29 Jun 2026", time: "20:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
-  { id: 75, phase: "16avos de Final", group: null, team1: "1° Grupo F", team2: "2° Grupo C", date: "30 Jun 2026", time: "20:00", venue: "Estadio Monterrey, Monterrey (MEX)", score1: null, score2: null },
-  { id: 77, phase: "16avos de Final", group: null, team1: "1° Grupo I", team2: "3° Grupo C/D/F/G/H", date: "30 Jun 2026", time: "14:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
-  { id: 78, phase: "16avos de Final", group: null, team1: "2° Grupo E", team2: "2° Grupo I", date: "30 Jun 2026", time: "17:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
+  { id: 73, phase: "16avos de Final", group: null, team1: "2° Grupo A", team2: "2° Grupo B", date: "28 Jun 2026", time: "14:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
+  { id: 74, phase: "16avos de Final", group: null, team1: "1° Grupo E", team2: "3° Grupo A/B/C/D/F", date: "29 Jun 2026", time: "15:30", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
+  { id: 76, phase: "16avos de Final", group: null, team1: "1° Grupo C", team2: "2° Grupo F", date: "29 Jun 2026", time: "12:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
+  { id: 75, phase: "16avos de Final", group: null, team1: "1° Grupo F", team2: "2° Grupo C", date: "29 Jun 2026", time: "20:00", venue: "Estadio Monterrey, Monterrey (MEX)", score1: null, score2: null },
+  { id: 77, phase: "16avos de Final", group: null, team1: "1° Grupo I", team2: "3° Grupo C/D/F/G/H", date: "30 Jun 2026", time: "16:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
+  { id: 78, phase: "16avos de Final", group: null, team1: "2° Grupo E", team2: "2° Grupo I", date: "30 Jun 2026", time: "12:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
   { id: 79, phase: "16avos de Final", group: null, team1: "1° Grupo A", team2: "3° Grupo C/E/F/H/I", date: "30 Jun 2026", time: "20:00", venue: "Estadio Azteca, CDMX (MEX)", score1: null, score2: null },
-  { id: 80, phase: "16avos de Final", group: null, team1: "1° Grupo L", team2: "3° E/H/I/J/K", date: "01 Jul 2026", time: "14:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
-  { id: 81, phase: "16avos de Final", group: null, team1: "1° Grupo D", team2: "3° B/E/F/I/J", date: "01 Jul 2026", time: "17:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
-  { id: 82, phase: "16avos de Final", group: null, team1: "1° Grupo G", team2: "3° A/E/H/I/J", date: "01 Jul 2026", time: "20:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
-  { id: 83, phase: "16avos de Final", group: null, team1: "2° Grupo K", team2: "2° Grupo L", date: "02 Jul 2026", time: "14:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
-  { id: 84, phase: "16avos de Final", group: null, team1: "1° Grupo H", team2: "2° Grupo J", date: "02 Jul 2026", time: "20:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
-  { id: 85, phase: "16avos de Final", group: null, team1: "1° Grupo B", team2: "3° E/F/G/I/J", date: "02 Jul 2026", time: "20:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
-  { id: 86, phase: "16avos de Final", group: null, team1: "1° Grupo J", team2: "2° Grupo H", date: "03 Jul 2026", time: "14:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
-  { id: 87, phase: "16avos de Final", group: null, team1: "1° Grupo K", team2: "3° D/E/I/J/L", date: "03 Jul 2026", time: "17:00", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
-  { id: 88, phase: "16avos de Final", group: null, team1: "2° Grupo D", team2: "2° Grupo G", date: "03 Jul 2026", time: "20:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
+  { id: 80, phase: "16avos de Final", group: null, team1: "1° Grupo L", team2: "3° E/H/I/J/K", date: "01 Jul 2026", time: "11:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
+  { id: 81, phase: "16avos de Final", group: null, team1: "1° Grupo D", team2: "3° B/E/F/I/J", date: "01 Jul 2026", time: "19:00", venue: "Levi's Stadium, San Francisco (USA)", score1: null, score2: null },
+  { id: 82, phase: "16avos de Final", group: null, team1: "1° Grupo G", team2: "3° A/E/H/I/J", date: "01 Jul 2026", time: "15:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
+  { id: 83, phase: "16avos de Final", group: null, team1: "2° Grupo K", team2: "2° Grupo L", date: "02 Jul 2026", time: "18:00", venue: "BMO Field, Toronto (CAN)", score1: null, score2: null },
+  { id: 84, phase: "16avos de Final", group: null, team1: "1° Grupo H", team2: "2° Grupo J", date: "02 Jul 2026", time: "14:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
+  { id: 85, phase: "16avos de Final", group: null, team1: "1° Grupo B", team2: "3° E/F/G/I/J", date: "02 Jul 2026", time: "22:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
+  { id: 86, phase: "16avos de Final", group: null, team1: "1° Grupo J", team2: "2° Grupo H", date: "03 Jul 2026", time: "17:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
+  { id: 87, phase: "16avos de Final", group: null, team1: "1° Grupo K", team2: "3° D/E/I/J/L", date: "03 Jul 2026", time: "20:30", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
+  { id: 88, phase: "16avos de Final", group: null, team1: "2° Grupo D", team2: "2° Grupo G", date: "03 Jul 2026", time: "13:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
 
   // --- OCTAVOS DE FINAL ---
-  { id: 89, phase: "Octavos de Final", group: null, team1: "Ganador 74", team2: "Ganador 77", date: "04 Jul 2026", time: "14:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
-  { id: 90, phase: "Octavos de Final", group: null, team1: "Ganador 73", team2: "Ganador 75", date: "04 Jul 2026", time: "20:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
-  { id: 91, phase: "Octavos de Final", group: null, team1: "Ganador 76", team2: "Ganador 78", date: "05 Jul 2026", time: "14:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
-  { id: 92, phase: "Octavos de Final", group: null, team1: "Ganador 79", team2: "Ganador 80", date: "05 Jul 2026", time: "20:00", venue: "Estadio Azteca, CDMX (MEX)", score1: null, score2: null },
-  { id: 93, phase: "Octavos de Final", group: null, team1: "Ganador 83", team2: "Ganador 84", date: "06 Jul 2026", time: "20:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
-  { id: 94, phase: "Octavos de Final", group: null, team1: "Ganador 81", team2: "Ganador 82", date: "06 Jul 2026", time: "20:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
-  { id: 95, phase: "Octavos de Final", group: null, team1: "Ganador 86", team2: "Ganador 88", date: "07 Jul 2026", time: "14:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
-  { id: 96, phase: "Octavos de Final", group: null, team1: "Ganador 85", team2: "Ganador 87", date: "07 Jul 2026", time: "20:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
+  { id: 89, phase: "Octavos de Final", group: null, team1: "Ganador 74", team2: "Ganador 77", date: "04 Jul 2026", time: "12:00", venue: "Lincoln Financial Field, Philadelphia (USA)", score1: null, score2: null },
+  { id: 90, phase: "Octavos de Final", group: null, team1: "Ganador 73", team2: "Ganador 75", date: "04 Jul 2026", time: "16:00", venue: "NRG Stadium, Houston (USA)", score1: null, score2: null },
+  { id: 91, phase: "Octavos de Final", group: null, team1: "Ganador 76", team2: "Ganador 78", date: "05 Jul 2026", time: "15:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null },
+  { id: 92, phase: "Octavos de Final", group: null, team1: "Ganador 79", team2: "Ganador 80", date: "05 Jul 2026", time: "19:00", venue: "Estadio Azteca, CDMX (MEX)", score1: null, score2: null },
+  { id: 93, phase: "Octavos de Final", group: null, team1: "Ganador 83", team2: "Ganador 84", date: "06 Jul 2026", time: "14:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
+  { id: 94, phase: "Octavos de Final", group: null, team1: "Ganador 81", team2: "Ganador 82", date: "06 Jul 2026", time: "19:00", venue: "Lumen Field, Seattle (USA)", score1: null, score2: null },
+  { id: 95, phase: "Octavos de Final", group: null, team1: "Ganador 86", team2: "Ganador 88", date: "07 Jul 2026", time: "11:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
+  { id: 96, phase: "Octavos de Final", group: null, team1: "Ganador 85", team2: "Ganador 87", date: "07 Jul 2026", time: "15:00", venue: "BC Place, Vancouver (CAN)", score1: null, score2: null },
 
   // --- CUARTOS DE FINAL ---
-  { id: 97, phase: "Cuartos de Final", group: null, team1: "Ganador 89", team2: "Ganador 90", date: "09 Jul 2026", time: "17:00", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
-  { id: 98, phase: "Cuartos de Final", group: null, team1: "Ganador 93", team2: "Ganador 94", date: "10 Jul 2026", time: "20:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
-  { id: 99, phase: "Cuartos de Final", group: null, team1: "Ganador 91", team2: "Ganador 92", date: "11 Jul 2026", time: "14:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
+  { id: 97, phase: "Cuartos de Final", group: null, team1: "Ganador 89", team2: "Ganador 90", date: "09 Jul 2026", time: "15:00", venue: "Gillette Stadium, Boston (USA)", score1: null, score2: null },
+  { id: 98, phase: "Cuartos de Final", group: null, team1: "Ganador 93", team2: "Ganador 94", date: "10 Jul 2026", time: "14:00", venue: "SoFi Stadium, Los Angeles (USA)", score1: null, score2: null },
+  { id: 99, phase: "Cuartos de Final", group: null, team1: "Ganador 91", team2: "Ganador 92", date: "11 Jul 2026", time: "16:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
   { id: 100, phase: "Cuartos de Final", group: null, team1: "Ganador 95", team2: "Ganador 96", date: "11 Jul 2026", time: "20:00", venue: "Arrowhead Stadium, Kansas City (USA)", score1: null, score2: null },
 
   // --- SEMIFINALES ---
-  { id: 101, phase: "Semifinal", group: null, team1: "Ganador 97", team2: "Ganador 98", date: "14 Jul 2026", time: "20:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
-  { id: 102, phase: "Semifinal", group: null, team1: "Ganador 99", team2: "Ganador 100", date: "15 Jul 2026", time: "20:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
+  { id: 101, phase: "Semifinal", group: null, team1: "Ganador 97", team2: "Ganador 98", date: "14 Jul 2026", time: "14:00", venue: "AT&T Stadium, Dallas (USA)", score1: null, score2: null },
+  { id: 102, phase: "Semifinal", group: null, team1: "Ganador 99", team2: "Ganador 100", date: "15 Jul 2026", time: "14:00", venue: "Mercedes-Benz Stadium, Atlanta (USA)", score1: null, score2: null },
 
   // --- TERCER PUESTO ---
-  { id: 103, phase: "Tercer Puesto", group: null, team1: "Perdedor 101", team2: "Perdedor 102", date: "18 Jul 2026", time: "17:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
+  { id: 103, phase: "Tercer Puesto", group: null, team1: "Perdedor 101", team2: "Perdedor 102", date: "18 Jul 2026", time: "16:00", venue: "Hard Rock Stadium, Miami (USA)", score1: null, score2: null },
 
   // --- FINAL ---
   { id: 104, phase: "Final", group: null, team1: "Ganador 101", team2: "Ganador 102", date: "19 Jul 2026", time: "14:00", venue: "MetLife Stadium, New York (USA)", score1: null, score2: null }
@@ -186,7 +186,31 @@ let favoriteTeam = localStorage.getItem("wc_2026_fav") || "Todos";
 // Previous standings cache to calculate rank shifts
 let previousStandingsCache = null;
 
-// Load initial predictions if they exist
+// Seed localStorage with hardcoded official results so resetPredictions() los preserve
+(function seedOfficialScores() {
+  const _LIVE_KEY = 'wc_2026_live_ids';
+  const saved    = JSON.parse(localStorage.getItem('wc_2026_predictions') || '{}');
+  const liveIds  = new Set(JSON.parse(localStorage.getItem(_LIVE_KEY) || '[]').map(Number));
+  let changed = false;
+  matchesData.forEach(m => {
+    if (m.score1 !== null && m.score2 !== null) {
+      if (!saved[m.id]) {
+        saved[m.id] = { score1: m.score1, score2: m.score2 };
+        changed = true;
+      }
+      if (!liveIds.has(m.id)) {
+        liveIds.add(m.id);
+        changed = true;
+      }
+    }
+  });
+  if (changed) {
+    localStorage.setItem('wc_2026_predictions', JSON.stringify(saved));
+    localStorage.setItem(_LIVE_KEY, JSON.stringify([...liveIds]));
+  }
+})();
+
+// Load predictions from localStorage (overrides hardcoded scores if user has saved different values)
 if (localStorage.getItem("wc_2026_predictions")) {
   try {
     const saved = JSON.parse(localStorage.getItem("wc_2026_predictions"));
