@@ -208,8 +208,12 @@
     }
     .bk-team.win{background:linear-gradient(90deg,rgba(212,175,55,.2),rgba(212,175,55,.05));border-color:rgba(212,175,55,.5);}
     .bk-team.real-win{background:linear-gradient(90deg,rgba(16,185,129,.18),rgba(16,185,129,.04));border-color:rgba(16,185,129,.5);}
-    .bk-team.lose{opacity:.33;}
+    .bk-team.lose{opacity:.4;}
     .bk-team.tbd{background:var(--tbd);border-color:var(--tbd-bdr);}
+    .bk-team.real-tbd{background:rgba(59,130,246,.07);border-color:rgba(59,130,246,.28);}
+    .bk-team.real-tbd .bk-name{color:var(--tx);font-weight:600;}
+    .bk-team.real-tbd .bk-stat{color:rgba(100,149,237,.85);font-size:.5rem;}
+    html[data-theme="light"] .bk-team.real-tbd .bk-name{color:var(--txd);}
     .bk-flag{font-size:.85rem;flex-shrink:0;line-height:1;}
     .bk-name{flex:1;font-size:.67rem;font-weight:600;color:var(--txd);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
     .bk-team.win  .bk-name{color:#F5E6A0;font-weight:800;}
@@ -600,20 +604,26 @@ function calcRealStandings(gKey, scores) {
 function buildRealBracket(scores) {
   // For each group, get top-2 finishers based on real scores
   const qualified = [], thirds = [];
-  let groupsComplete = true;
+  let groupsComplete = true, completedGroups = 0;
   for (const [gKey, teams] of Object.entries(GROUPS)) {
     const { ranked, allPlayed } = calcRealStandings(gKey, scores);
     if (allPlayed) {
+      completedGroups++;
       qualified.push({ team:ranked[0][0], seed:1, group:gKey });
       qualified.push({ team:ranked[1][0], seed:2, group:gKey });
       thirds.push({ team:ranked[2][0], pts:ranked[2][1].pts, gd:ranked[2][1].gd, gf:ranked[2][1].gf });
     } else {
-      // Group not finished — use probabilistic ranking as placeholder
+      // Group not finished — use REAL current standings (pts→gd→gf) then TEAM_RATINGS as tiebreaker
       groupsComplete = false;
-      const sorted = [...teams].sort((a,b)=>(TEAM_RATINGS[b]||70)-(TEAM_RATINGS[a]||70));
-      qualified.push({ team:sorted[0], seed:1, group:gKey, tbd:true });
-      qualified.push({ team:sorted[1], seed:2, group:gKey, tbd:true });
-      thirds.push({ team:sorted[2], pts:0, gd:0, gf:0, tbd:true });
+      const sortedReal = [...ranked].sort((a,b)=>
+        (b[1].pts - a[1].pts) ||
+        (b[1].gd  - a[1].gd)  ||
+        (b[1].gf  - a[1].gf)  ||
+        ((TEAM_RATINGS[b[0]]||70) - (TEAM_RATINGS[a[0]]||70))
+      );
+      qualified.push({ team:sortedReal[0][0], seed:1, group:gKey, tbd:true });
+      qualified.push({ team:sortedReal[1][0], seed:2, group:gKey, tbd:true });
+      thirds.push({ team:sortedReal[2][0], pts:sortedReal[2][1].pts, gd:sortedReal[2][1].gd, gf:sortedReal[2][1].gf, tbd:true });
     }
   }
   // Best 8 third-place
@@ -657,7 +667,7 @@ function buildRealBracket(scores) {
   const lsf=wp(lqf[0].winner,lqf[1].winner);
   const rsf=wp(rqf[0].winner,rqf[1].winner);
   const fin=wp(lsf.winner,rsf.winner);
-  return {lr32,rr32,lr16,rr16,lqf,rqf,lsf,rsf,fin,third:{t1:lsf.loser,t2:rsf.loser},groupsComplete};
+  return {lr32,rr32,lr16,rr16,lqf,rqf,lsf,rsf,fin,third:{t1:lsf.loser,t2:rsf.loser},groupsComplete,completedGroups};
 }
 
 // ── Build PROBABILISTIC bracket ───────────────────────────────
@@ -694,8 +704,10 @@ function buildProjBracket() {
 // ── Render bracket HTML ──────────────────────────────────────
 function teamHtml(team, stat, isWinner, isTbd=false, isReal=false, score=null) {
   if (!team||team==='null') return `<div class="bk-team tbd"><span class="bk-flag">🕐</span><span class="bk-name">A definir</span></div>`;
-  const cls = isTbd ? 'tbd' : isWinner ? (isReal?'real-win':'win') : 'lose';
-  const statStr = isTbd ? '?' : score||`${stat}%`;
+  const cls = isTbd
+    ? (isReal ? 'real-tbd' : 'tbd')
+    : isWinner ? (isReal?'real-win':'win') : 'lose';
+  const statStr = isTbd ? (isReal ? 'prov.' : '?') : score||`${stat}%`;
   return `<div class="bk-team ${cls}" title="${team}">
     <span class="bk-flag">${F[team]||'🏳'}</span>
     <span class="bk-name">${team}</span>
@@ -951,9 +963,10 @@ function switchView(view) {
     document.getElementById('bk-bracket-inner').innerHTML = renderBracketHTML(b, true);
     renderThird(b, true);
     if (!b.groupsComplete) {
-      document.getElementById('view-status').textContent = '⏳ Grupos en progreso — algunas posiciones son proyecciones';
+      document.getElementById('view-status').textContent =
+        `⏳ ${b.completedGroups}/12 grupos completos — posiciones provisionales según resultados reales del torneo`;
     } else {
-      document.getElementById('view-status').textContent = '✅ Grupos completos — bracket con clasificados reales';
+      document.getElementById('view-status').textContent = '✅ Todos los grupos completos — bracket con clasificados reales';
     }
   } else {
     btnReal.className='vt-btn';
@@ -1014,7 +1027,9 @@ async function refreshLiveScores() {
         document.getElementById('bk-bracket-inner').innerHTML=renderBracketHTML(b,true);
         renderThird(b,true);
         const vs=document.getElementById('view-status');
-        if(vs) vs.textContent=b.groupsComplete?'✅ Grupos completos — bracket con clasificados reales':'⏳ Grupos en progreso — posiciones preliminares';
+        if(vs) vs.textContent=b.groupsComplete
+          ?'✅ Todos los grupos completos — bracket con clasificados reales'
+          :`⏳ ${b.completedGroups}/12 grupos completos — posiciones provisionales según resultados reales del torneo`;
       }
     }
     if (chip) {
