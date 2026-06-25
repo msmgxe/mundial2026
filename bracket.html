@@ -144,6 +144,33 @@
     .gr-score{font-family:'Bebas Neue','Outfit',sans-serif;font-size:.7rem;font-weight:900;
       color:var(--goldb);width:36px;text-align:center;flex-shrink:0;}
 
+    /* ── GROUP STANDINGS TABLE ─────────────────────────── */
+    .grp-stand-sep{border-top:1px dashed var(--bdr);margin:0 10px;}
+    .grp-stand-title{padding:4px 10px 2px;font-size:.46rem;font-weight:700;
+      color:var(--txm);text-transform:uppercase;letter-spacing:.08em;background:var(--n3);}
+    .grp-st-row{display:flex;align-items:center;padding:3px 10px;font-size:.54rem;
+      background:var(--n3);border-top:1px solid var(--line);gap:4px;}
+    .grp-st-row:last-child{border-radius:0 0 4px 4px;}
+    .grp-st-row.q1{background:rgba(16,185,129,.09);}
+    .grp-st-row.q2{background:rgba(59,130,246,.07);}
+    .grp-st-badge{width:14px;text-align:center;flex-shrink:0;font-size:.52rem;font-weight:900;}
+    .grp-st-row.q1 .grp-st-badge{color:#10B981;}
+    .grp-st-row.q2 .grp-st-badge{color:#3B82F6;}
+    .grp-st-flag{width:16px;flex-shrink:0;}
+    .grp-st-team{flex:1;font-weight:600;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .grp-st-num{width:20px;text-align:center;color:var(--txm);flex-shrink:0;font-size:.5rem;}
+    .grp-st-pts{width:22px;text-align:center;font-weight:900;color:var(--goldb);flex-shrink:0;font-size:.58rem;}
+    .grp-st-row.q1 .grp-st-pts{color:#10B981;}
+    .grp-st-row.q2 .grp-st-pts{color:#3B82F6;}
+
+    /* ── REFRESH INDICATOR ─────────────────────────────── */
+    .bk-refresh-chip{display:inline-flex;align-items:center;gap:5px;font-size:.5rem;
+      color:var(--txm);padding:2px 7px;border-radius:99px;border:1px solid var(--bdr);
+      background:var(--n3);}
+    .bk-refresh-chip.live::before{content:'';display:inline-block;width:6px;height:6px;
+      background:#10B981;border-radius:50%;animation:pulse-dot 2s infinite;}
+    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.7);}}
+
     /* ── BRACKET SECTION ───────────────────────────────── */
     .bracket-section{padding:16px 0 0;}
     .bracket-view-label{
@@ -326,8 +353,9 @@
           📊 Proyección Probabilística
         </button>
       </div>
-      <div style="font-size:.6rem;color:var(--txd);text-align:right;" id="view-status">
-        Leyendo resultados reales…
+      <div style="display:flex;align-items:center;gap:8px;justify-content:flex-end;">
+        <span class="bk-refresh-chip" id="bk-refresh-chip">⏳ sincronizando…</span>
+        <div style="font-size:.6rem;color:var(--txd);" id="view-status">Leyendo resultados reales…</div>
       </div>
     </div>
   </div>
@@ -789,6 +817,8 @@ function renderGroups(scores) {
   function groupBlock(gKey, side) {
     const clr = side==='left'?'tl':'pu';
     const matches = GM.filter(m=>m.g===gKey);
+
+    // Match result rows
     const rows = matches.map(m=>{
       const sc = scores[m.id];
       const hasScore = sc&&sc.score1!==null&&sc.score2!==null;
@@ -804,8 +834,31 @@ function renderGroups(scores) {
         <span class="gr-t2">${m.t2} ${F[m.t2]||''}</span>
       </div>`;
     }).join('');
+
+    // Standings table from real scores
+    const { ranked } = calcRealStandings(gKey, scores);
+    const hasAnyScore = ranked.some(([,s])=>s.played>0);
+    const standRows = ranked.map(([team, s], i) => {
+      const badge  = i===0 ? '1°' : i===1 ? '2°' : `${i+1}°`;
+      const qClass = i===0 ? 'q1' : i===1 ? 'q2' : '';
+      const gdStr  = s.gd > 0 ? `+${s.gd}` : `${s.gd}`;
+      return `<div class="grp-st-row ${qClass}">
+        <span class="grp-st-badge">${badge}</span>
+        <span class="grp-st-flag">${F[team]||'🏳'}</span>
+        <span class="grp-st-team">${team}</span>
+        <span class="grp-st-num" title="Partidos jugados">${s.played}PJ</span>
+        <span class="grp-st-num" title="Diferencia de goles">${gdStr}</span>
+        <span class="grp-st-pts">${s.pts}pts</span>
+      </div>`;
+    }).join('');
+
+    const standSection = `
+      <div class="grp-stand-sep"></div>
+      <div class="grp-stand-title">Posiciones${hasAnyScore ? '' : ' · sin partidos aún'}</div>
+      ${standRows}`;
+
     return `<div class="grp-block">
-      <div class="grp-head ${clr}">Grupo ${gKey}</div>${rows}
+      <div class="grp-head ${clr}">Grupo ${gKey}</div>${rows}${standSection}
     </div>`;
   }
 
@@ -927,77 +980,83 @@ function toggleGroups() {
 }
 
 
-// ── INIT ─────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', async () => {
-  // 1. Load real scores from localStorage
-  realScores = loadRealScores();
-  const scoreCount = Object.keys(realScores).length;
-
-  // 2. Try to sync from API (use proper name map to avoid accent mismatches)
+// ── Live scores refresh (module-level so init can call it) ────
+async function refreshLiveScores() {
+  const chip = document.getElementById('bk-refresh-chip');
+  if (chip) { chip.className='bk-refresh-chip'; chip.textContent='⏳ actualizando…'; }
   try {
     const r = await fetch('/api/live-results');
-    if (r.ok) {
-      const data = await r.json();
-      const gmLookup = {};
-      GM.forEach(x => {
-        gmLookup[`${x.t1}||${x.t2}`] = x.id;
-        gmLookup[`${x.t2}||${x.t1}`] = x.id;
-      });
-      let apiUpdated = false;
-      (data.matches||[]).forEach(m=>{
-        if ((m.status==='FINISHED'||m.status==='IN_PLAY'||m.status==='PAUSED') && m.score1!==null && m.score2!==null) {
-          const h = _BK_FD_MAP[m.home] || m.home;
-          const a = _BK_FD_MAP[m.away] || m.away;
-          const id = gmLookup[`${h}||${a}`] || gmLookup[`${a}||${h}`];
-          if (id) {
-            let s1 = m.score1, s2 = m.score2;
-            if (!gmLookup[`${h}||${a}`] && gmLookup[`${a}||${h}`]) { s1 = m.score2; s2 = m.score1; }
-            realScores[id] = {score1:s1, score2:s2};
-            apiUpdated = true;
-          }
+    if (!r.ok) throw new Error('api error');
+    const data = await r.json();
+    const gmLookup = {};
+    GM.forEach(x => { gmLookup[`${x.t1}||${x.t2}`]=x.id; gmLookup[`${x.t2}||${x.t1}`]=x.id; });
+    let updated = false;
+    (data.matches||[]).forEach(m=>{
+      if ((m.status==='FINISHED'||m.status==='IN_PLAY'||m.status==='PAUSED') && m.score1!==null && m.score2!==null) {
+        const h = _BK_FD_MAP[m.home]||m.home;
+        const a = _BK_FD_MAP[m.away]||m.away;
+        const id = gmLookup[`${h}||${a}`]||gmLookup[`${a}||${h}`];
+        if (!id) return;
+        let s1=m.score1, s2=m.score2;
+        if (!gmLookup[`${h}||${a}`] && gmLookup[`${a}||${h}`]) { s1=m.score2; s2=m.score1; }
+        const prev = realScores[id];
+        if (!prev || prev.score1!==s1 || prev.score2!==s2) {
+          realScores[id]={score1:s1,score2:s2};
+          updated=true;
         }
-      });
-      if (apiUpdated) {
-        localStorage.setItem('wc_2026_predictions', JSON.stringify(realScores));
+      }
+    });
+    if (updated) {
+      localStorage.setItem('wc_2026_predictions', JSON.stringify(realScores));
+      renderGroups(realScores);
+      if (currentView==='real') {
+        const b=buildRealBracket(realScores);
+        document.getElementById('bk-bracket-inner').innerHTML=renderBracketHTML(b,true);
+        renderThird(b,true);
+        const vs=document.getElementById('view-status');
+        if(vs) vs.textContent=b.groupsComplete?'✅ Grupos completos — bracket con clasificados reales':'⏳ Grupos en progreso — posiciones preliminares';
       }
     }
-  } catch(_){}
+    if (chip) {
+      const t=new Date().toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'});
+      chip.className='bk-refresh-chip live';
+      chip.textContent=`● Live · ${t}`;
+    }
+  } catch(_) {
+    if (chip) { chip.className='bk-refresh-chip'; chip.textContent='⚠ sin conexión'; }
+  }
+}
 
-  // 3. Run probability simulation
+
+// ── INIT ─────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', async () => {
+  // 1. Load real scores from localStorage (fast path)
+  realScores = loadRealScores();
+
+  // 2. Run probability simulation
   document.getElementById('bk-load-sub').textContent='Simulando 2,000 torneos…';
   simProbs = runSimulations(2000);
 
-  // 4. Render groups with real scores
+  // 3. Render groups + bracket with whatever scores we have
   renderGroups(realScores);
-
-  // 5. Render bracket (default: real view)
   switchView('real');
-
-  // 6. Render probability favorites
   renderFavs(simProbs);
 
-  // 7. Show content
+  // 4. Show content
   document.getElementById('bk-loading').style.display='none';
   document.getElementById('bk-main').style.display='block';
 
-  // 8. Disclaimer
+  // 5. Disclaimer
   const top=Object.entries(simProbs).sort((a,b)=>b[1].champ-a[1].champ)[0];
   const disc=document.getElementById('bk-disc');
   if(disc) disc.innerHTML=`⚠ Proyección basada en 2,000 simulaciones Monte Carlo · Modelo: ${MODEL_METADATA.name}
     Favorito estadístico: <strong style="color:var(--goldb)">${top?.[0]}</strong> · ${top?.[1]?.champ}% probabilidad de título · ${MODEL_METADATA.warning}`;
 
-  // 9. Auto-refresh real scores every 3 min
-  let _lastScoreJson = JSON.stringify(realScores);
-  setInterval(async()=>{
-    const saved = loadRealScores();
-    const newJson = JSON.stringify(saved);
-    if (newJson !== _lastScoreJson) {
-      _lastScoreJson = newJson;
-      realScores = saved;
-      if (currentView==='real') switchView('real');
-      renderGroups(realScores);
-    }
-  }, 3*60*1000);
+  // 6. Fetch fresh scores from ESPN API (updates chip, re-renders if needed)
+  refreshLiveScores();
+
+  // 7. Auto-refresh every 5 min
+  setInterval(refreshLiveScores, 5*60*1000);
 });
 </script>
 </body>
